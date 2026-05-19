@@ -13,43 +13,53 @@ const bugClasses = [
   { n: '09', glyph: '∞',  title: 'Resource leaks',                   severity: 'medium',   description: 'Memory leaks from raw pointers in C++, unclosed file handles, timers that never get cleared, listeners that never get removed.', sample: 'memory leak due to unmanaged raw pointer. the new member m_progressindicator is a raw pointer requiring a manual delete in the destructor' },
   { n: '10', glyph: '⌗',  title: 'Database edge cases',              severity: 'medium',   description: 'ToDictionary failures on duplicate keys, missing transactions around multi-statement updates, queries that assume non-empty result sets.', sample: 'uso de todictionary sem tratamento de duplicatas causa falha total. as chamadas em debtsinwindow.todictionary irao lancar uma argumentexception se as colecoes de entrada contiverem multiplos elementos com a mesma chave' },
 ];
+
+const sevPillStyle = (sev: string) => {
+  if (sev === 'critical') return 'background: var(--color-phosphor-500); color: var(--color-night-200);';
+  if (sev === 'high')     return 'background: var(--color-phosphor-300); color: var(--color-night-200);';
+  return 'background: oklch(35% 0.01 250); color: var(--color-mist-200);';
+};
 ---
 
 <Layout
   title="The 10 bugs AI catches most in production code · State of AI Code Review"
-  description="90,527 bug suggestions delivered across 433 organizations between September 2025 and May 2026. 17% became code, 16% inspired a partial fix, 67% were ignored. The 10 most common bug classes."
+  description="90,527 bug suggestions delivered across 433 organizations between September 2025 and May 2026. 33% earned a fix. The 10 most common bug classes."
   runningHead="§ 01 Bugs"
   page="Plate I"
+  theme="dark"
 >
 
   <!-- HERO -->
-  <section class="border-b-2 border-ink-900 relative overflow-hidden">
-    <div class="max-w-[1320px] mx-auto px-6 md:px-10 pt-16 md:pt-20 pb-16 relative">
+  <section class="border-b border-night-50 bg-night-100">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 pt-16 md:pt-24 pb-16">
       <div class="grid grid-cols-12 gap-8 items-start">
         <div class="col-span-12 md:col-span-9">
-          <h1 class="font-display leading-[0.95] tracking-tight text-ink-900 reveal reveal-1" style="font-size: clamp(2.5rem, 6.5vw, 5.5rem);">
-            The ten bugs AI <span class="italic">catches most</span><br/>in production code.
+          <div class="font-mono text-[12px] font-medium tracking-[0.22em] uppercase text-phosphor-500 mb-5 reveal reveal-1">
+            ◆ Chapter § 01 · Bugs
+          </div>
+          <h1 class="font-display leading-[0.95] tracking-tight text-mist-50 reveal reveal-2" style="font-size: clamp(2.5rem, 6.5vw, 5.5rem);">
+            The ten bugs AI <span class="italic phosphor">catches most</span><br/>in production code.
           </h1>
         </div>
-        <aside class="col-span-12 md:col-span-3 md:pt-6 reveal reveal-2">
-          <div class="border-2 border-ink-900 bg-paper-200 p-5">
-            <div class="tracked text-oxblood-500 mb-3">At a glance</div>
-            <ul class="space-y-2 text-ink-900">
-              <li class="flex items-baseline justify-between border-b border-paper-400/60 pb-1">
-                <span class="text-sm">Bug suggestions delivered</span>
-                <span class="font-mono text-sm">90,527</span>
+        <aside class="col-span-12 md:col-span-3 md:pt-4 reveal reveal-3">
+          <div class="border border-night-50 bg-night-200 p-5">
+            <div class="font-mono text-[12px] font-medium tracking-[0.22em] uppercase text-phosphor-500 mb-4">At a glance</div>
+            <ul class="space-y-3 text-mist-50">
+              <li class="flex items-baseline justify-between border-b border-night-50 pb-2">
+                <span class="text-[13px] text-mist-200">Delivered</span>
+                <span class="font-mono text-[13px]">90,527</span>
               </li>
-              <li class="flex items-baseline justify-between border-b border-paper-400/60 pb-1">
-                <span class="text-sm">Distinct organizations</span>
-                <span class="font-mono text-sm">433</span>
+              <li class="flex items-baseline justify-between border-b border-night-50 pb-2">
+                <span class="text-[13px] text-mist-200">Organizations</span>
+                <span class="font-mono text-[13px]">433</span>
               </li>
-              <li class="flex items-baseline justify-between border-b border-paper-400/60 pb-1">
-                <span class="text-sm">Implemented or adapted</span>
-                <span class="font-mono text-sm text-moss-700">32.8%</span>
+              <li class="flex items-baseline justify-between border-b border-night-50 pb-2">
+                <span class="text-[13px] text-mist-200">Implemented or adapted</span>
+                <span class="font-mono text-[13px] phosphor">32.8%</span>
               </li>
               <li class="flex items-baseline justify-between">
-                <span class="text-sm">Applied exactly</span>
-                <span class="font-mono text-sm text-ochre-700">17.3%</span>
+                <span class="text-[13px] text-mist-200">Applied exactly</span>
+                <span class="font-mono text-[13px] text-mist-50">17.3%</span>
               </li>
             </ul>
           </div>
@@ -59,36 +69,39 @@ const bugClasses = [
   </section>
 
   <!-- IMPLEMENTATION SPLIT -->
-  <section class="dark-section border-b-2 border-ink-900">
-    <div class="max-w-[1320px] mx-auto py-20 md:py-24 px-6 md:px-10">
-      <div class="grid grid-cols-12 gap-10 items-center max-w-[1320px] mx-auto">
+  <section class="border-b border-night-50 bg-night-200">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-20 md:py-24">
+      <div class="grid grid-cols-12 gap-10 items-center">
         <div class="col-span-12 md:col-span-7">
-          <h2 class="font-display tracking-tight leading-[0.95] text-paper-100" style="font-size: clamp(2.25rem, 5.5vw, 4.5rem);">
-            <span class="italic text-ochre-300">1 in 3</span><br/>flagged bugs earn a fix.
+          <div class="font-mono text-[12px] font-medium tracking-[0.22em] uppercase text-phosphor-500 mb-5">
+            What happens to a flagged bug
+          </div>
+          <h2 class="font-display tracking-tight leading-[0.95] text-mist-50" style="font-size: clamp(2.25rem, 5.5vw, 4.5rem);">
+            <span class="italic phosphor">1 in 3</span><br/>flagged bugs earn a fix.
           </h2>
-          <p class="text-paper-300 leading-[1.6] text-[16px] mt-8 max-w-xl">
+          <p class="text-mist-200 leading-[1.6] text-[16px] mt-8 max-w-xl">
             33% of delivered bug findings show up in the code after the PR closes. About half land exactly as suggested. The other half are kept in spirit but adapted to the team's style.
           </p>
         </div>
         <div class="col-span-12 md:col-span-5">
-          <div class="font-display text-paper-100 leading-none" style="font-size: clamp(5rem, 14vw, 11rem);">32.8%</div>
-          <div class="tracked text-ochre-300 mt-3">Implemented or adapted</div>
+          <div class="font-display phosphor leading-none" style="font-size: clamp(5rem, 14vw, 11rem);">32.8%</div>
+          <div class="font-mono text-[12px] font-medium tracking-[0.22em] uppercase text-phosphor-500 mt-3">Implemented or adapted</div>
 
           <div class="mt-8">
-            <div class="relative h-12 bg-ink-700/40 flex">
-              <div class="bar-grow bg-moss-500 h-full" style="width: 52.7%;"></div>
-              <div class="bar-grow bg-ochre-500 h-full" style="width: 47.3%; animation-delay: 0.3s;"></div>
+            <div class="relative h-3 bg-night-50 flex">
+              <div class="bar-grow" style="background: var(--color-phosphor-500); width: 52.7%;"></div>
+              <div class="bar-grow" style="background: var(--color-signal-cyan); width: 47.3%; animation-delay: 0.3s;"></div>
             </div>
-            <div class="flex justify-between mt-3 text-[13px]">
+            <div class="flex justify-between mt-3 text-[12px]">
               <div class="flex items-center gap-2">
-                <span class="inline-block w-3 h-3 bg-moss-500"></span>
-                <span class="text-paper-100">Applied exactly</span>
-                <span class="font-mono text-paper-300">17.3%</span>
+                <span class="inline-block w-3 h-3" style="background: var(--color-phosphor-500);"></span>
+                <span class="text-mist-50">Applied exactly</span>
+                <span class="font-mono text-mist-200">17.3%</span>
               </div>
               <div class="flex items-center gap-2">
-                <span class="font-mono text-paper-300">15.5%</span>
-                <span class="text-paper-100">Adapted to fit</span>
-                <span class="inline-block w-3 h-3 bg-ochre-500"></span>
+                <span class="font-mono text-mist-200">15.5%</span>
+                <span class="text-mist-50">Adapted to fit</span>
+                <span class="inline-block w-3 h-3" style="background: var(--color-signal-cyan);"></span>
               </div>
             </div>
           </div>
@@ -98,54 +111,62 @@ const bugClasses = [
   </section>
 
   <!-- SEVERITY LEGEND -->
-  <section class="border-b border-ink-900/20 bg-paper-50">
-    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-4 flex flex-wrap items-center gap-6 text-[12px] text-ink-500">
-      <span class="tracked">Severity</span>
-      <span class="flex items-center gap-2"><span class="pill pill-critical">Critical</span></span>
-      <span class="flex items-center gap-2"><span class="pill pill-high">High</span></span>
-      <span class="flex items-center gap-2"><span class="pill pill-medium">Medium</span></span>
-      <span class="ml-auto tracked">Class boundaries are approximate; full clustering pending</span>
+  <section class="border-b border-night-50 bg-night-100">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-4 flex flex-wrap items-center gap-6 font-mono text-[11px] text-mist-400">
+      <span class="font-medium tracking-[0.22em] uppercase text-mist-200">Severity</span>
+      <span class="flex items-center gap-2">
+        <span class="font-mono text-[10px] tracking-[0.18em] uppercase px-2 py-0.5" style={sevPillStyle('critical')}>critical</span>
+      </span>
+      <span class="flex items-center gap-2">
+        <span class="font-mono text-[10px] tracking-[0.18em] uppercase px-2 py-0.5" style={sevPillStyle('high')}>high</span>
+      </span>
+      <span class="flex items-center gap-2">
+        <span class="font-mono text-[10px] tracking-[0.18em] uppercase px-2 py-0.5" style={sevPillStyle('medium')}>medium</span>
+      </span>
+      <span class="ml-auto text-mist-400">Class boundaries are approximate; full clustering pending</span>
     </div>
   </section>
 
   <!-- BUG GRID -->
-  <section class="max-w-[1320px] mx-auto px-6 md:px-10 py-16">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-      {bugClasses.map((b) => (
-        <article class="group lift border-2 border-ink-900 bg-paper-50 hover:bg-ink-950 hover:text-paper-100 p-7 relative overflow-hidden">
-          <div class="flex items-start justify-between gap-4">
-            <div class="flex items-baseline gap-4">
-              <span class="font-display italic text-oxblood-500 group-hover:text-ochre-300 leading-none" style="font-size: clamp(2.5rem, 4vw, 3.75rem);">{b.n}</span>
-              <span class="font-display text-ink-900 group-hover:text-paper-100 leading-none" style="font-size: 2.5rem;">{b.glyph}</span>
+  <section class="bg-night-100 border-b border-night-50">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-16 md:py-20">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {bugClasses.map((b) => (
+          <article class="glow-on-hover border border-night-50 bg-night-200 p-7 relative">
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex items-baseline gap-4">
+                <span class="font-display italic phosphor leading-none" style="font-size: clamp(2.25rem, 3.5vw, 3rem);">{b.n}</span>
+                <span class="font-display text-mist-50 leading-none" style="font-size: 2.25rem;">{b.glyph}</span>
+              </div>
+              <span class="font-mono text-[10px] tracking-[0.18em] uppercase px-2 py-1" style={sevPillStyle(b.severity)}>{b.severity}</span>
             </div>
-            <span class={`pill pill-${b.severity}`}>{b.severity}</span>
-          </div>
 
-          <h2 class="font-display tracking-tight leading-[1.05] mt-4 text-ink-900 group-hover:text-paper-100 transition-colors" style="font-size: clamp(1.4rem, 2vw, 1.8rem);">{b.title}</h2>
+            <h2 class="font-display tracking-tight leading-[1.05] mt-4 text-mist-50" style="font-size: clamp(1.4rem, 2vw, 1.75rem);">{b.title}</h2>
 
-          <p class="text-ink-700 group-hover:text-paper-300 leading-[1.6] mt-5 text-[15px]">{b.description}</p>
+            <p class="text-mist-200 leading-[1.6] mt-5 text-[14.5px]">{b.description}</p>
 
-          <div class="margin-note mt-5 group-hover:text-paper-300">Excerpt · review comment</div>
-          <blockquote class="font-mono text-[12px] leading-[1.65] text-ink-700 group-hover:text-paper-100 mt-2 pl-3 border-l-2 border-oxblood-500">
-            {b.sample}
-          </blockquote>
-        </article>
-      ))}
+            <div class="font-mono text-[10px] font-medium tracking-[0.22em] uppercase text-phosphor-500 mt-5">Excerpt · review comment</div>
+            <blockquote class="font-mono text-[12px] leading-[1.65] text-mist-200 mt-2 pl-3 border-l-2 border-phosphor-500/60">
+              {b.sample}
+            </blockquote>
+          </article>
+        ))}
+      </div>
     </div>
   </section>
 
   <!-- CLOSER -->
-  <section class="border-t-2 border-ink-900 bg-paper-200">
+  <section class="bg-night-200">
     <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-20">
       <div class="grid grid-cols-12 gap-8 items-start">
         <div class="col-span-12 md:col-span-3">
-          <div class="tracked text-oxblood-500">Note</div>
+          <div class="font-mono text-[12px] font-medium tracking-[0.22em] uppercase text-phosphor-500">Note</div>
         </div>
         <div class="col-span-12 md:col-span-9">
-          <p class="font-display italic text-ink-900 leading-[1.35]" style="font-size: clamp(1.5rem, 2.4vw, 2.25rem);">
-            Class boundaries are approximate. Semantic clustering of the full suggestion text is ongoing. Implementation rates above are aggregate across all bug subclasses; per-class breakdowns publish in the 2026-Q3 snapshot.
+          <p class="font-display italic text-mist-50 leading-[1.35]" style="font-size: clamp(1.5rem, 2.4vw, 2.25rem);">
+            Class boundaries are approximate. Semantic clustering of the full suggestion text is ongoing. Per-class breakdowns publish in the 2026-Q3 snapshot.
           </p>
-          <a href="https://github.com/kodustech/stateofcodereview.com" class="tracked text-ink-500 hover:text-oxblood-500 mt-6 inline-block">↳ Methodology and SQL queries on GitHub</a>
+          <a href="https://github.com/kodustech/stateofcodereview.com" class="font-mono text-[11px] tracking-[0.22em] uppercase text-phosphor-500 hover:text-phosphor-300 mt-6 inline-block">↳ Methodology and SQL queries on GitHub</a>
         </div>
       </div>
     </div>
