@@ -4,9 +4,8 @@ import Layout from '../layouts/Layout.astro';
 const chapters = [
   { num: '01', eyebrow: 'Bugs',            title: 'The 10 bugs AI catches most.',          metric: '90,527', metricLabel: 'bug findings',         href: '/bugs/' },
   { num: '02', eyebrow: 'Vulnerabilities', title: 'The 2026 vulnerability landscape.',     metric: '6,552',  metricLabel: 'security findings',    href: '/vulnerabilities/', tag: 'New · prompt injection' },
-  { num: '03', eyebrow: 'Cross-file',      title: 'What AI catches that linters cannot.',  metric: '10,992', metricLabel: 'cross-file findings',  href: '/cross-file/' },
-  { num: '04', eyebrow: 'Rules',           title: 'What 610 teams codified.',              metric: '7,276',  metricLabel: 'codified rules',       href: '/rules/' },
-  { num: '05', eyebrow: 'Models',          title: 'Best LLM: 28%. Worst: 3%.',             metric: '79',     metricLabel: 'BYOK organizations',   href: '/models/' },
+  { num: '03', eyebrow: 'Rules',           title: 'What 610 teams codified.',              metric: '7,276',  metricLabel: 'codified rules',       href: '/rules/' },
+  { num: '04', eyebrow: 'Models',          title: 'Best LLM: 28%. Worst: 3%.',             metric: '79',     metricLabel: 'BYOK organizations',   href: '/models/' },
 ];
 
 const langs = [
@@ -45,7 +44,7 @@ const langs = [
       </h1>
 
       <p class="text-mist-200 text-[17px] md:text-[19px] leading-[1.55] max-w-2xl mt-8 reveal reveal-3">
-        We read the post-PR diff for 112,336 AI code review suggestions across 456 engineering teams. This is what shipped on those lines.
+        We read the post-PR diff for 162,262 AI code review suggestions across 464 engineering teams. This is what shipped on those lines.
       </p>
 
       <!-- Demo + Counter grid -->
@@ -111,11 +110,11 @@ const langs = [
           <div class="mt-10 space-y-4 border-t border-night-50 pt-6">
             <div class="flex items-baseline justify-between">
               <span class="font-mono text-[12px] font-medium tracking-[0.18em] uppercase text-mist-200">Suggestions</span>
-              <span class="font-display text-mist-50 text-xl tabular-nums" id="live-suggestions">112,336</span>
+              <span class="font-display text-mist-50 text-xl tabular-nums" id="live-suggestions">162,262</span>
             </div>
             <div class="flex items-baseline justify-between">
               <span class="font-mono text-[12px] font-medium tracking-[0.18em] uppercase text-mist-200">Organizations</span>
-              <span class="font-display text-mist-50 text-xl">456</span>
+              <span class="font-display text-mist-50 text-xl">464</span>
             </div>
             <div class="flex items-baseline justify-between">
               <span class="font-mono text-[12px] font-medium tracking-[0.18em] uppercase text-mist-200">Window</span>
@@ -149,22 +148,22 @@ const langs = [
             ◆ Implementation rate · by finding class
           </div>
           <h2 class="font-display leading-[0.98] tracking-tight text-mist-50" style="font-size: clamp(2rem, 5vw, 4rem);">
-            <span class="italic phosphor">Cross-file at 39%.</span><br/>
-            <span class="text-mist-200">Security at 29%.</span>
+            <span class="italic phosphor">Bugs at 33%.</span><br/>
+            <span class="text-mist-200">Custom rules at 30%.</span>
           </h2>
         </div>
         <div class="col-span-12 md:col-span-5">
           <p class="text-mist-200 leading-[1.65] text-[15px] max-w-md">
-            The 33% headline rate hides real variance. Cross-file findings — the class single-file linters cannot reach — earn the highest implementation. Security trails despite being the highest-stakes category.
+            The 32% headline rate hides variance across categories. Bug findings lead. Custom rules — defined by the teams themselves — sit a step behind. Security trails despite being the highest-stakes class.
           </p>
         </div>
       </div>
 
       <div class="space-y-3">
         {[
-          { label: 'Cross-file',    pct: 39.2, n: '10,992', href: '/cross-file/',     blurb: 'DRY violations, schema drift, type incompatibility' },
           { label: 'Performance',   pct: 36.7, n: '4,265',  href: '/bugs/',           blurb: 'Caching, query patterns, async/await abuse' },
           { label: 'Bugs',          pct: 32.8, n: '90,527', href: '/bugs/',           blurb: 'Null access, race conditions, schema mismatches' },
+          { label: 'Custom rules',  pct: 29.8, n: '60,918', href: '/rules/',          blurb: 'What 610 teams codified as their own enforcement layer' },
           { label: 'Security',      pct: 28.8, n: '6,552',  href: '/vulnerabilities/',blurb: 'SQL injection, path traversal, prompt injection (new in 2026)' },
         ].map((row, i) => (
           <a href={row.href} class="group block border-b border-night-50 py-6 hover:bg-night-100/40 transition-colors -mx-3 md:-mx-6 px-3 md:px-6">
@@ -555,7 +554,7 @@ https://stateofcodereview.com</pre>
     // ─── Live suggestion counter · subtle real-time feel ─────────────────
     const liveSuggestions = document.getElementById('live-suggestions');
     if (liveSuggestions && !reducedMotion) {
-      let value = 112336;
+      let value = 162262;
       setInterval(() => {
         // increment by 1-3 every ~4-9 seconds
         if (Math.random() > 0.5) {
