@@ -229,18 +229,35 @@
   }
   .phosphor-pulse { animation: phosphor-pulse 3.6s ease-in-out infinite; }
 
-  /* Counter — animated using CSS custom property + @property */
-  @property --num {
-    syntax: "<integer>";
-    initial-value: 0;
-    inherits: false;
+  /* Cursor blink (atmospheric live feel) */
+  @keyframes blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
   }
-  .counter {
-    counter-reset: count var(--num);
-    transition: --num 1.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+  .cursor-blink {
+    display: inline-block;
+    animation: blink 1.05s steps(1, end) infinite;
   }
-  .counter::after { content: counter(count); }
-  .counter.is-on { --num: var(--target, 0); }
+
+  /* Live ticker fade-in */
+  @keyframes ticker-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .ticker-line { animation: ticker-in 0.4s ease-out both; }
+
+  /* Subtle grid pulse — barely-there breathing on the gridfield */
+  @keyframes grid-breath {
+    0%, 100% { opacity: 0.55; }
+    50%      { opacity: 0.85; }
+  }
+  .gridfield {
+    animation: grid-breath 7s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .gridfield { animation: none; }
+    .cursor-blink { animation: none; opacity: 1; }
+  }
 
   /* Glow ring on hover for chapter cards (dark only) */
   .glow-on-hover {

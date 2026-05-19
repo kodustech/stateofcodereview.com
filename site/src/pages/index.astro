@@ -39,7 +39,7 @@ const langs = [
       <h1 class="font-display leading-[0.92] tracking-tight text-mist-50 reveal reveal-2 max-w-5xl"
           style="font-size: clamp(2.75rem, 9vw, 8rem);">
         What happens<br/>
-        after the AI <span class="italic phosphor phosphor-pulse">comment lands</span>?
+        after the AI <span class="italic phosphor phosphor-pulse">comment lands</span>?<span class="cursor-blink phosphor ml-1">▌</span>
       </h1>
 
       <!-- Big animated stat -->
@@ -50,11 +50,11 @@ const langs = [
           </div>
           <div class="flex items-baseline gap-5">
             <span
-              class="counter font-display phosphor leading-none"
+              class="font-display phosphor leading-none"
               data-counter
               data-target="33"
-              style="font-size: clamp(7rem, 22vw, 17rem); --num: 0; --target: 33;"
-            ></span>
+              style="font-size: clamp(7rem, 22vw, 17rem);"
+            >0</span>
             <span class="font-display phosphor leading-none" style="font-size: clamp(3rem, 7vw, 6rem);">%</span>
           </div>
           <div class="font-mono text-[13px] text-mist-400 mt-6 max-w-md leading-relaxed">
@@ -66,7 +66,7 @@ const langs = [
           <div class="space-y-5">
             <div class="flex items-baseline justify-between">
               <span class="font-mono text-[11px] tracking-[0.18em] uppercase text-mist-600">Suggestions</span>
-              <span class="font-display text-mist-50 text-2xl">112,336</span>
+              <span class="font-display text-mist-50 text-2xl tabular-nums" id="live-suggestions">112,336</span>
             </div>
             <div class="flex items-baseline justify-between border-t border-night-50 pt-5">
               <span class="font-mono text-[11px] tracking-[0.18em] uppercase text-mist-600">Organizations</span>
@@ -90,6 +90,13 @@ const langs = [
            class="font-mono text-[11px] tracking-[0.22em] uppercase text-mist-50 border border-mist-600 px-6 py-3.5 hover:border-phosphor-500 hover:text-phosphor-500 transition-colors">
           Chapter 01 →
         </a>
+      </div>
+
+      <!-- Live ticker -->
+      <div class="mt-20 pt-6 border-t border-night-50 reveal reveal-5">
+        <div class="font-mono text-[10.5px] tracking-wider text-mist-400 truncate" id="live-ticker">
+          <span class="text-phosphor-500">▌</span> <span class="text-mist-600">now reviewing</span> · typescript / packages/auth/login.ts:128 · null access · <span class="text-phosphor-500">critical</span>
+        </div>
       </div>
     </div>
   </section>
@@ -311,11 +318,13 @@ https://stateofcodereview.com</pre>
     </div>
   </section>
 
-  <!-- Contextual scripts: mouse-follow atmospheric glow + counter on view -->
+  <!-- Contextual scripts: mouse glow · counter · live ticker · suggestion tick -->
   <script is:inline>
-    // Atmospheric mouse-follow glow on hero
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ─── Mouse-follow atmospheric glow on hero ──────────────────────────
     const hero = document.getElementById('hero');
-    if (hero && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (hero && !reducedMotion) {
       hero.addEventListener('pointermove', (e) => {
         const rect = hero.getBoundingClientRect();
         const x = ((e.clientX - rect.left) / rect.width) * 100;
@@ -325,21 +334,81 @@ https://stateofcodereview.com</pre>
       }, { passive: true });
     }
 
-    // Counter trigger on view
+    // ─── Counter animation via rAF (ease-out cubic) ────────────────────
+    function animateCounter(el, target, duration) {
+      if (reducedMotion) { el.textContent = String(target); return; }
+      const start = performance.now();
+      function tick(now) {
+        const t = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.round(eased * target);
+        if (t < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
     const counters = document.querySelectorAll('[data-counter]');
-    if (counters.length && 'IntersectionObserver' in window) {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-on');
-            io.unobserve(entry.target);
-          }
+    if (counters.length) {
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const target = parseInt(entry.target.dataset.target || '0', 10);
+              animateCounter(entry.target, target, 1600);
+              io.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.35 });
+        counters.forEach((c) => io.observe(c));
+      } else {
+        counters.forEach((c) => {
+          const target = parseInt(c.dataset.target || '0', 10);
+          c.textContent = String(target);
         });
-      }, { threshold: 0.4 });
-      counters.forEach((c) => io.observe(c));
-    } else {
-      // Fallback: just show the value
-      counters.forEach((c) => c.classList.add('is-on'));
+      }
+    }
+
+    // ─── Live ticker · simulates ongoing AI reviews ────────────────────
+    const ticker = document.getElementById('live-ticker');
+    if (ticker && !reducedMotion) {
+      const reviews = [
+        { lang: 'typescript', path: 'packages/auth/login.ts:128',     issue: 'null access',           sev: 'critical' },
+        { lang: 'python',     path: 'api/users/handler.py:45',         issue: 'race condition',        sev: 'high' },
+        { lang: 'go',         path: 'internal/sql/repo.go:87',         issue: 'sql injection',         sev: 'critical' },
+        { lang: 'java',       path: 'src/payments/Webhook.java:212',   issue: 'missing authorization', sev: 'critical' },
+        { lang: 'ruby',       path: 'app/jobs/contract_worker.rb:34',  issue: 'critical logic disabled', sev: 'critical' },
+        { lang: 'php',        path: 'src/Controllers/Admin.php:88',    issue: 'hardcoded secret',      sev: 'critical' },
+        { lang: 'rust',       path: 'crates/api/src/handler.rs:163',   issue: 'unbounded loop',        sev: 'high' },
+        { lang: 'csharp',     path: 'Services/PaymentSvc.cs:401',      issue: 'schema drift',          sev: 'high' },
+        { lang: 'vue',        path: 'src/views/Dashboard.vue:99',      issue: 'async in constructor',  sev: 'high' },
+        { lang: 'javascript', path: 'lib/parser/index.js:240',         issue: 'off-by-one',            sev: 'medium' },
+      ];
+      const sevColor = (s) => s === 'critical' ? 'text-phosphor-500' : s === 'high' ? 'text-phosphor-300' : 'text-mist-400';
+      let i = Math.floor(Math.random() * reviews.length);
+      function rotate() {
+        const r = reviews[i % reviews.length];
+        ticker.innerHTML = `<span class="text-phosphor-500">▌</span> <span class="text-mist-600">now reviewing</span> · ${r.lang} / ${r.path} · ${r.issue} · <span class="${sevColor(r.sev)}">${r.sev}</span>`;
+        ticker.classList.remove('ticker-line');
+        // force reflow so animation restarts
+        void ticker.offsetWidth;
+        ticker.classList.add('ticker-line');
+        i++;
+      }
+      rotate();
+      setInterval(rotate, 2600);
+    }
+
+    // ─── Live suggestion counter · subtle real-time feel ─────────────────
+    const liveSuggestions = document.getElementById('live-suggestions');
+    if (liveSuggestions && !reducedMotion) {
+      let value = 112336;
+      setInterval(() => {
+        // increment by 1-3 every ~4-9 seconds
+        if (Math.random() > 0.5) {
+          value += Math.floor(Math.random() * 3) + 1;
+          liveSuggestions.textContent = value.toLocaleString('en-US');
+        }
+      }, 4200);
     }
   </script>
 </Layout>
