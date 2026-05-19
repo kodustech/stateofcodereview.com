@@ -207,13 +207,15 @@
   }
   .atmos > * { position: relative; z-index: 1; }
 
-  /* Fine grid backdrop */
+  /* Fine grid backdrop — masked by a soft vignette so it doesn't compete with content */
   .gridfield {
     background-image:
-      linear-gradient(to right, oklch(25% 0.01 250 / 0.4) 1px, transparent 1px),
-      linear-gradient(to bottom, oklch(25% 0.01 250 / 0.4) 1px, transparent 1px);
-    background-size: 64px 64px;
+      linear-gradient(to right, oklch(22% 0.01 250 / 0.22) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(22% 0.01 250 / 0.22) 1px, transparent 1px);
+    background-size: 80px 80px;
     background-position: -1px -1px;
+    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 50%, black 40%, transparent 100%);
+            mask-image: radial-gradient(ellipse 90% 70% at 50% 50%, black 40%, transparent 100%);
   }
 
   /* Big stat phosphor glow + pulse */
