@@ -1,0 +1,25 @@
+# Quarterly refresh workflow.
+# Triggered manually or on schedule at the start of Q3, Q4, Q1 of each year.
+# Runs the methodology queries, produces a new data/YYYY-qN/ snapshot, opens a PR.
+#
+# Currently a placeholder. Implementation pending after first manual snapshot lands.
+
+name: quarterly-refresh
+
+on:
+  workflow_dispatch:
+    inputs:
+      quarter:
+        description: 'Quarter label (e.g. 2026-q3)'
+        required: true
+        type: string
+  schedule:
+    # First day of Aug, Nov, Feb, May at 09:00 UTC
+    - cron: '0 9 1 8,11,2,5 *'
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder
+        run: echo "Implementation pending. See data/README.md for the manual snapshot procedure."
