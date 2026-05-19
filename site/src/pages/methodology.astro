@@ -4,12 +4,12 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout
   title="Methodology · State of AI Code Review"
-  description="How the data was produced. Source, filters, privacy thresholds, reproducibility, and consent."
+  description="How the data was produced. Source, filters, implementation status definition, privacy thresholds, reproducibility, and the selection-bias correction applied between drafts."
   runningHead="Methodology"
   page="Methodology"
 >
 
-  <section class="max-w-[1280px] mx-auto px-8 pt-16 md:pt-20 pb-12">
+  <section class="max-w-[1320px] mx-auto px-6 md:px-10 pt-16 md:pt-20 pb-12">
     <div class="grid grid-cols-12 gap-8 items-start">
       <div class="col-span-12 md:col-span-7">
         <div class="tracked text-ink-500 mb-4 reveal reveal-1">Apparatus</div>
@@ -20,14 +20,33 @@ import Layout from '../layouts/Layout.astro';
       <aside class="col-span-12 md:col-span-5 md:pt-8 reveal reveal-3">
         <div class="border-l border-ink-900 pl-5">
           <p class="text-ink-700 leading-[1.6] text-[15px]">
-            This section documents the dataset, filtering criteria, privacy thresholds, and citation format. All SQL queries are public on GitHub. External researchers can request a controlled extract under data use agreement at <a href="mailto:research@kodus.io" class="underline decoration-1 underline-offset-4 hover:text-oxblood-500">research@kodus.io</a>.
+            This section documents the dataset, filtering criteria, the definition of "implementation status," privacy thresholds, and the selection-bias correction that altered our acceptance numbers between internal drafts and publication.
           </p>
         </div>
       </aside>
     </div>
   </section>
 
-  <section class="max-w-[1280px] mx-auto px-8 pb-20">
+  <!-- SELECTION BIAS NOTE -->
+  <section class="dark-section border-y-2 border-ink-900">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-16">
+      <div class="grid grid-cols-12 gap-8 items-start">
+        <div class="col-span-12 md:col-span-3">
+          <div class="stamp text-ochre-300">A note on honesty</div>
+        </div>
+        <div class="col-span-12 md:col-span-9">
+          <p class="font-display italic text-paper-100 leading-[1.3]" style="font-size: clamp(1.5rem, 2.6vw, 2.5rem);">
+            An earlier internal draft reported 94.7% acceptance. That was wrong.
+          </p>
+          <p class="text-paper-300 leading-[1.7] text-[16px] mt-5 max-w-3xl">
+            The draft counted only suggestions that received explicit developer feedback (thumbs-up, thumbs-down, or detected implementation). That table is a selection-biased subset of suggestions where the developer engaged. Silent ignores were missing entirely. When the full population is queried from the post-PR diff, the real implementation rate is 17%, not 94.7%. This report uses the full population.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-[1320px] mx-auto px-6 md:px-10 pb-20">
     <div class="grid grid-cols-12 gap-10 border-t-2 border-ink-900 pt-16">
 
       <div class="col-span-12 md:col-span-3">
@@ -36,7 +55,7 @@ import Layout from '../layouts/Layout.astro';
       </div>
       <div class="col-span-12 md:col-span-9">
         <p class="font-display italic text-ink-900 leading-[1.35]" style="font-size: clamp(1.5rem, 2.2vw, 2rem);">
-          All data is sourced from the Kodus production code review pipeline.
+          Production code reviews from the Kodus pipeline.
         </p>
         <p class="text-ink-700 leading-[1.7] mt-5 max-w-prose">
           Kodus reviews pull requests across GitHub, GitLab, Bitbucket, and Azure DevOps. The full dataset lives in a BigQuery warehouse. Each chart in this report has a backing SQL query published in the <a href="https://github.com/kodustech/stateofcodereview.com" class="underline decoration-1 underline-offset-4 hover:text-oxblood-500">GitHub repository</a> under <code class="font-mono text-sm bg-paper-200 px-1.5 py-0.5">methodology/queries/</code>.
@@ -47,14 +66,22 @@ import Layout from '../layouts/Layout.astro';
 
       <div class="col-span-12 md:col-span-3">
         <div class="tracked text-oxblood-500">§ ii</div>
-        <div class="tracked text-ink-500 mt-2">Engine cutoff</div>
+        <div class="tracked text-ink-500 mt-2">Implementation status</div>
       </div>
       <div class="col-span-12 md:col-span-9">
         <p class="font-display italic text-ink-900 leading-[1.35]" style="font-size: clamp(1.5rem, 2.2vw, 2rem);">
-          Suggestions before 2025-09-01 are excluded.
+          Measured from the post-PR diff, not opt-in feedback.
         </p>
         <p class="text-ink-700 leading-[1.7] mt-5 max-w-prose">
-          Kodus introduced a new label taxonomy in September 2025 with five canonical labels: bug, security, performance, cross-file, and kody rules. Suggestions generated before this cutoff used a different label set and a different LLM prompt. To keep findings interpretable as the current state of AI code review, all pre-cutoff suggestions are excluded.
+          For every delivered suggestion, the pipeline compares the suggested code against what actually shipped on those lines after the PR closed. The status is one of three:
+        </p>
+        <ul class="text-ink-700 leading-[1.75] mt-5 space-y-2 list-none max-w-prose">
+          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-moss-500">▣</span> <strong>implemented</strong> · the developer applied the suggested change closely.</li>
+          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-ochre-500">▦</span> <strong>partially_implemented</strong> · the developer changed those lines but not exactly as suggested. The idea was taken, the form was adapted.</li>
+          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">▢</span> <strong>not_implemented</strong> · the lines were left untouched, or the change went in a different direction.</li>
+        </ul>
+        <p class="text-ink-700 leading-[1.7] mt-5 max-w-prose">
+          This is a behavioral measure, not a quality measure. A correct suggestion ignored because the developer disagreed is counted as "not implemented." A wrong suggestion the developer happened to also fix differently is counted "partially." We discuss this trade-off in chapter notes.
         </p>
       </div>
 
@@ -62,40 +89,60 @@ import Layout from '../layouts/Layout.astro';
 
       <div class="col-span-12 md:col-span-3">
         <div class="tracked text-oxblood-500">§ iii</div>
-        <div class="tracked text-ink-500 mt-2">Privacy thresholds</div>
+        <div class="tracked text-ink-500 mt-2">Engine cutoff</div>
       </div>
       <div class="col-span-12 md:col-span-9">
         <p class="font-display italic text-ink-900 leading-[1.35]" style="font-size: clamp(1.5rem, 2.2vw, 2rem);">
-          Aggregation only. No identifiers.
+          Suggestions before 2025-09-01 are excluded.
         </p>
-        <ul class="text-ink-700 leading-[1.75] mt-5 space-y-2 list-none max-w-prose">
-          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">a.</span> No slice with fewer than 50 suggestions is published as a finding.</li>
-          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">b.</span> Language slices with fewer than five distinct organizations are footnoted as low-confidence.</li>
-          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">c.</span> Organization, repository, and pull-request identifiers are never exposed.</li>
-          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">d.</span> Suggestion text shown in the report is reviewed for sensitive substrings (hostnames, customer identifiers, project names) before publication.</li>
-        </ul>
+        <p class="text-ink-700 leading-[1.7] mt-5 max-w-prose">
+          Kodus introduced the current label taxonomy in September 2025 with five canonical labels (bug, security, performance, cross-file, kody rules). Earlier suggestions used a different label set and prompt and are excluded so findings remain interpretable as the current state.
+        </p>
       </div>
 
       <div class="col-span-12 border-t border-paper-300"></div>
 
       <div class="col-span-12 md:col-span-3">
         <div class="tracked text-oxblood-500">§ iv</div>
+        <div class="tracked text-ink-500 mt-2">Privacy</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <p class="font-display italic text-ink-900 leading-[1.35]" style="font-size: clamp(1.5rem, 2.2vw, 2rem);">
+          Aggregation only.
+        </p>
+        <ul class="text-ink-700 leading-[1.75] mt-5 space-y-2 list-none max-w-prose">
+          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">a.</span> No slice with fewer than 50 suggestions is published.</li>
+          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">b.</span> Language slices with fewer than three distinct organizations are footnoted as low-confidence.</li>
+          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">c.</span> Organization, repository, and pull-request identifiers are never exposed.</li>
+          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">d.</span> Suggestion text shown in the report is reviewed for sensitive substrings before publication.</li>
+        </ul>
+      </div>
+
+      <div class="col-span-12 border-t border-paper-300"></div>
+
+      <div class="col-span-12 md:col-span-3">
+        <div class="tracked text-oxblood-500">§ v</div>
         <div class="tracked text-ink-500 mt-2">Sample sizes</div>
       </div>
       <div class="col-span-12 md:col-span-9">
         <p class="font-display italic text-ink-900 leading-[1.35]" style="font-size: clamp(1.5rem, 2.2vw, 2rem);">
-          For the 2026-Q2 snapshot.
+          2026-Q2 snapshot.
         </p>
         <div class="mt-6 border-t border-ink-900">
           {[
-            ['Suggestions with feedback, post-filter', '17,773'],
-            ['Distinct organizations', '200'],
-            ['Distinct repositories', '639'],
-            ['Programming languages', '103'],
-            ['Bug findings', '14,560'],
-            ['Security findings', '7,483'],
-            ['Cross-file findings', '1,852'],
-            ['Codified review rules', '7,276'],
+            ['Delivered suggestions (sent, post-cutoff)', '112,336'],
+            ['Distinct organizations', '456'],
+            ['Fully implemented', '19,107 (17.0%)'],
+            ['Partially implemented', '18,390 (16.4%)'],
+            ['Ignored', '74,839 (66.6%)'],
+            ['Bug-label findings', '90,527'],
+            ['Security-label findings', '6,552'],
+            ['Cross-file findings', '10,992'],
+            ['Performance findings', '4,265'],
+            ['Organizations with BYOK config', '79'],
+            ['LLM providers represented', '5'],
+            ['Distinct models in production use', '20+'],
+            ['Codified review rules (KodyRules)', '7,276'],
             ['Organizations with codified rules', '610'],
           ].map(([k, v]) => (
             <div class="flex items-baseline justify-between border-b border-paper-300 py-2.5">
@@ -109,7 +156,7 @@ import Layout from '../layouts/Layout.astro';
       <div class="col-span-12 border-t border-paper-300"></div>
 
       <div class="col-span-12 md:col-span-3">
-        <div class="tracked text-oxblood-500">§ v</div>
+        <div class="tracked text-oxblood-500">§ vi</div>
         <div class="tracked text-ink-500 mt-2">Out of scope</div>
       </div>
       <div class="col-span-12 md:col-span-9">
@@ -118,15 +165,16 @@ import Layout from '../layouts/Layout.astro';
         </p>
         <ul class="text-ink-700 leading-[1.75] mt-5 space-y-2 list-none max-w-prose">
           <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">a.</span> Suggestions from Kodus self-hosted deployments. The data warehouse covers Cloud only.</li>
-          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">b.</span> Suggestions without explicit developer feedback. Unobserved suggestions are excluded because reception cannot be measured.</li>
-          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">c.</span> Pull requests from organizations that opted out of research. Reserved as policy. None currently.</li>
+          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">b.</span> Suggestions where delivery failed (failed_lines_mismatch, failed). Excluded from rate denominators because they never reached the developer.</li>
+          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">c.</span> Pull requests that never closed. Implementation status is only finalized at PR close.</li>
+          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">d.</span> Pull requests from organizations that opted out of research. Reserved as policy. None currently.</li>
         </ul>
       </div>
 
       <div class="col-span-12 border-t border-paper-300"></div>
 
       <div class="col-span-12 md:col-span-3">
-        <div class="tracked text-oxblood-500">§ vi</div>
+        <div class="tracked text-oxblood-500">§ vii</div>
         <div class="tracked text-ink-500 mt-2">Citation</div>
       </div>
       <div class="col-span-12 md:col-span-9">

@@ -2,25 +2,22 @@
 import Layout from '../layouts/Layout.astro';
 
 const bugClasses = [
-  { n: '01', glyph: '∅',  title: 'Null access on optional fields', share: 18, severity: 'high',     description: 'Reading nested properties of objects that can be null, often because the field was added in a later migration and older records do not have it.', sample: 'accesses integrationsstore.integrations.ads without checking if integrationsstore.integrations is null or undefined. if the integrations data has not yet been loaded into the store this property could be nullish causing a typeerror' },
-  { n: '02', glyph: '⇄',  title: 'Race conditions',                 share: 14, severity: 'critical', description: 'Concurrent paths that step on each other. Async ops kicked off before init completes, or timestamps used as unique IDs.', sample: 'race condition en la generacion de ids. el uso de date.now() para generar ids de ubicacion no garantiza la unicidad. si dos acciones addlocation se despachan en el mismo milisegundo recibiran el mismo id' },
-  { n: '03', glyph: '≠',  title: 'Schema drift, create vs update',  share: 12, severity: 'high',     description: 'Two schemas for the same entity that disagree on which fields are required. Records pass one validator, fail the other.', sample: 'the updatetechnicalplanningschema allows targetdate to be set to null but the createtechnicalplanningschema requires it to be a non-nullable string. this creates a logical inconsistency where a mandatory field at create time becomes optional at update time' },
-  { n: '04', glyph: '⌫',  title: 'Critical business logic disabled', share: 10, severity: 'critical', description: 'Workers, scheduled jobs, or middleware commented out during refactors that silently never come back.', sample: 'desativacao de processo de negocio critico. o contractrenewalworker foi comentado desativando-o em todos os ambientes' },
-  { n: '05', glyph: '⟳',  title: 'Async / await pattern abuse',      share: 9,  severity: 'high',     description: 'Calls to async APIs from sync contexts, manual commits inside transaction blocks that already commit on exit, blocking IO inside async functions.', sample: 'calls await uow.commit() explicitly inside an async with self.uow as uow block. this pattern is incorrect and will cause the application to crash' },
-  { n: '06', glyph: '!',  title: 'Inverted boolean or off-by-one',   share: 9,  severity: 'high',     description: 'Conditions that evaluate the opposite of what the developer intended. Often introduced when refactoring if-statements or flipping a sign during a fix.', sample: 'incorrect time calculation for future dates. when a future date is passed as an argument now.diff(postdate, second) returns a negative number. the condition if (diffseconds < 60) is true for all negative numbers' },
-  { n: '07', glyph: '#',  title: 'Hardcoded where dynamic required', share: 8,  severity: 'medium',   description: 'Session IDs, model identifiers, environment-specific configuration committed as string literals.', sample: 'o socketsessionid foi alterado de um uuid gerado dinamicamente para um valor estatico e fixo. cada conexao de socket iniciada pela aplicacao usara o mesmo id' },
-  { n: '08', glyph: '↯',  title: 'Downstream breakage from schema',  share: 7,  severity: 'high',     description: 'Dropping a column, renaming a field, or changing a serialization format that other consumers depend on.', sample: 'dropping the temperature column from the deals table breaks multiple consumers. the fetchdeals function and the search_deals database function both still attempt to read this column' },
-  { n: '09', glyph: '∞',  title: 'Resource leaks',                   share: 7,  severity: 'medium',   description: 'Memory leaks from raw pointers in C++, unclosed file handles, timers that never get cleared, listeners that never get removed.', sample: 'memory leak due to unmanaged raw pointer. the new member m_progressindicator is a raw pointer requiring a manual delete in the destructor' },
-  { n: '10', glyph: '⌗',  title: 'Database edge cases',              share: 6,  severity: 'medium',   description: 'ToDictionary failures on duplicate keys, missing transactions around multi-statement updates, queries that assume non-empty result sets.', sample: 'uso de todictionary sem tratamento de duplicatas causa falha total. as chamadas em debtsinwindow.todictionary irao lancar uma argumentexception se as colecoes de entrada contiverem multiplos elementos com a mesma chave' },
+  { n: '01', glyph: '∅',  title: 'Null access on optional fields',  severity: 'high',     description: 'Reading nested properties of objects that can be null, often because the field was added in a later migration and older records do not have it.', sample: 'accesses integrationsstore.integrations.ads without checking if integrationsstore.integrations is null or undefined. if the integrations data has not yet been loaded into the store this property could be nullish causing a typeerror' },
+  { n: '02', glyph: '⇄',  title: 'Race conditions',                 severity: 'critical', description: 'Concurrent paths that step on each other. Async ops kicked off before init completes, or timestamps used as unique IDs.', sample: 'race condition en la generacion de ids. el uso de date.now() para generar ids de ubicacion no garantiza la unicidad. si dos acciones addlocation se despachan en el mismo milisegundo recibiran el mismo id' },
+  { n: '03', glyph: '≠',  title: 'Schema drift, create vs update',  severity: 'high',     description: 'Two schemas for the same entity that disagree on which fields are required. Records pass one validator, fail the other.', sample: 'the updatetechnicalplanningschema allows targetdate to be set to null but the createtechnicalplanningschema requires it to be a non-nullable string. this creates a logical inconsistency where a mandatory field at create time becomes optional at update time' },
+  { n: '04', glyph: '⌫',  title: 'Critical business logic disabled', severity: 'critical', description: 'Workers, scheduled jobs, or middleware commented out during refactors that silently never come back.', sample: 'desativacao de processo de negocio critico. o contractrenewalworker foi comentado desativando-o em todos os ambientes' },
+  { n: '05', glyph: '⟳',  title: 'Async / await pattern abuse',      severity: 'high',     description: 'Calls to async APIs from sync contexts, manual commits inside transaction blocks that already commit on exit, blocking IO inside async functions.', sample: 'calls await uow.commit() explicitly inside an async with self.uow as uow block. this pattern is incorrect and will cause the application to crash' },
+  { n: '06', glyph: '!',  title: 'Inverted boolean or off-by-one',   severity: 'high',     description: 'Conditions that evaluate the opposite of what the developer intended. Often introduced when refactoring if-statements or flipping a sign during a fix.', sample: 'incorrect time calculation for future dates. when a future date is passed as an argument now.diff(postdate, second) returns a negative number. the condition if (diffseconds < 60) is true for all negative numbers' },
+  { n: '07', glyph: '#',  title: 'Hardcoded where dynamic required', severity: 'medium',   description: 'Session IDs, model identifiers, environment-specific configuration committed as string literals.', sample: 'o socketsessionid foi alterado de um uuid gerado dinamicamente para um valor estatico e fixo. cada conexao de socket iniciada pela aplicacao usara o mesmo id' },
+  { n: '08', glyph: '↯',  title: 'Downstream breakage from schema',  severity: 'high',     description: 'Dropping a column, renaming a field, or changing a serialization format that other consumers depend on.', sample: 'dropping the temperature column from the deals table breaks multiple consumers. the fetchdeals function and the search_deals database function both still attempt to read this column' },
+  { n: '09', glyph: '∞',  title: 'Resource leaks',                   severity: 'medium',   description: 'Memory leaks from raw pointers in C++, unclosed file handles, timers that never get cleared, listeners that never get removed.', sample: 'memory leak due to unmanaged raw pointer. the new member m_progressindicator is a raw pointer requiring a manual delete in the destructor' },
+  { n: '10', glyph: '⌗',  title: 'Database edge cases',              severity: 'medium',   description: 'ToDictionary failures on duplicate keys, missing transactions around multi-statement updates, queries that assume non-empty result sets.', sample: 'uso de todictionary sem tratamento de duplicatas causa falha total. as chamadas em debtsinwindow.todictionary irao lancar uma argumentexception se as colecoes de entrada contiverem multiplos elementos com a mesma chave' },
 ];
-
-const sevColor = (sev: string) =>
-  sev === 'critical' ? 'oxblood' : sev === 'high' ? 'ochre' : 'paper-400';
 ---
 
 <Layout
   title="The 10 bugs AI catches most in production code · State of AI Code Review"
-  description="Categorized from 14,560 accepted bug findings across 200 organizations. Null access, race conditions, schema drift, and seven more bug classes."
+  description="90,527 bug suggestions delivered across 433 organizations between September 2025 and May 2026. 17% became code, 16% inspired a partial fix, 67% were ignored. The 10 most common bug classes."
   runningHead="§ 01 Bugs"
   page="Plate I"
 >
@@ -44,16 +41,24 @@ const sevColor = (sev: string) =>
             <div class="tracked text-oxblood-500 mb-3">At a glance</div>
             <ul class="space-y-2 text-ink-900">
               <li class="flex items-baseline justify-between border-b border-paper-400/60 pb-1">
-                <span class="text-sm">Bug findings</span>
-                <span class="font-mono text-sm">14,560</span>
+                <span class="text-sm">Bug suggestions delivered</span>
+                <span class="font-mono text-sm">90,527</span>
               </li>
               <li class="flex items-baseline justify-between border-b border-paper-400/60 pb-1">
-                <span class="text-sm">Acceptance rate</span>
-                <span class="font-mono text-sm text-moss-700">~95%</span>
+                <span class="text-sm">Distinct organizations</span>
+                <span class="font-mono text-sm">433</span>
+              </li>
+              <li class="flex items-baseline justify-between border-b border-paper-400/60 pb-1">
+                <span class="text-sm">Fully implemented</span>
+                <span class="font-mono text-sm text-moss-700">17.3%</span>
+              </li>
+              <li class="flex items-baseline justify-between border-b border-paper-400/60 pb-1">
+                <span class="text-sm">Partially implemented</span>
+                <span class="font-mono text-sm text-ochre-700">15.5%</span>
               </li>
               <li class="flex items-baseline justify-between">
-                <span class="text-sm">Organizations</span>
-                <span class="font-mono text-sm">200</span>
+                <span class="text-sm">Ignored</span>
+                <span class="font-mono text-sm text-oxblood-500">67.2%</span>
               </li>
             </ul>
           </div>
@@ -62,14 +67,61 @@ const sevColor = (sev: string) =>
     </div>
   </section>
 
+  <!-- IMPLEMENTATION SPLIT -->
+  <section class="dark-section border-b-2 border-ink-900">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-16">
+      <div class="grid grid-cols-12 gap-8 items-center">
+        <div class="col-span-12 md:col-span-6">
+          <div class="stamp text-ochre-300">What happens to a flagged bug</div>
+          <h2 class="font-display tracking-tight leading-[0.95] text-paper-100 mt-5" style="font-size: clamp(2.25rem, 5vw, 3.75rem);">
+            <span class="italic text-ochre-300">1 in 3</span> earns a fix.<br/>
+            <span class="italic text-oxblood-300">2 in 3</span> get scrolled past.
+          </h2>
+        </div>
+        <div class="col-span-12 md:col-span-6">
+          <div class="space-y-3">
+            <div>
+              <div class="flex items-baseline justify-between mb-2">
+                <span class="tracked text-paper-300">Fully implemented</span>
+                <span class="font-mono text-moss-300">17.3%</span>
+              </div>
+              <div class="h-4 bg-ink-700/50">
+                <div class="h-full bg-moss-500 bar-grow" style="width: 17.3%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-baseline justify-between mb-2">
+                <span class="tracked text-paper-300">Partially implemented</span>
+                <span class="font-mono text-ochre-300">15.5%</span>
+              </div>
+              <div class="h-4 bg-ink-700/50">
+                <div class="h-full bg-ochre-500 bar-grow" style="width: 15.5%; animation-delay: 0.1s;"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-baseline justify-between mb-2">
+                <span class="tracked text-paper-300">Ignored (no change to the suggested lines)</span>
+                <span class="font-mono text-oxblood-300">67.2%</span>
+              </div>
+              <div class="h-4 bg-ink-700/50">
+                <div class="h-full bg-oxblood-500 bar-grow" style="width: 67.2%; animation-delay: 0.2s;"></div>
+              </div>
+            </div>
+          </div>
+          <p class="margin-note text-paper-300 mt-4">90,527 bug suggestions delivered to 433 distinct organizations. Implementation status derived from post-PR diff, not opt-in feedback.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- SEVERITY LEGEND -->
   <section class="border-b border-ink-900/20 bg-paper-50">
     <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-4 flex flex-wrap items-center gap-6 text-[12px] text-ink-500">
       <span class="tracked">Severity</span>
-      <span class="flex items-center gap-2"><span class="pill pill-critical">Critical</span><span class="text-ink-500">≥ 90% implemented</span></span>
-      <span class="flex items-center gap-2"><span class="pill pill-high">High</span><span class="text-ink-500">75–90% implemented</span></span>
-      <span class="flex items-center gap-2"><span class="pill pill-medium">Medium</span><span class="text-ink-500">below 75%</span></span>
-      <span class="ml-auto tracked">Bar = share of total bug volume</span>
+      <span class="flex items-center gap-2"><span class="pill pill-critical">Critical</span></span>
+      <span class="flex items-center gap-2"><span class="pill pill-high">High</span></span>
+      <span class="flex items-center gap-2"><span class="pill pill-medium">Medium</span></span>
+      <span class="ml-auto tracked">Class boundaries are approximate; full clustering pending</span>
     </div>
   </section>
 
@@ -88,14 +140,6 @@ const sevColor = (sev: string) =>
 
           <h2 class="font-display tracking-tight leading-[1.05] mt-4 text-ink-900 group-hover:text-paper-100 transition-colors" style="font-size: clamp(1.4rem, 2vw, 1.8rem);">{b.title}</h2>
 
-          <!-- Share of total bar -->
-          <div class="mt-5 flex items-center gap-3">
-            <div class="flex-1 h-2 bg-paper-300 group-hover:bg-ink-700">
-              <div class={`h-full ${sevColor(b.severity) === 'oxblood' ? 'bg-oxblood-500' : sevColor(b.severity) === 'ochre' ? 'bg-ochre-500' : 'bg-paper-400'} bar-grow`} style={`width: ${b.share * 4}%;`}></div>
-            </div>
-            <div class="font-mono text-[11px] text-ink-500 group-hover:text-paper-300 w-24 text-right">~{b.share}% of bugs</div>
-          </div>
-
           <p class="text-ink-700 group-hover:text-paper-300 leading-[1.6] mt-5 text-[15px]">{b.description}</p>
 
           <div class="margin-note mt-5 group-hover:text-paper-300">Excerpt · review comment</div>
@@ -108,17 +152,17 @@ const sevColor = (sev: string) =>
   </section>
 
   <!-- CLOSER -->
-  <section class="dark-section border-y-2 border-ink-900">
+  <section class="border-t-2 border-ink-900 bg-paper-200">
     <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-20">
       <div class="grid grid-cols-12 gap-8 items-start">
         <div class="col-span-12 md:col-span-3">
-          <div class="tracked text-ochre-300">Note</div>
+          <div class="tracked text-oxblood-500">Note</div>
         </div>
         <div class="col-span-12 md:col-span-9">
-          <p class="font-display italic text-paper-100 leading-[1.35]" style="font-size: clamp(1.5rem, 2.4vw, 2.25rem);">
-            Class boundaries are approximate. Semantic clustering of the full suggestion text is ongoing. The 2026-Q2 snapshot will publish counts per class, language breakdowns, and acceptance rates per class.
+          <p class="font-display italic text-ink-900 leading-[1.35]" style="font-size: clamp(1.5rem, 2.4vw, 2.25rem);">
+            Class boundaries are approximate. Semantic clustering of the full suggestion text is ongoing. Implementation rates above are aggregate across all bug subclasses; per-class breakdowns publish in the 2026-Q3 snapshot.
           </p>
-          <a href="https://github.com/kodustech/stateofcodereview.com" class="tracked text-ochre-300 hover:text-paper-100 mt-6 inline-block">↳ Methodology and SQL queries on GitHub</a>
+          <a href="https://github.com/kodustech/stateofcodereview.com" class="tracked text-ink-500 hover:text-oxblood-500 mt-6 inline-block">↳ Methodology and SQL queries on GitHub</a>
         </div>
       </div>
     </div>

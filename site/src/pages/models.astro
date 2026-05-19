@@ -1,0 +1,189 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const providers = [
+  { name: 'google_gemini',      label: 'Google Gemini',     orgs: 24, delivered: 7294, pct_full: 20.5, pct_any: 35.5, tone: 'cobalt' },
+  { name: 'openai',             label: 'OpenAI',            orgs: 19, delivered: 2696, pct_full: 17.8, pct_any: 37.9, tone: 'moss'   },
+  { name: 'anthropic',          label: 'Anthropic',         orgs: 15, delivered: 2316, pct_full: 21.2, pct_any: 39.0, tone: 'oxblood'},
+  { name: 'openai_compatible',  label: 'OpenAI-compatible', orgs: 11, delivered: 2125, pct_full: 28.6, pct_any: 45.8, tone: 'ochre' },
+  { name: 'open_router',        label: 'OpenRouter',        orgs: 10, delivered: 2750, pct_full: 22.4, pct_any: 37.1, tone: 'ink' },
+];
+
+const models = [
+  { model: 'gemini-3-flash-preview',      provider: 'google_gemini',     n: 3620, orgs: 6, full: 21.7, any: 38.3 },
+  { model: 'gemini-3-pro-preview',        provider: 'google_gemini',     n: 2048, orgs: 4, full: 19.8, any: 31.7 },
+  { model: 'claude-sonnet-4-5',           provider: 'anthropic',         n: 1784, orgs: 6, full: 22.9, any: 41.3 },
+  { model: 'z-ai/glm-4.7-flash',          provider: 'open_router',       n: 1365, orgs: 1, full:  5.0, any: 14.8, low: true },
+  { model: 'gemini-2.5-pro',              provider: 'google_gemini',     n: 1247, orgs: 4, full: 16.9, any: 30.1 },
+  { model: 'moonshotai/kimi-k2.5',        provider: 'open_router',       n: 1040, orgs: 1, full: 46.2, any: 64.9, low: true },
+  { model: 'nvidia/Kimi-K2.5-NVFP4',      provider: 'openai_compatible', n: 1040, orgs: 1, full: 46.2, any: 64.9, low: true },
+  { model: 'gpt-4.1-mini',                provider: 'openai',            n:  659, orgs: 2, full: 12.9, any: 42.5 },
+  { model: 'gpt-5.2',                     provider: 'openai',            n:  619, orgs: 2, full: 15.5, any: 31.0 },
+  { model: 'gpt-5.2-codex',               provider: 'openai',            n:  618, orgs: 4, full: 29.3, any: 48.5 },
+  { model: 'gpt-5.3-codex',               provider: 'openai',            n:  541, orgs: 1, full: 17.9, any: 35.7, low: true },
+  { model: 'gemini-2.5-flash',            provider: 'google_gemini',     n:  372, orgs: 2, full: 24.2, any: 47.0 },
+  { model: 'azure_ai/claude-haiku-4-5',   provider: 'openai_compatible', n:  331, orgs: 1, full: 15.7, any: 40.2, low: true },
+  { model: 'Devstral-Small-2-24B (Q4)',   provider: 'openai_compatible', n:  317, orgs: 1, full: 15.1, any: 28.7, low: true },
+  { model: 'MiniMax-M2.5',                provider: 'openai_compatible', n:  304, orgs: 1, full:  3.0, any:  9.9, low: true },
+  { model: 'claude-haiku-4-5',            provider: 'anthropic',         n:  238, orgs: 1, full: 14.7, any: 29.8, low: true },
+  { model: 'claude-sonnet-4-6',           provider: 'anthropic',         n:  169, orgs: 2, full:  8.3, any: 12.4 },
+  { model: 'gpt-5',                       provider: 'openai',            n:  134, orgs: 1, full:  6.0, any: 23.9, low: true },
+  { model: 'claude-opus-4-5',             provider: 'anthropic',         n:  125, orgs: 1, full: 27.2, any: 59.2, low: true },
+];
+
+const maxN = Math.max(...providers.map((p) => p.delivered));
+---
+
+<Layout
+  title="The model comparison · State of AI Code Review"
+  description="79 BYOK engineering teams. 5 LLM providers. 20+ models in production use. Implementation rate by provider and by model, drawn from delivered AI code review suggestions across all BYOK orgs."
+  runningHead="§ 05 Models"
+  page="Plate V"
+>
+
+  <section class="border-b-2 border-ink-900">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 pt-16 md:pt-20 pb-16">
+      <div class="grid grid-cols-12 gap-8 items-start">
+        <div class="col-span-12 md:col-span-2">
+          <div class="font-display italic text-oxblood-500 leading-[0.85] reveal reveal-1" style="font-size: clamp(6rem, 12vw, 11rem);">V</div>
+          <div class="tracked text-ink-500 mt-2 reveal reveal-1">Plate V</div>
+        </div>
+        <div class="col-span-12 md:col-span-7">
+          <div class="stamp text-oxblood-500 reveal reveal-2">Chapter § 05 · Models</div>
+          <h1 class="font-display leading-[0.95] tracking-tight text-ink-900 mt-5 reveal reveal-2" style="font-size: clamp(2.75rem, 6.5vw, 5.5rem);">
+            Five providers.<br/><span class="italic">No single winner.</span>
+          </h1>
+        </div>
+        <aside class="col-span-12 md:col-span-3 md:pt-6 reveal reveal-3">
+          <div class="border-2 border-ink-900 bg-paper-200 p-5">
+            <div class="tracked text-oxblood-500 mb-3">At a glance</div>
+            <ul class="space-y-2 text-ink-900">
+              <li class="flex items-baseline justify-between border-b border-paper-400/60 pb-1"><span class="text-sm">BYOK organizations</span><span class="font-mono text-sm">79</span></li>
+              <li class="flex items-baseline justify-between border-b border-paper-400/60 pb-1"><span class="text-sm">LLM providers</span><span class="font-mono text-sm">5</span></li>
+              <li class="flex items-baseline justify-between border-b border-paper-400/60 pb-1"><span class="text-sm">Distinct models</span><span class="font-mono text-sm">20+</span></li>
+              <li class="flex items-baseline justify-between"><span class="text-sm">Provider top share</span><span class="font-mono text-sm">30%</span></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="dark-section border-b-2 border-ink-900">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-16">
+      <div class="grid grid-cols-12 gap-8 items-start mb-10">
+        <div class="col-span-12 md:col-span-6">
+          <div class="stamp text-ochre-300">Provider mix</div>
+          <h2 class="font-display tracking-tight leading-[0.95] text-paper-100 mt-5" style="font-size: clamp(2rem, 4.5vw, 3.5rem);">
+            The biggest provider holds <span class="italic text-ochre-300">30% of teams.</span> Nobody dominates.
+          </h2>
+        </div>
+        <div class="col-span-12 md:col-span-6">
+          <p class="text-paper-300 leading-[1.65] text-[16px]">
+            Gemini leads on team count. OpenAI-compatible endpoints (Groq, Azure, self-hosted) lead on implementation rate. The gap between the most-adopted and the best-performing is real evidence that "vendor lock-in" is structurally absent here. Teams are routing where the tradeoffs make sense for them.
+          </p>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        {providers.map((p, i) => (
+          <div class="grid grid-cols-12 gap-3 items-center">
+            <div class="col-span-3 md:col-span-2 text-paper-100 font-display text-[18px]">{p.label}</div>
+            <div class="col-span-7 md:col-span-7">
+              <div class="relative h-9 bg-ink-700/40">
+                <div
+                  class={`absolute inset-y-0 left-0 bar-grow ${p.tone === 'oxblood' ? 'bg-oxblood-500' : p.tone === 'ochre' ? 'bg-ochre-500' : p.tone === 'moss' ? 'bg-moss-500' : p.tone === 'cobalt' ? 'bg-cobalt-500' : 'bg-paper-300'}`}
+                  style={`width: ${(p.delivered / maxN) * 100}%; animation-delay: ${0.15 + i * 0.08}s;`}
+                ></div>
+                <div class="absolute inset-0 flex items-center justify-end pr-3 font-mono text-[11px] text-paper-50/90">{p.delivered.toLocaleString()} delivered</div>
+              </div>
+            </div>
+            <div class="col-span-1 text-right font-mono text-paper-100 text-sm">{p.orgs}</div>
+            <div class="hidden md:block md:col-span-2 text-right">
+              <span class="font-mono text-moss-300 text-sm">{p.pct_full}%</span>
+              <span class="font-mono text-paper-300 text-xs ml-1">full</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="flex flex-wrap items-center gap-4 mt-6 text-[11px] text-paper-300">
+        <span class="tracked">Bar · suggestions delivered</span>
+        <span class="tracked">Right column · BYOK organizations</span>
+        <span class="ml-auto tracked">Source · Query 10</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-[1320px] mx-auto px-6 md:px-10 py-20">
+    <div class="grid grid-cols-12 gap-8">
+      <div class="col-span-12 md:col-span-3">
+        <div class="tracked text-oxblood-500">Counter-intuitive</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <p class="font-display italic text-ink-900 leading-[1.2]" style="font-size: clamp(1.75rem, 3.5vw, 2.75rem);">
+          OpenAI-compatible endpoints (Groq inference, Azure AI Foundry, self-hosted) deliver the highest full-implementation rate. Big-name commercial APIs cluster a step behind.
+        </p>
+        <p class="text-ink-700 leading-[1.7] mt-5 max-w-prose">
+          This is not "open beats closed." Several openai_compatible orgs run frontier closed-source models via Groq or Azure. The signal here is that engineering teams investing in their own inference stack tend to also tune their prompts and rule libraries more carefully. Confounders are real. The number is real too.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-y-2 border-ink-900 bg-paper-200">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-20">
+      <div class="flex items-baseline justify-between border-b-2 border-ink-900 pb-3 mb-2 flex-wrap gap-2">
+        <h2 class="font-display italic text-ink-900" style="font-size: clamp(1.75rem, 3vw, 2.5rem);">The Common List.</h2>
+        <span class="tracked text-ink-500">Models with 100+ delivered · sorted by volume</span>
+      </div>
+
+      <div>
+        {models.map((m, i) => {
+          const fullWidth = m.full * 2;
+          const partialWidth = (m.any - m.full) * 2;
+          return (
+            <div class="grid grid-cols-12 gap-3 md:gap-4 items-center py-3.5 border-b border-paper-300 group hover:bg-paper-50 transition-colors">
+              <div class="col-span-1 font-mono text-[12px] text-ink-300">{String(i + 1).padStart(2, '0')}</div>
+              <div class="col-span-11 md:col-span-4 font-display text-ink-900 text-[16px] md:text-[17px] leading-snug group-hover:text-oxblood-700 transition-colors break-words">
+                {m.model}
+                {m.low && <span class="ml-2 tracked-xs text-oxblood-500">⚠ single-org</span>}
+              </div>
+              <div class="hidden md:block md:col-span-2 font-mono text-xs text-ink-500">{m.provider}</div>
+              <div class="col-span-7 md:col-span-3">
+                <div class="h-[10px] bg-paper-300 relative">
+                  <div class="absolute inset-y-0 left-0 bg-moss-500 bar-grow" style={`width: ${fullWidth}%; animation-delay: ${0.05 + i * 0.025}s;`}></div>
+                  <div class="absolute inset-y-0 bg-ochre-500/70 bar-grow" style={`left: ${fullWidth}%; width: ${partialWidth}%; animation-delay: ${0.1 + i * 0.025}s;`}></div>
+                </div>
+              </div>
+              <div class="col-span-2 md:col-span-1 text-right font-mono text-sm text-ink-900">{m.full}%</div>
+              <div class="col-span-2 md:col-span-1 text-right font-mono text-xs text-ink-500">{m.n.toLocaleString()}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div class="flex flex-wrap items-center gap-4 mt-6 text-[12px] text-ink-500">
+        <span class="flex items-center gap-2"><span class="inline-block w-3 h-3 bg-moss-500"></span> Fully implemented</span>
+        <span class="flex items-center gap-2"><span class="inline-block w-3 h-3 bg-ochre-500/70"></span> Partially implemented</span>
+        <span class="ml-auto tracked">Single-org rows carry sample-size caveat</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="dark-section border-t-2 border-ink-900">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-20">
+      <div class="grid grid-cols-12 gap-8 items-start">
+        <div class="col-span-12 md:col-span-3">
+          <div class="tracked text-ochre-300">What this measures</div>
+        </div>
+        <div class="col-span-12 md:col-span-9">
+          <p class="font-display italic text-paper-100 leading-[1.35]" style="font-size: clamp(1.5rem, 2.4vw, 2.25rem);">
+            Implementation rate is a behavioral measure, not a model-quality benchmark. A model rated low here may be correct and ignored. A model rated high may be tuned to suggest only what its host team is likely to accept. Use these numbers to understand adoption patterns, not to rank model intelligence.
+          </p>
+          <a href="https://github.com/kodustech/stateofcodereview.com" class="tracked text-ochre-300 hover:text-paper-100 mt-6 inline-block">↳ Queries 10 and 11 on GitHub</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
