@@ -2,16 +2,66 @@
 import Layout from '../layouts/Layout.astro';
 
 const bugClasses = [
-  { n: '01', glyph: '∅',  title: 'Null access on optional fields',  severity: 'high',     description: 'Reading nested properties of objects that can be null, often because the field was added in a later migration and older records do not have it.', sample: 'accesses integrationsstore.integrations.ads without checking if integrationsstore.integrations is null or undefined. if the integrations data has not yet been loaded into the store this property could be nullish causing a typeerror' },
-  { n: '02', glyph: '⇄',  title: 'Race conditions',                 severity: 'critical', description: 'Concurrent paths that step on each other. Async ops kicked off before init completes, or timestamps used as unique IDs.', sample: 'race condition en la generacion de ids. el uso de date.now() para generar ids de ubicacion no garantiza la unicidad. si dos acciones addlocation se despachan en el mismo milisegundo recibiran el mismo id' },
-  { n: '03', glyph: '≠',  title: 'Schema drift, create vs update',  severity: 'high',     description: 'Two schemas for the same entity that disagree on which fields are required. Records pass one validator, fail the other.', sample: 'the updatetechnicalplanningschema allows targetdate to be set to null but the createtechnicalplanningschema requires it to be a non-nullable string. this creates a logical inconsistency where a mandatory field at create time becomes optional at update time' },
-  { n: '04', glyph: '⌫',  title: 'Critical business logic disabled', severity: 'critical', description: 'Workers, scheduled jobs, or middleware commented out during refactors that silently never come back.', sample: 'desativacao de processo de negocio critico. o contractrenewalworker foi comentado desativando-o em todos os ambientes' },
-  { n: '05', glyph: '⟳',  title: 'Async / await pattern abuse',      severity: 'high',     description: 'Calls to async APIs from sync contexts, manual commits inside transaction blocks that already commit on exit, blocking IO inside async functions.', sample: 'calls await uow.commit() explicitly inside an async with self.uow as uow block. this pattern is incorrect and will cause the application to crash' },
-  { n: '06', glyph: '!',  title: 'Inverted boolean or off-by-one',   severity: 'high',     description: 'Conditions that evaluate the opposite of what the developer intended. Often introduced when refactoring if-statements or flipping a sign during a fix.', sample: 'incorrect time calculation for future dates. when a future date is passed as an argument now.diff(postdate, second) returns a negative number. the condition if (diffseconds < 60) is true for all negative numbers' },
-  { n: '07', glyph: '#',  title: 'Hardcoded where dynamic required', severity: 'medium',   description: 'Session IDs, model identifiers, environment-specific configuration committed as string literals.', sample: 'o socketsessionid foi alterado de um uuid gerado dinamicamente para um valor estatico e fixo. cada conexao de socket iniciada pela aplicacao usara o mesmo id' },
-  { n: '08', glyph: '↯',  title: 'Downstream breakage from schema',  severity: 'high',     description: 'Dropping a column, renaming a field, or changing a serialization format that other consumers depend on.', sample: 'dropping the temperature column from the deals table breaks multiple consumers. the fetchdeals function and the search_deals database function both still attempt to read this column' },
-  { n: '09', glyph: '∞',  title: 'Resource leaks',                   severity: 'medium',   description: 'Memory leaks from raw pointers in C++, unclosed file handles, timers that never get cleared, listeners that never get removed.', sample: 'memory leak due to unmanaged raw pointer. the new member m_progressindicator is a raw pointer requiring a manual delete in the destructor' },
-  { n: '10', glyph: '⌗',  title: 'Database edge cases',              severity: 'medium',   description: 'ToDictionary failures on duplicate keys, missing transactions around multi-statement updates, queries that assume non-empty result sets.', sample: 'uso de todictionary sem tratamento de duplicatas causa falha total. as chamadas em debtsinwindow.todictionary irao lancar uma argumentexception se as colecoes de entrada contiverem multiplos elementos com a mesma chave' },
+  {
+    n: '01', anim: 'anim-null', severity: 'high',
+    title: 'Null access on optional fields',
+    description: "Reading a nested field that might not exist. Usually because a column was added in a migration and older records still have it null.",
+    sample: "Accesses `data.subscription.tier` without checking if `subscription` exists. Older accounts predate the subscription model and will throw a TypeError on read.",
+  },
+  {
+    n: '02', anim: 'anim-race', severity: 'critical',
+    title: 'Race conditions',
+    description: "Two requests for the same resource arrive at once and both think they're first.",
+    sample: "Two concurrent calls use `Date.now()` as a unique ID. If dispatched in the same millisecond they collide, breaking the dedup constraint downstream.",
+  },
+  {
+    n: '03', anim: 'anim-drift', severity: 'high',
+    title: 'Schema drift, create vs update',
+    description: "Two validators describe the same record but disagree on what's required.",
+    sample: "The update schema allows `target_date` to be null. The create schema requires it as a non-nullable string. A record that passes one fails the other.",
+  },
+  {
+    n: '04', anim: 'anim-disabled', severity: 'critical',
+    title: 'Critical logic commented out',
+    description: "A worker, cron, or middleware that got disabled during a refactor and never came back.",
+    sample: "Renewal worker commented out across all environments in a PR labelled 'cleanup'. The block was meant to come back the next day. Six weeks later, still off.",
+  },
+  {
+    n: '05', anim: 'anim-async', severity: 'high',
+    title: 'Async / await pattern abuse',
+    description: "Async called from sync, transactions committed twice, or blocking IO inside an async function.",
+    sample: "Calls `await uow.commit()` inside `async with self.uow:`. The context manager already commits on exit — second commit raises and the worker crashes.",
+  },
+  {
+    n: '06', anim: 'anim-ob1', severity: 'high',
+    title: 'Inverted boolean or off-by-one',
+    description: "A condition that evaluates the opposite of what was meant. Common after refactors that flip an operator.",
+    sample: "`if (diff_seconds < 60)` returns true for any future date because `diff` is negative. The original guard meant 'recent past' — now it also fires on dates next year.",
+  },
+  {
+    n: '07', anim: 'anim-hardcoded', severity: 'medium',
+    title: 'Hardcoded where dynamic required',
+    description: "A session ID, model name, or environment value committed as a string literal.",
+    sample: "Session ID switched from a generated UUID to a string constant. Every socket connection now shares the same ID and the server can't distinguish concurrent tabs.",
+  },
+  {
+    n: '08', anim: 'anim-cascade', severity: 'high',
+    title: 'Downstream breakage from schema change',
+    description: "Dropping a column, renaming a field, or changing serialization while other code still expects the old shape.",
+    sample: "Dropped the `temperature` column. Two consumers (a fetcher and a stored procedure) still reference it. Both throw on the first read after the migration.",
+  },
+  {
+    n: '09', anim: 'anim-leak', severity: 'medium',
+    title: 'Resource leaks',
+    description: "Memory, file handles, timers, or listeners that get allocated and never released.",
+    sample: "Raw pointer assigned in the constructor with no matching delete in the destructor. Each instance leaks the buffer at teardown.",
+  },
+  {
+    n: '10', anim: 'anim-db', severity: 'medium',
+    title: 'Database edge cases',
+    description: "Queries that assume the data is well-formed: no duplicates, never empty, fits in a single row.",
+    sample: "`ToDictionary` on a list that may contain duplicate keys. The first dupe throws ArgumentException and the request returns 500 with no fallback.",
+  },
 ];
 
 const sevPillStyle = (sev: string) => {
@@ -19,11 +69,14 @@ const sevPillStyle = (sev: string) => {
   if (sev === 'high')     return 'background: var(--color-phosphor-300); color: var(--color-night-200);';
   return 'background: oklch(35% 0.01 250); color: var(--color-mist-200);';
 };
+
+// Inline SVG icons — keyed by anim class
+const Icon = ({ anim }: { anim: string }) => null;
 ---
 
 <Layout
   title="The 10 bugs AI catches most in production code · State of AI Code Review"
-  description="90,527 bug suggestions delivered across 433 organizations between September 2025 and May 2026. 33% earned a fix. The 10 most common bug classes."
+  description="90,527 bug suggestions delivered across 433 organizations. 33% earned a fix. The 10 most common bug classes, with anonymized excerpts."
   runningHead="§ 01 Bugs"
   page="Plate I"
   theme="dark"
@@ -37,7 +90,7 @@ const sevPillStyle = (sev: string) => {
           <div class="font-mono text-[12px] font-medium tracking-[0.22em] uppercase text-phosphor-500 mb-5 reveal reveal-1">
             ◆ Chapter § 01 · Bugs
           </div>
-          <h1 class="font-display leading-[0.95] tracking-tight text-mist-50 reveal reveal-2" style="font-size: clamp(2.5rem, 6.5vw, 5.5rem);">
+          <h1 class="font-display leading-[0.95] tracking-tight text-mist-50 reveal reveal-2" style="font-size: clamp(2.5rem, 6.5vw, 5.5rem); overflow-wrap: anywhere;">
             The ten bugs AI <span class="italic phosphor">catches most</span><br/>in production code.
           </h1>
         </div>
@@ -74,17 +127,17 @@ const sevPillStyle = (sev: string) => {
       <div class="grid grid-cols-12 gap-10 items-center">
         <div class="col-span-12 md:col-span-7">
           <div class="font-mono text-[12px] font-medium tracking-[0.22em] uppercase text-phosphor-500 mb-5">
-            What happens to a flagged bug
+            ◆ What happens to a flagged bug
           </div>
           <h2 class="font-display tracking-tight leading-[0.95] text-mist-50" style="font-size: clamp(2.25rem, 5.5vw, 4.5rem);">
             <span class="italic phosphor">1 in 3</span><br/>flagged bugs earn a fix.
           </h2>
           <p class="text-mist-200 leading-[1.6] text-[16px] mt-8 max-w-xl">
-            33% of delivered bug findings show up in the code after the PR closes. About half land exactly as suggested. The other half are kept in spirit but adapted to the team's style.
+            About half land exactly as suggested. The other half are kept in spirit but adapted to the team's style. The remaining two-thirds are scrolled past on the next commit.
           </p>
         </div>
         <div class="col-span-12 md:col-span-5">
-          <div class="font-display phosphor leading-none" style="font-size: clamp(5rem, 14vw, 11rem);">32.8%</div>
+          <div class="archi-num phosphor-pulse" style="font-size: clamp(5rem, 14vw, 11rem);">32.8%</div>
           <div class="font-mono text-[12px] font-medium tracking-[0.22em] uppercase text-phosphor-500 mt-3">Implemented or adapted</div>
 
           <div class="mt-8">
@@ -114,16 +167,10 @@ const sevPillStyle = (sev: string) => {
   <section class="border-b border-night-50 bg-night-100">
     <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-4 flex flex-wrap items-center gap-6 font-mono text-[11px] text-mist-400">
       <span class="font-medium tracking-[0.22em] uppercase text-mist-200">Severity</span>
-      <span class="flex items-center gap-2">
-        <span class="font-mono text-[10px] tracking-[0.18em] uppercase px-2 py-0.5" style={sevPillStyle('critical')}>critical</span>
-      </span>
-      <span class="flex items-center gap-2">
-        <span class="font-mono text-[10px] tracking-[0.18em] uppercase px-2 py-0.5" style={sevPillStyle('high')}>high</span>
-      </span>
-      <span class="flex items-center gap-2">
-        <span class="font-mono text-[10px] tracking-[0.18em] uppercase px-2 py-0.5" style={sevPillStyle('medium')}>medium</span>
-      </span>
-      <span class="ml-auto text-mist-400">Class boundaries are approximate; full clustering pending</span>
+      <span class="font-mono text-[10px] tracking-[0.18em] uppercase px-2 py-0.5" style={sevPillStyle('critical')}>critical</span>
+      <span class="font-mono text-[10px] tracking-[0.18em] uppercase px-2 py-0.5" style={sevPillStyle('high')}>high</span>
+      <span class="font-mono text-[10px] tracking-[0.18em] uppercase px-2 py-0.5" style={sevPillStyle('medium')}>medium</span>
+      <span class="ml-auto text-mist-400">Excerpts paraphrased to remove identifying details. Pattern preserved.</span>
     </div>
   </section>
 
@@ -134,21 +181,99 @@ const sevPillStyle = (sev: string) => {
         {bugClasses.map((b) => (
           <article class="glow-on-hover border border-night-50 bg-night-200 p-7 relative">
             <div class="flex items-start justify-between gap-4">
-              <div class="flex items-baseline gap-4">
-                <span class="font-display italic phosphor leading-none" style="font-size: clamp(2.25rem, 3.5vw, 3rem);">{b.n}</span>
-                <span class="font-display text-mist-50 leading-none" style="font-size: 2.25rem;">{b.glyph}</span>
+              <div class="flex items-center gap-4">
+                <span class="archi-num leading-none" style="font-size: clamp(2.25rem, 3.5vw, 3rem);">{b.n}</span>
+                <div class={`bug-icon ${b.anim}`}>
+                  {b.anim === 'anim-null' && (
+                    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="28" cy="28" r="16"/>
+                      <line class="slash" x1="16" y1="40" x2="40" y2="16"/>
+                    </svg>
+                  )}
+                  {b.anim === 'anim-race' && (
+                    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <g class="a">
+                        <line x1="10" y1="22" x2="42" y2="22"/>
+                        <polyline points="34,15 42,22 34,29"/>
+                      </g>
+                      <g class="b">
+                        <line x1="14" y1="34" x2="46" y2="34"/>
+                        <polyline points="22,27 14,34 22,41"/>
+                      </g>
+                    </svg>
+                  )}
+                  {b.anim === 'anim-drift' && (
+                    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect class="l" x="10" y="20" width="14" height="24"/>
+                      <rect class="r" x="32" y="14" width="14" height="30"/>
+                    </svg>
+                  )}
+                  {b.anim === 'anim-disabled' && (
+                    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="10" y="14" width="36" height="28" rx="2"/>
+                      <line class="strike" x1="14" y1="28" x2="42" y2="28" stroke-linecap="round"/>
+                    </svg>
+                  )}
+                  {b.anim === 'anim-async' && (
+                    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                      <path class="arc" d="M28 12 A 16 16 0 1 1 12 28" />
+                      <circle cx="28" cy="28" r="3" fill="currentColor"/>
+                    </svg>
+                  )}
+                  {b.anim === 'anim-ob1' && (
+                    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                      <line x1="28" y1="14" x2="28" y2="32"/>
+                      <circle class="tip" cx="28" cy="40" r="2.5" fill="currentColor" stroke="none"/>
+                    </svg>
+                  )}
+                  {b.anim === 'anim-hardcoded' && (
+                    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="14" y1="36" x2="42" y2="36" stroke-linecap="round"/>
+                      <g class="pin">
+                        <line x1="28" y1="14" x2="28" y2="32" stroke-linecap="round"/>
+                        <circle cx="28" cy="14" r="3" fill="currentColor" stroke="none"/>
+                      </g>
+                    </svg>
+                  )}
+                  {b.anim === 'anim-cascade' && (
+                    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle class="r1" cx="28" cy="14" r="4"/>
+                      <circle class="r2" cx="18" cy="30" r="4"/>
+                      <circle class="r2" cx="38" cy="30" r="4"/>
+                      <circle class="r3" cx="28" cy="44" r="4"/>
+                      <line x1="28" y1="18" x2="20" y2="26" stroke-opacity="0.5"/>
+                      <line x1="28" y1="18" x2="36" y2="26" stroke-opacity="0.5"/>
+                      <line x1="20" y1="34" x2="26" y2="42" stroke-opacity="0.5"/>
+                      <line x1="36" y1="34" x2="30" y2="42" stroke-opacity="0.5"/>
+                    </svg>
+                  )}
+                  {b.anim === 'anim-leak' && (
+                    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M16 14 L40 14 L36 38 L20 38 Z"/>
+                      <ellipse class="drop" cx="28" cy="42" rx="2.5" ry="3.5" fill="currentColor" stroke="none"/>
+                    </svg>
+                  )}
+                  {b.anim === 'anim-db' && (
+                    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <rect x="10" y="10" width="36" height="36" stroke-opacity="0.5"/>
+                      <line x1="22" y1="10" x2="22" y2="46" stroke-opacity="0.3"/>
+                      <line x1="34" y1="10" x2="34" y2="46" stroke-opacity="0.3"/>
+                      <line x1="10" y1="22" x2="46" y2="22" stroke-opacity="0.3"/>
+                      <line x1="10" y1="34" x2="46" y2="34" stroke-opacity="0.3"/>
+                      <rect class="cell" x="22" y="22" width="12" height="12" stroke="none"/>
+                    </svg>
+                  )}
+                </div>
               </div>
               <span class="font-mono text-[10px] tracking-[0.18em] uppercase px-2 py-1" style={sevPillStyle(b.severity)}>{b.severity}</span>
             </div>
 
-            <h2 class="font-display tracking-tight leading-[1.05] mt-4 text-mist-50" style="font-size: clamp(1.4rem, 2vw, 1.75rem);">{b.title}</h2>
+            <h2 class="font-display tracking-tight leading-[1.05] mt-5 text-mist-50" style="font-size: clamp(1.45rem, 2vw, 1.85rem);">{b.title}</h2>
 
-            <p class="text-mist-200 leading-[1.6] mt-5 text-[14.5px]">{b.description}</p>
+            <p class="text-mist-200 leading-[1.55] mt-3 text-[15px]">{b.description}</p>
 
-            <div class="font-mono text-[10px] font-medium tracking-[0.22em] uppercase text-phosphor-500 mt-5">Excerpt · review comment</div>
-            <blockquote class="font-mono text-[12px] leading-[1.65] text-mist-200 mt-2 pl-3 border-l-2 border-phosphor-500/60">
-              {b.sample}
-            </blockquote>
+            <div class="font-mono text-[10px] font-medium tracking-[0.22em] uppercase text-phosphor-500 mt-6">Sample finding</div>
+            <p class="text-mist-200 leading-[1.6] mt-2 text-[13.5px] pl-3 border-l-2 border-phosphor-500/60" set:html={b.sample.replace(/`([^`]+)`/g, '<code class="font-mono text-mist-50 bg-night-100 px-1.5 py-0.5 text-[12px]">$1</code>')}></p>
           </article>
         ))}
       </div>
@@ -164,7 +289,7 @@ const sevPillStyle = (sev: string) => {
         </div>
         <div class="col-span-12 md:col-span-9">
           <p class="font-display italic text-mist-50 leading-[1.35]" style="font-size: clamp(1.5rem, 2.4vw, 2.25rem);">
-            Class boundaries are approximate. Semantic clustering of the full suggestion text is ongoing. Per-class breakdowns publish in the 2026-Q3 snapshot.
+            Sample findings are paraphrased from real review comments. Identifying details (project names, customer-specific identifiers, internal hostnames) are removed; the underlying pattern is preserved.
           </p>
           <a href="https://github.com/kodustech/stateofcodereview.com" class="font-mono text-[11px] tracking-[0.22em] uppercase text-phosphor-500 hover:text-phosphor-300 mt-6 inline-block">↳ Methodology and SQL queries on GitHub</a>
         </div>
