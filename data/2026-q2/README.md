@@ -4,23 +4,25 @@
 **Dataset window:** 2025-09-01 to 2026-05-19
 **Publication target:** 2026-05
 
-## Honest baseline (from queries 09, 10, 11)
+## Honest baseline (4 canonical labels)
+
+Scope: `bug`, `security`, `performance`, `kody_rules`. Cross-file is a deprecated category and is excluded.
 
 | Metric | Value |
 |---|---|
-| Delivered suggestions (sent, post-cutoff) | 112,336 |
-| Distinct organizations | 456 |
-| Fully implemented | 19,107 (17.0%) |
-| Partially implemented | 18,390 (16.4%) |
-| Ignored | 74,839 (66.6%) |
-| Any implementation (full + partial) | 37,497 (33.4%) |
+| Delivered suggestions (sent, post-cutoff) | 162,262 |
+| Distinct organizations | 464 |
+| Fully implemented | 25,791 (15.9%) |
+| Partially implemented | 25,524 (15.7%) |
+| Ignored | 110,947 (68.4%) |
+| Any implementation (full + partial) | 51,315 (31.6%) |
 
 ## By label
 
 | Label | Delivered | Orgs | Full | Any |
 |---|---|---|---|---|
 | bug | 90,527 | 433 | 17.3% | 32.8% |
-| cross_file | 10,992 | 231 | 15.3% | 39.2% |
+| kody_rules | 60,918 | 175 | 13.7% | 29.8% |
 | security | 6,552 | 308 | 14.7% | 28.8% |
 | performance | 4,265 | 239 | 18.3% | 36.7% |
 
@@ -49,5 +51,4 @@ An earlier internal draft used `suggestion_embedded.feedbackType` and reported 9
 - [ ] funnel.csv
 - [ ] bug-classes.csv
 - [ ] security-vulnerabilities.csv
-- [ ] cross-file-findings.csv
 - [ ] codified-rules.csv
