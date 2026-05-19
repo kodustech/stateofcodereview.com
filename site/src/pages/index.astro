@@ -1,81 +1,169 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+const stats = [
+  { n: '17,773', label: 'AI suggestions analyzed' },
+  { n: '200',    label: 'Engineering organizations' },
+  { n: '639',    label: 'Repositories' },
+  { n: '103',    label: 'Programming languages' },
+];
+
+const chapters = [
+  {
+    num: '01',
+    eyebrow: 'Bugs',
+    title: 'The 10 bugs AI catches most in production code.',
+    abstract: 'Null access on optional fields, race conditions, schema drift, async/await abuse. Categorized from 14,560 accepted bug findings.',
+    href: '/bugs/',
+    plate: 'I',
+  },
+  {
+    num: '02',
+    eyebrow: 'Vulnerabilities',
+    title: 'The 2026 vulnerability landscape.',
+    abstract: 'SQL injection still leads. Prompt injection enters the top 10 as a new class. From 7,483 accepted security findings.',
+    href: '/vulnerabilities/',
+    plate: 'II',
+  },
+  {
+    num: '03',
+    eyebrow: 'Cross-file',
+    title: 'What AI catches that linters cannot.',
+    abstract: 'Logic duplicated across files, schema drift between modules, N+1 queries split between controller and view. From 1,852 cross-file findings.',
+    href: '/cross-file/',
+    plate: 'III',
+  },
+  {
+    num: '04',
+    eyebrow: 'Rules',
+    title: 'What 610 engineering teams codified as review standards.',
+    abstract: '7,276 codified rules from 610 organizations. A behavioral snapshot of what teams chose to enforce in 2026.',
+    href: '/rules/',
+    plate: 'IV',
+  },
+];
 ---
 
-<Layout>
-  <section class="max-w-6xl mx-auto px-6 pt-20 pb-16">
-    <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500 mb-6">Snapshot · 2026-Q2</p>
-    <h1 class="text-5xl md:text-7xl font-medium tracking-tight leading-[1.04] max-w-4xl">
-      What AI code review actually catches on real production pull requests.
-    </h1>
-    <p class="text-xl text-ink-500 mt-8 max-w-2xl leading-relaxed">
-      A public research project on how AI code review tools perform when reviewing pull requests at scale. No benchmarks, no synthetic data. Every finding comes from production code reviews shipped between September 2025 and May 2026.
-    </p>
+<Layout page="Frontispiece">
+
+  <section class="max-w-[1280px] mx-auto px-8 pt-16 md:pt-24 pb-12">
+    <div class="grid grid-cols-12 gap-8 items-start">
+      <div class="col-span-12 md:col-span-8">
+        <div class="tracked text-ink-500 reveal reveal-1">A field report · MMXXVI · Q2</div>
+        <h1 class="font-display leading-[0.95] tracking-tight text-ink-900 mt-6 reveal reveal-2"
+            style="font-size: clamp(3.5rem, 11vw, 9.5rem);">
+          A field report on
+          <span class="italic text-oxblood-500">AI code review.</span>
+        </h1>
+      </div>
+      <aside class="col-span-12 md:col-span-4 md:pt-12 reveal reveal-3">
+        <div class="border-l border-ink-900 pl-6">
+          <p class="text-ink-700 leading-[1.65] text-[17px]">
+            Public research on how AI code review actually performs when reviewing pull requests at scale. <span class="font-display italic text-ink-900">No benchmarks, no synthetic data.</span> Every finding is sourced from production code reviews shipped between September 2025 and May 2026.
+          </p>
+          <div class="tracked text-ink-500 mt-6">
+            <a href="/methodology/" class="hover:text-oxblood-500">↳ Read the methodology</a>
+          </div>
+        </div>
+      </aside>
+    </div>
   </section>
 
-  <section class="bg-ink-100 border-y border-ink-200">
-    <div class="max-w-6xl mx-auto px-6 py-14 grid grid-cols-2 md:grid-cols-4 gap-y-10 gap-x-4">
-      <div>
-        <div class="font-mono text-5xl text-ink-900">17,773</div>
-        <div class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500 mt-2">AI suggestions analyzed</div>
-      </div>
-      <div>
-        <div class="font-mono text-5xl text-ink-900">200</div>
-        <div class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500 mt-2">Engineering organizations</div>
-      </div>
-      <div>
-        <div class="font-mono text-5xl text-ink-900">639</div>
-        <div class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500 mt-2">Repositories</div>
-      </div>
-      <div>
-        <div class="font-mono text-5xl text-ink-900">103</div>
-        <div class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500 mt-2">Programming languages</div>
+  <section class="border-y-2 border-ink-900 bg-paper-200 reveal reveal-4">
+    <div class="max-w-[1280px] mx-auto px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4">
+        {stats.map((s, i) => (
+          <div class={`py-10 md:py-14 ${i < 3 ? 'md:border-r' : ''} ${i % 2 === 0 ? 'border-r' : ''} ${i < 2 ? 'border-b md:border-b-0' : ''} border-ink-900/30 ${i % 2 !== 0 ? 'md:pl-10' : ''} md:px-8 px-4 relative`}>
+            <div class="tracked text-ink-500 absolute top-3 left-4 md:left-8">No. {String(i + 1).padStart(2, '0')}</div>
+            <div class="font-display text-ink-900 leading-none mt-2" style="font-size: clamp(2.5rem, 6vw, 5rem);">
+              {s.n}
+            </div>
+            <div class="tracked text-ink-700 mt-3">{s.label}</div>
+          </div>
+        ))}
       </div>
     </div>
   </section>
 
-  <section class="max-w-6xl mx-auto px-6 py-24">
-    <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500 mb-10">Four chapters</p>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-14">
-      <a href="/bugs/" class="block group">
-        <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-accent-500 mb-3">Chapter 01 · Bugs</p>
-        <h2 class="text-3xl font-medium leading-tight group-hover:text-accent-700 transition-colors">The 10 bugs AI catches most in production code</h2>
-        <p class="text-ink-500 mt-3 leading-relaxed">Null access on optional fields, race conditions, schema drift, async/await abuse. Categorized from 14,560 accepted bug findings.</p>
-      </a>
-      <a href="/vulnerabilities/" class="block group">
-        <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-accent-500 mb-3">Chapter 02 · Vulnerabilities</p>
-        <h2 class="text-3xl font-medium leading-tight group-hover:text-accent-700 transition-colors">The 2026 vulnerability landscape</h2>
-        <p class="text-ink-500 mt-3 leading-relaxed">SQL injection is still the top class. Prompt injection enters the top 10 as a new category. From 7,483 accepted security findings.</p>
-      </a>
-      <a href="/cross-file/" class="block group">
-        <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-accent-500 mb-3">Chapter 03 · Cross-file</p>
-        <h2 class="text-3xl font-medium leading-tight group-hover:text-accent-700 transition-colors">What AI catches that linters cannot</h2>
-        <p class="text-ink-500 mt-3 leading-relaxed">Logic duplicated across files, schema drift between modules, N+1 queries split between controller and view. From 1,852 cross-file findings.</p>
-      </a>
-      <a href="/rules/" class="block group">
-        <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-accent-500 mb-3">Chapter 04 · Rules</p>
-        <h2 class="text-3xl font-medium leading-tight group-hover:text-accent-700 transition-colors">What 610 engineering teams codified as review standards</h2>
-        <p class="text-ink-500 mt-3 leading-relaxed">7,276 codified rules from 610 organizations. A behavioral snapshot of what teams chose to enforce in 2026.</p>
-      </a>
+  <section class="max-w-[1280px] mx-auto px-8 py-24">
+    <div class="grid grid-cols-12 gap-8">
+      <div class="hidden md:block md:col-span-3">
+        <div class="tracked text-ink-500 sticky top-8">Editor's note</div>
+      </div>
+      <div class="col-span-12 md:col-span-7">
+        <p class="dropcap font-display text-[26px] md:text-[30px] leading-[1.35] text-ink-900">
+          Most reporting on AI code review measures the model. This report measures what the model produces, after the developer sees it and decides what to do. Every finding here comes from a human accepting or rejecting a real suggestion on a real pull request. The dataset is large enough to talk about classes, not anecdotes. Where a class is too small to publish, we say so.
+        </p>
+        <p class="text-ink-700 leading-[1.7] text-[17px] mt-8 max-w-prose">
+          Four chapters follow. The first names the ten bug classes AI catches most in production code. The second maps the 2026 vulnerability landscape, including the first appearance of prompt injection in our top ten. The third documents the cross-file findings that single-file linters cannot reach. The fourth, drawn from a separate dataset, records what 610 engineering teams have written down as their own review standards in 2026.
+        </p>
+      </div>
+      <div class="col-span-12 md:col-span-2">
+        <div class="margin-note border-l border-paper-400 pl-3 md:mt-2">
+          Filed under: code review, software quality, applied AI, security research, engineering culture.
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="max-w-6xl mx-auto px-6 py-16 border-t border-ink-200">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-      <div>
-        <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500 mb-3">Methodology</p>
-        <p class="text-ink-700 leading-relaxed">All data sourced from production code reviews of organizations using Kodus between September 2025 and May 2026. Engine cutoff filter applied. No slice published with fewer than 50 suggestions.</p>
-        <a href="/methodology/" class="font-mono text-[11px] uppercase tracking-[0.18em] mt-4 inline-block underline decoration-1 underline-offset-4 hover:text-accent-700">Read full methodology →</a>
+  <section class="max-w-[1280px] mx-auto px-8 pb-24">
+    <div class="flex items-baseline justify-between border-b border-ink-900 pb-3 mb-12">
+      <h2 class="font-display italic text-ink-900" style="font-size: clamp(2rem, 4vw, 3rem);">Contents</h2>
+      <span class="tracked text-ink-500">Four chapters · Plates I — IV</span>
+    </div>
+
+    <ol class="space-y-0">
+      {chapters.map((c) => (
+        <li class="border-b border-paper-300 last:border-b-0">
+          <a href={c.href} class="block py-10 group">
+            <div class="grid grid-cols-12 gap-6 items-baseline">
+              <div class="col-span-2 md:col-span-1">
+                <div class="font-display italic text-oxblood-500 leading-none" style="font-size: clamp(2.5rem, 4vw, 3.75rem);">{c.num}</div>
+              </div>
+              <div class="col-span-10 md:col-span-7">
+                <div class="tracked text-ink-500 mb-3">Chapter {c.num} · {c.eyebrow}</div>
+                <h3 class="font-display text-ink-900 leading-[1.05] tracking-tight group-hover:text-oxblood-500 transition-colors" style="font-size: clamp(1.8rem, 3.5vw, 2.75rem);">{c.title}</h3>
+              </div>
+              <div class="col-span-12 md:col-span-3 md:pl-4">
+                <p class="text-ink-500 leading-[1.55] text-[14px]">{c.abstract}</p>
+              </div>
+              <div class="col-span-12 md:col-span-1 text-right">
+                <div class="tracked text-ink-300 group-hover:text-oxblood-500 transition-colors">Plate {c.plate} →</div>
+              </div>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="max-w-[1280px] mx-auto px-8 py-20 border-t border-ink-900">
+    <div class="grid grid-cols-12 gap-8">
+      <div class="col-span-12 md:col-span-4 border-r border-paper-300 md:pr-8">
+        <div class="tracked text-oxblood-500 mb-3">i. Methodology</div>
+        <p class="font-display italic text-2xl text-ink-900 leading-[1.25] mb-4">Real reviews. Filtered honestly. Privacy enforced.</p>
+        <p class="text-ink-700 leading-relaxed text-[15px]">
+          All data sourced from production code reviews of organizations using Kodus. Engine cutoff at 2025-09-01 excludes the deprecated label taxonomy. No slice with fewer than 50 suggestions is published.
+        </p>
+        <a href="/methodology/" class="tracked text-ink-500 hover:text-oxblood-500 mt-5 inline-block">↳ Read full methodology</a>
       </div>
-      <div>
-        <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500 mb-3">Reproducible</p>
-        <p class="text-ink-700 leading-relaxed">Every chart has a published SQL query. The full query set is committed to GitHub for inspection and academic citation.</p>
-        <a href="https://github.com/kodustech/stateofcodereview.com" class="font-mono text-[11px] uppercase tracking-[0.18em] mt-4 inline-block underline decoration-1 underline-offset-4 hover:text-accent-700">Repository on GitHub →</a>
+
+      <div class="col-span-12 md:col-span-4 border-r border-paper-300 md:pr-8">
+        <div class="tracked text-oxblood-500 mb-3">ii. Reproducible</div>
+        <p class="font-display italic text-2xl text-ink-900 leading-[1.25] mb-4">Every chart, one SQL query, in the open.</p>
+        <p class="text-ink-700 leading-relaxed text-[15px]">
+          The full query set is committed to GitHub for inspection, replication, and academic citation. Each chapter links the queries that produced its figures.
+        </p>
+        <a href="https://github.com/kodustech/stateofcodereview.com" class="tracked text-ink-500 hover:text-oxblood-500 mt-5 inline-block">↳ Repository on GitHub</a>
       </div>
-      <div>
-        <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500 mb-3">Refreshed quarterly</p>
-        <p class="text-ink-700 leading-relaxed">Snapshots are immutable. Each quarter adds a new snapshot folder; existing citations never break.</p>
-        <p class="font-mono text-[11px] uppercase tracking-[0.18em] mt-4 text-ink-500">Next: 2026-Q3 · August 2026</p>
+
+      <div class="col-span-12 md:col-span-4">
+        <div class="tracked text-oxblood-500 mb-3">iii. Refreshed quarterly</div>
+        <p class="font-display italic text-2xl text-ink-900 leading-[1.25] mb-4">Snapshots stay immutable. Citations never break.</p>
+        <p class="text-ink-700 leading-relaxed text-[15px]">
+          Each quarter adds a new snapshot folder; the published one stays frozen. Subsequent issues compare like with like across time.
+        </p>
+        <p class="tracked text-ink-500 mt-5">Next issue · 2026-Q3 · August</p>
       </div>
     </div>
   </section>

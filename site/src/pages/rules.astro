@@ -23,38 +23,103 @@ const topRules = [
   { rank: 19, title: 'Prevent open redirect vulnerabilities in DOM updates', orgs: 17 },
   { rank: 20, title: 'Prevent SQL injection via string concatenation', orgs: 16 },
 ];
+
+const maxOrgs = Math.max(...topRules.map((r) => r.orgs));
 ---
 
 <Layout
   title="What 610 engineering teams codified · State of AI Code Review"
   description="7,276 codified review rules from 610 organizations. The top 20 rules adopted across distinct teams: a behavioral snapshot of what engineering teams chose to enforce in 2026."
+  runningHead="§ 04 Rules"
+  page="Plate IV"
 >
-  <section class="max-w-3xl mx-auto px-6 pt-20 pb-12">
-    <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-accent-500 mb-6">Chapter 04 · Rules</p>
-    <h1 class="text-4xl md:text-6xl font-medium tracking-tight leading-[1.05]">
-      What 610 engineering teams codified as review standards.
-    </h1>
-    <p class="text-lg text-ink-500 mt-8 leading-relaxed">
-      Teams using Kodus can write custom review rules that supplement the model's defaults. 610 organizations have authored 7,276 rules between them. Median 11.9 rules per organization. The largest rule library contains 328 rules. Below, the rules that appear most often across distinct teams. This is a behavioral snapshot, not a survey.
-    </p>
-  </section>
 
-  <section class="max-w-3xl mx-auto px-6 pb-20">
-    <div class="border-t border-ink-200">
-      {topRules.map((r) => (
-        <div class="flex items-baseline gap-6 py-4 border-b border-ink-200">
-          <span class="font-mono text-sm text-ink-300 w-8 shrink-0">{String(r.rank).padStart(2, '0')}</span>
-          <span class="flex-1 text-ink-900">{r.title}</span>
-          <span class="font-mono text-sm text-ink-500 shrink-0">{r.orgs} <span class="text-ink-300">orgs</span></span>
+  <section class="max-w-[1280px] mx-auto px-8 pt-16 md:pt-20 pb-12">
+    <div class="grid grid-cols-12 gap-8 items-start">
+      <div class="col-span-12 md:col-span-2">
+        <div class="font-display italic text-oxblood-500 leading-none reveal reveal-1" style="font-size: clamp(5rem, 8vw, 7.5rem);">IV</div>
+        <div class="tracked text-ink-500 mt-3 reveal reveal-1">Plate IV</div>
+      </div>
+      <div class="col-span-12 md:col-span-7">
+        <div class="tracked text-ink-500 mb-4 reveal reveal-2">Chapter § 04 · Rules</div>
+        <h1 class="font-display leading-[0.98] tracking-tight text-ink-900 reveal reveal-2" style="font-size: clamp(3rem, 6.5vw, 5.5rem);">
+          What 610 engineering teams <span class="italic">codified.</span>
+        </h1>
+      </div>
+      <aside class="col-span-12 md:col-span-3 md:pt-8 reveal reveal-3">
+        <div class="border-l border-ink-900 pl-5">
+          <p class="text-ink-700 leading-[1.6] text-[15px]">
+            Teams using Kodus can write custom review rules that supplement the model's defaults. 610 organizations have authored 7,276 rules between them. Median 11.9 rules per organization. The largest rule library contains 328 rules.
+          </p>
         </div>
-      ))}
+      </aside>
     </div>
   </section>
 
-  <section class="max-w-3xl mx-auto px-6 py-12 border-t border-ink-200">
-    <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500 mb-3">What this measures</p>
-    <p class="text-ink-700 leading-relaxed">
-      Each row is a rule title that appears verbatim or near-verbatim in at least 3 distinct organizations. Counts represent distinct organizations, not total rule instances. A team that copies the same rule twice still counts once. Rules with org count below 3 are excluded as not yet a pattern.
-    </p>
+  <!-- Summary metrics -->
+  <section class="border-y border-ink-900 bg-paper-200 reveal reveal-4">
+    <div class="max-w-[1280px] mx-auto px-8 grid grid-cols-2 md:grid-cols-4">
+      <div class="py-10 md:py-12 px-4 md:px-8 border-r border-ink-900/30 relative">
+        <div class="tracked text-ink-500 absolute top-3 left-4 md:left-8">i</div>
+        <div class="font-display text-ink-900 leading-none mt-2" style="font-size: clamp(2.5rem, 5vw, 4rem);">7,276</div>
+        <div class="tracked text-ink-700 mt-3">Total codified rules</div>
+      </div>
+      <div class="py-10 md:py-12 px-4 md:px-8 md:border-r border-ink-900/30 relative">
+        <div class="tracked text-ink-500 absolute top-3 left-4 md:left-8">ii</div>
+        <div class="font-display text-ink-900 leading-none mt-2" style="font-size: clamp(2.5rem, 5vw, 4rem);">610</div>
+        <div class="tracked text-ink-700 mt-3">Organizations</div>
+      </div>
+      <div class="py-10 md:py-12 px-4 md:px-8 border-r border-ink-900/30 relative border-t md:border-t-0">
+        <div class="tracked text-ink-500 absolute top-3 left-4 md:left-8">iii</div>
+        <div class="font-display text-ink-900 leading-none mt-2" style="font-size: clamp(2.5rem, 5vw, 4rem);">11.9</div>
+        <div class="tracked text-ink-700 mt-3">Median rules per org</div>
+      </div>
+      <div class="py-10 md:py-12 px-4 md:px-8 relative border-t md:border-t-0">
+        <div class="tracked text-ink-500 absolute top-3 left-4 md:left-8">iv</div>
+        <div class="font-display text-ink-900 leading-none mt-2" style="font-size: clamp(2.5rem, 5vw, 4rem);">328</div>
+        <div class="tracked text-ink-700 mt-3">Largest library</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ranked table styled as encyclopedia entry -->
+  <section class="max-w-[1280px] mx-auto px-8 py-20">
+    <div class="flex items-baseline justify-between border-b-2 border-ink-900 pb-3 mb-2">
+      <h2 class="font-display italic text-ink-900" style="font-size: clamp(1.75rem, 3vw, 2.5rem);">The Common List</h2>
+      <span class="tracked text-ink-500">Top 20 by distinct organization count</span>
+    </div>
+
+    <div>
+      {topRules.map((r) => {
+        const pct = (r.orgs / maxOrgs) * 100;
+        return (
+          <div class="grid grid-cols-12 gap-4 items-center py-4 border-b border-paper-300 group hover:bg-paper-200/60 transition-colors">
+            <div class="col-span-1 font-mono text-sm text-ink-300">{String(r.rank).padStart(2, '0')}</div>
+            <div class="col-span-7 md:col-span-6 font-display text-ink-900 text-[18px] md:text-[20px] leading-snug group-hover:text-oxblood-700 transition-colors">{r.title}</div>
+            <div class="hidden md:block md:col-span-4">
+              <div class="h-[6px] bg-paper-300 relative">
+                <div class="absolute inset-y-0 left-0 bg-oxblood-500" style={`width: ${pct}%`}></div>
+              </div>
+            </div>
+            <div class="col-span-4 md:col-span-1 text-right font-mono text-sm text-ink-700">
+              {r.orgs}<span class="text-ink-300"> orgs</span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+
+  <section class="max-w-[1280px] mx-auto px-8 pb-20">
+    <div class="grid grid-cols-12 gap-8">
+      <div class="col-span-12 md:col-span-3">
+        <div class="tracked text-ink-500">What this measures</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <p class="font-display italic text-ink-700 leading-[1.45] text-2xl">
+          Each row is a rule title that appears verbatim or near-verbatim in at least three distinct organizations. Counts represent distinct organizations, not total rule instances. A team that copies the same rule twice still counts once. Rules with organization count below three are excluded as not yet a pattern.
+        </p>
+      </div>
+    </div>
   </section>
 </Layout>

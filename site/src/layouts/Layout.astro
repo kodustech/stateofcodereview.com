@@ -4,11 +4,15 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  runningHead?: string;
+  page?: string;
 }
 
 const {
   title = 'State of AI Code Review (2026)',
-  description = 'Research on how AI code review actually performs on real production pull requests. 17,773 AI suggestions across 200 organizations and 103 programming languages.',
+  description = 'A field report on AI code review at scale. 17,773 AI suggestions across 200 engineering organizations and 103 programming languages, sourced from production pull requests shipped between September 2025 and May 2026.',
+  runningHead = 'State of AI Code Review',
+  page = 'Frontispiece',
 } = Astro.props;
 ---
 
@@ -25,19 +29,48 @@ const {
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Albert+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
   </head>
-  <body class="bg-ink-50 text-ink-900">
-    <header class="border-b border-ink-200">
-      <div class="max-w-6xl mx-auto px-6 py-5 flex items-baseline justify-between flex-wrap gap-y-3">
-        <a href="/" class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-900">
-          State of AI Code Review<span class="text-ink-500"> · 2026</span>
+  <body class="bg-paper-100 text-ink-900 font-sans">
+
+    <!-- Running banner: looks like the spine of a dossier -->
+    <div class="border-b border-ink-900 bg-paper-100">
+      <div class="max-w-[1280px] mx-auto px-8 py-2.5 flex items-baseline justify-between gap-6">
+        <div class="running-head">
+          <span class="text-ink-900">Vol. I</span>
+          <span class="text-ink-300 mx-2">·</span>
+          <span>{runningHead}</span>
+          <span class="text-ink-300 mx-2">·</span>
+          <span>Snapshot 2026-Q2</span>
+        </div>
+        <div class="running-head hidden md:block">
+          <span class="text-ink-300">Issued</span> 2026·05
+          <span class="text-ink-300 mx-2">·</span>
+          <span class="text-ink-300">By</span>
+          <a href="https://kodus.io" class="text-ink-900 hover:text-oxblood-500">Kodus</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Primary header with masthead -->
+    <header class="border-b border-ink-900">
+      <div class="max-w-[1280px] mx-auto px-8 py-6 flex items-end justify-between gap-6 flex-wrap">
+        <a href="/" class="block leading-none">
+          <span class="font-display italic text-3xl md:text-4xl text-ink-900">State of AI</span>
+          <span class="font-display text-3xl md:text-4xl text-ink-900"> Code Review</span>
         </a>
-        <nav class="font-mono text-[11px] uppercase tracking-[0.18em] flex gap-6 text-ink-500">
-          <a href="/bugs/" class="hover:text-accent-700 transition-colors">Bugs</a>
-          <a href="/vulnerabilities/" class="hover:text-accent-700 transition-colors">Vulnerabilities</a>
-          <a href="/cross-file/" class="hover:text-accent-700 transition-colors">Cross-file</a>
-          <a href="/rules/" class="hover:text-accent-700 transition-colors">Rules</a>
-          <a href="/methodology/" class="hover:text-accent-700 transition-colors">Methodology</a>
+        <nav class="flex gap-7 flex-wrap items-baseline">
+          <a href="/bugs/" class="tracked text-ink-700 hover:text-oxblood-500 transition-colors">§ 01 Bugs</a>
+          <a href="/vulnerabilities/" class="tracked text-ink-700 hover:text-oxblood-500 transition-colors">§ 02 Vulnerabilities</a>
+          <a href="/cross-file/" class="tracked text-ink-700 hover:text-oxblood-500 transition-colors">§ 03 Cross-file</a>
+          <a href="/rules/" class="tracked text-ink-700 hover:text-oxblood-500 transition-colors">§ 04 Rules</a>
+          <a href="/methodology/" class="tracked text-ink-500 hover:text-oxblood-500 transition-colors">Methodology</a>
         </nav>
       </div>
     </header>
@@ -46,21 +79,41 @@ const {
       <slot />
     </main>
 
-    <footer class="border-t border-ink-200 mt-32">
-      <div class="max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10 text-sm leading-relaxed">
-        <div>
-          <div class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500 mb-3">Research by</div>
-          <a href="https://kodus.io" class="text-ink-900 underline decoration-1 underline-offset-4 hover:text-accent-700">Kodus</a>
-          <p class="text-ink-500 mt-2 max-w-xs">Open source AI code review without vendor lock-in.</p>
+    <!-- Colophon footer -->
+    <footer class="border-t border-ink-900 bg-paper-50 mt-32">
+      <div class="max-w-[1280px] mx-auto px-8 py-16">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-10">
+          <div class="md:col-span-5">
+            <div class="tracked text-ink-500 mb-4">Colophon</div>
+            <p class="font-display italic text-3xl leading-tight text-ink-900">
+              State of AI Code Review.<br/>A field report by <a class="underline decoration-1 underline-offset-[6px] hover:text-oxblood-500" href="https://kodus.io">Kodus</a>.
+            </p>
+            <p class="text-ink-500 mt-6 leading-relaxed max-w-md">
+              Set in <span class="font-display italic">Instrument Serif</span>, Albert Sans, and JetBrains Mono. Cream <span class="font-mono text-xs">#f4eee0</span>, ink <span class="font-mono text-xs">#1a1715</span>, oxblood <span class="font-mono text-xs">#8b1e1e</span>.
+            </p>
+          </div>
+
+          <div class="md:col-span-3">
+            <div class="tracked text-ink-500 mb-4">License</div>
+            <p class="text-ink-700 leading-relaxed">
+              Report and data licensed under <a href="https://creativecommons.org/licenses/by/4.0/" class="underline decoration-1 underline-offset-4 hover:text-oxblood-500">CC BY 4.0</a>.<br/>Reuse with attribution.
+            </p>
+          </div>
+
+          <div class="md:col-span-4">
+            <div class="tracked text-ink-500 mb-4">Recommended citation</div>
+            <div class="font-mono text-[12px] leading-relaxed text-ink-700 border-l-2 border-oxblood-500 pl-4">
+              State of AI Code Review (2026-Q2).<br/>
+              Research by Kodus.<br/>
+              https://stateofcodereview.com
+            </div>
+            <a href="https://github.com/kodustech/stateofcodereview.com" class="tracked text-ink-500 hover:text-oxblood-500 mt-5 inline-block">↳ Repository on GitHub</a>
+          </div>
         </div>
-        <div>
-          <div class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500 mb-3">License</div>
-          <p class="text-ink-700">Report and data licensed under <a href="https://creativecommons.org/licenses/by/4.0/" class="underline decoration-1 underline-offset-4 hover:text-accent-700">CC BY 4.0</a>. Reuse with attribution.</p>
-        </div>
-        <div>
-          <div class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500 mb-3">Cite</div>
-          <p class="font-mono text-[11px] leading-relaxed text-ink-500">State of AI Code Review (2026-Q2). Research by Kodus. stateofcodereview.com</p>
-          <a href="https://github.com/kodustech/stateofcodereview.com" class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500 hover:text-accent-700 mt-3 inline-block">GitHub repo →</a>
+
+        <div class="double-rule mt-16 flex justify-between items-baseline">
+          <div class="running-head">Kodustech · MMXXVI</div>
+          <div class="running-head">{page}</div>
         </div>
       </div>
     </footer>

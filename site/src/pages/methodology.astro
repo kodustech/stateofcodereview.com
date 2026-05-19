@@ -5,78 +5,140 @@ import Layout from '../layouts/Layout.astro';
 <Layout
   title="Methodology · State of AI Code Review"
   description="How the data was produced. Source, filters, privacy thresholds, reproducibility, and consent."
+  runningHead="Methodology"
+  page="Methodology"
 >
-  <section class="max-w-3xl mx-auto px-6 pt-20 pb-12">
-    <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-accent-500 mb-6">Methodology</p>
-    <h1 class="text-4xl md:text-6xl font-medium tracking-tight leading-[1.05]">
-      How the data was produced.
-    </h1>
+
+  <section class="max-w-[1280px] mx-auto px-8 pt-16 md:pt-20 pb-12">
+    <div class="grid grid-cols-12 gap-8 items-start">
+      <div class="col-span-12 md:col-span-7">
+        <div class="tracked text-ink-500 mb-4 reveal reveal-1">Apparatus</div>
+        <h1 class="font-display leading-[0.98] tracking-tight text-ink-900 reveal reveal-2" style="font-size: clamp(3rem, 7vw, 6rem);">
+          How the <span class="italic">data was produced.</span>
+        </h1>
+      </div>
+      <aside class="col-span-12 md:col-span-5 md:pt-8 reveal reveal-3">
+        <div class="border-l border-ink-900 pl-5">
+          <p class="text-ink-700 leading-[1.6] text-[15px]">
+            This section documents the dataset, filtering criteria, privacy thresholds, and citation format. All SQL queries are public on GitHub. External researchers can request a controlled extract under data use agreement at <a href="mailto:research@kodus.io" class="underline decoration-1 underline-offset-4 hover:text-oxblood-500">research@kodus.io</a>.
+          </p>
+        </div>
+      </aside>
+    </div>
   </section>
 
-  <section class="max-w-3xl mx-auto px-6 pb-16 space-y-12 leading-relaxed text-ink-700">
-    <div>
-      <h2 class="text-2xl font-medium text-ink-900 mb-4">Source</h2>
-      <p>
-        All data is sourced from the Kodus production code review pipeline. Kodus reviews pull requests across GitHub, GitLab, Bitbucket, and Azure DevOps. The full dataset lives in a BigQuery warehouse. Each chart in this report has a backing SQL query published in the <a href="https://github.com/kodustech/stateofcodereview.com" class="underline decoration-1 underline-offset-4 hover:text-accent-700">GitHub repository</a> under <code class="font-mono text-sm bg-ink-100 px-1.5 py-0.5">methodology/queries/</code>.
-      </p>
-    </div>
+  <section class="max-w-[1280px] mx-auto px-8 pb-20">
+    <div class="grid grid-cols-12 gap-10 border-t-2 border-ink-900 pt-16">
 
-    <div>
-      <h2 class="text-2xl font-medium text-ink-900 mb-4">Engine cutoff: 2025-09-01</h2>
-      <p>
-        Kodus introduced a new label taxonomy in September 2025 with 5 canonical labels: bug, security, performance, cross-file, and kody rules. Suggestions generated before this cutoff used a different label set and a different LLM prompt. To keep findings interpretable as the current state of AI code review, all suggestions before 2025-09-01 are excluded.
-      </p>
-    </div>
+      <div class="col-span-12 md:col-span-3">
+        <div class="tracked text-oxblood-500">§ i</div>
+        <div class="tracked text-ink-500 mt-2">Source</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <p class="font-display italic text-ink-900 leading-[1.35]" style="font-size: clamp(1.5rem, 2.2vw, 2rem);">
+          All data is sourced from the Kodus production code review pipeline.
+        </p>
+        <p class="text-ink-700 leading-[1.7] mt-5 max-w-prose">
+          Kodus reviews pull requests across GitHub, GitLab, Bitbucket, and Azure DevOps. The full dataset lives in a BigQuery warehouse. Each chart in this report has a backing SQL query published in the <a href="https://github.com/kodustech/stateofcodereview.com" class="underline decoration-1 underline-offset-4 hover:text-oxblood-500">GitHub repository</a> under <code class="font-mono text-sm bg-paper-200 px-1.5 py-0.5">methodology/queries/</code>.
+        </p>
+      </div>
 
-    <div>
-      <h2 class="text-2xl font-medium text-ink-900 mb-4">Privacy thresholds</h2>
-      <ul class="list-disc list-outside pl-5 space-y-2">
-        <li>No slice with fewer than 50 suggestions is published as a finding.</li>
-        <li>Programming language slices with fewer than 5 distinct organizations are footnoted as low-confidence.</li>
-        <li>Organization, repository, and pull request identifiers are never exposed.</li>
-        <li>Suggestion text shown in the report is reviewed for sensitive substrings (hostnames, customer identifiers, project names) before publication.</li>
-      </ul>
-    </div>
+      <div class="col-span-12 border-t border-paper-300"></div>
 
-    <div>
-      <h2 class="text-2xl font-medium text-ink-900 mb-4">Sample sizes (2026-Q2)</h2>
-      <table class="w-full text-sm border-collapse">
-        <tbody>
-          <tr class="border-b border-ink-200"><td class="py-2 pr-4">Suggestions with feedback (post-filter)</td><td class="py-2 font-mono text-right">17,773</td></tr>
-          <tr class="border-b border-ink-200"><td class="py-2 pr-4">Distinct organizations</td><td class="py-2 font-mono text-right">200</td></tr>
-          <tr class="border-b border-ink-200"><td class="py-2 pr-4">Distinct repositories</td><td class="py-2 font-mono text-right">639</td></tr>
-          <tr class="border-b border-ink-200"><td class="py-2 pr-4">Programming languages</td><td class="py-2 font-mono text-right">103</td></tr>
-          <tr class="border-b border-ink-200"><td class="py-2 pr-4">Bug findings</td><td class="py-2 font-mono text-right">14,560</td></tr>
-          <tr class="border-b border-ink-200"><td class="py-2 pr-4">Security findings</td><td class="py-2 font-mono text-right">7,483</td></tr>
-          <tr class="border-b border-ink-200"><td class="py-2 pr-4">Cross-file findings</td><td class="py-2 font-mono text-right">1,852</td></tr>
-          <tr class="border-b border-ink-200"><td class="py-2 pr-4">Codified review rules</td><td class="py-2 font-mono text-right">7,276</td></tr>
-          <tr><td class="py-2 pr-4">Organizations with codified rules</td><td class="py-2 font-mono text-right">610</td></tr>
-        </tbody>
-      </table>
-    </div>
+      <div class="col-span-12 md:col-span-3">
+        <div class="tracked text-oxblood-500">§ ii</div>
+        <div class="tracked text-ink-500 mt-2">Engine cutoff</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <p class="font-display italic text-ink-900 leading-[1.35]" style="font-size: clamp(1.5rem, 2.2vw, 2rem);">
+          Suggestions before 2025-09-01 are excluded.
+        </p>
+        <p class="text-ink-700 leading-[1.7] mt-5 max-w-prose">
+          Kodus introduced a new label taxonomy in September 2025 with five canonical labels: bug, security, performance, cross-file, and kody rules. Suggestions generated before this cutoff used a different label set and a different LLM prompt. To keep findings interpretable as the current state of AI code review, all pre-cutoff suggestions are excluded.
+        </p>
+      </div>
 
-    <div>
-      <h2 class="text-2xl font-medium text-ink-900 mb-4">What is not included</h2>
-      <ul class="list-disc list-outside pl-5 space-y-2">
-        <li>Suggestions from Kodus self-hosted deployments. The data warehouse covers Cloud only.</li>
-        <li>Suggestions without explicit developer feedback. Unobserved suggestions are excluded because reception cannot be measured.</li>
-        <li>Pull requests from organizations that opted out of research. Reserved as policy. None currently.</li>
-      </ul>
-    </div>
+      <div class="col-span-12 border-t border-paper-300"></div>
 
-    <div>
-      <h2 class="text-2xl font-medium text-ink-900 mb-4">Consent and ethics</h2>
-      <p>
-        Organizations using Kodus consent to aggregated, anonymized research per the Terms of Service. No individually identifiable data is published. To validate findings against a controlled extract, contact <a href="mailto:research@kodus.io" class="underline decoration-1 underline-offset-4 hover:text-accent-700">research@kodus.io</a> under a data use agreement.
-      </p>
-    </div>
+      <div class="col-span-12 md:col-span-3">
+        <div class="tracked text-oxblood-500">§ iii</div>
+        <div class="tracked text-ink-500 mt-2">Privacy thresholds</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <p class="font-display italic text-ink-900 leading-[1.35]" style="font-size: clamp(1.5rem, 2.2vw, 2rem);">
+          Aggregation only. No identifiers.
+        </p>
+        <ul class="text-ink-700 leading-[1.75] mt-5 space-y-2 list-none max-w-prose">
+          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">a.</span> No slice with fewer than 50 suggestions is published as a finding.</li>
+          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">b.</span> Language slices with fewer than five distinct organizations are footnoted as low-confidence.</li>
+          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">c.</span> Organization, repository, and pull-request identifiers are never exposed.</li>
+          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">d.</span> Suggestion text shown in the report is reviewed for sensitive substrings (hostnames, customer identifiers, project names) before publication.</li>
+        </ul>
+      </div>
 
-    <div>
-      <h2 class="text-2xl font-medium text-ink-900 mb-4">How to cite</h2>
-      <p class="font-mono text-sm bg-ink-100 p-4 leading-relaxed">
-        State of AI Code Review (2026-Q2). Research by Kodus.<br />
-        https://stateofcodereview.com
-      </p>
+      <div class="col-span-12 border-t border-paper-300"></div>
+
+      <div class="col-span-12 md:col-span-3">
+        <div class="tracked text-oxblood-500">§ iv</div>
+        <div class="tracked text-ink-500 mt-2">Sample sizes</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <p class="font-display italic text-ink-900 leading-[1.35]" style="font-size: clamp(1.5rem, 2.2vw, 2rem);">
+          For the 2026-Q2 snapshot.
+        </p>
+        <div class="mt-6 border-t border-ink-900">
+          {[
+            ['Suggestions with feedback, post-filter', '17,773'],
+            ['Distinct organizations', '200'],
+            ['Distinct repositories', '639'],
+            ['Programming languages', '103'],
+            ['Bug findings', '14,560'],
+            ['Security findings', '7,483'],
+            ['Cross-file findings', '1,852'],
+            ['Codified review rules', '7,276'],
+            ['Organizations with codified rules', '610'],
+          ].map(([k, v]) => (
+            <div class="flex items-baseline justify-between border-b border-paper-300 py-2.5">
+              <span class="text-ink-700">{k}</span>
+              <span class="font-mono text-ink-900">{v}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="col-span-12 border-t border-paper-300"></div>
+
+      <div class="col-span-12 md:col-span-3">
+        <div class="tracked text-oxblood-500">§ v</div>
+        <div class="tracked text-ink-500 mt-2">Out of scope</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <p class="font-display italic text-ink-900 leading-[1.35]" style="font-size: clamp(1.5rem, 2.2vw, 2rem);">
+          What is not included.
+        </p>
+        <ul class="text-ink-700 leading-[1.75] mt-5 space-y-2 list-none max-w-prose">
+          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">a.</span> Suggestions from Kodus self-hosted deployments. The data warehouse covers Cloud only.</li>
+          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">b.</span> Suggestions without explicit developer feedback. Unobserved suggestions are excluded because reception cannot be measured.</li>
+          <li class="pl-7 relative"><span class="absolute left-0 top-0 font-mono text-oxblood-500">c.</span> Pull requests from organizations that opted out of research. Reserved as policy. None currently.</li>
+        </ul>
+      </div>
+
+      <div class="col-span-12 border-t border-paper-300"></div>
+
+      <div class="col-span-12 md:col-span-3">
+        <div class="tracked text-oxblood-500">§ vi</div>
+        <div class="tracked text-ink-500 mt-2">Citation</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <p class="font-display italic text-ink-900 leading-[1.35]" style="font-size: clamp(1.5rem, 2.2vw, 2rem);">
+          How to cite.
+        </p>
+        <p class="font-mono text-sm bg-paper-200 border-l-2 border-oxblood-500 p-5 leading-relaxed mt-6 max-w-prose">
+          State of AI Code Review (2026-Q2).<br />
+          Research by Kodus.<br />
+          https://stateofcodereview.com
+        </p>
+      </div>
     </div>
   </section>
 </Layout>
