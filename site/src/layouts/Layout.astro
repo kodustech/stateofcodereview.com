@@ -6,6 +6,7 @@ interface Props {
   description?: string;
   runningHead?: string;
   page?: string;
+  theme?: 'light' | 'dark';
 }
 
 const {
@@ -13,6 +14,7 @@ const {
   description = 'A field report on AI code review at scale. 112,336 AI suggestions delivered to 456 engineering organizations between September 2025 and May 2026. 17% became code. 67% were ignored.',
   runningHead = 'State of AI Code Review',
   page = 'Frontispiece',
+  theme = 'light',
 } = Astro.props;
 ---
 
@@ -37,7 +39,7 @@ const {
       rel="stylesheet"
     />
   </head>
-  <body class="bg-paper-100 text-ink-900 font-sans">
+  <body class:list={['font-sans', theme === 'dark' ? 'theme-dark' : 'bg-paper-100 text-ink-900']}>
 
     <div class="scroll-progress" id="scroll-progress"></div>
 
