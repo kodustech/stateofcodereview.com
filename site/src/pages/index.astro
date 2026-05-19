@@ -5,20 +5,23 @@ const chapters = [
   { num: '01', eyebrow: 'Bugs',            title: 'The 10 bugs AI catches most.',          metric: '90,527', metricLabel: 'bug findings',         href: '/bugs/' },
   { num: '02', eyebrow: 'Vulnerabilities', title: 'The 2026 vulnerability landscape.',     metric: '6,552',  metricLabel: 'security findings',    href: '/vulnerabilities/', tag: 'New · prompt injection' },
   { num: '03', eyebrow: 'Rules',           title: 'What 610 teams codified.',              metric: '7,276',  metricLabel: 'codified rules',       href: '/rules/' },
-  { num: '04', eyebrow: 'Models',          title: 'Best LLM: 28%. Worst: 3%.',             metric: '79',     metricLabel: 'BYOK organizations',   href: '/models/' },
+  { num: '04', eyebrow: 'Models',          title: 'Best LLM: 46%. Worst: 3%.',             metric: '79',     metricLabel: 'BYOK organizations',   href: '/models/' },
 ];
 
+// Real data, modern 4-label scope (bug + security + performance + kody_rules)
 const langs = [
-  { name: 'Rust',       pct: 37.6 },
-  { name: 'Go',         pct: 29.1 },
-  { name: 'Vue',        pct: 25.2 },
-  { name: 'Python',     pct: 20.5 },
-  { name: 'TypeScript', pct: 18.5 },
-  { name: 'JavaScript', pct: 16.3 },
-  { name: 'Ruby',       pct: 15.4 },
-  { name: 'PHP',        pct: 13.0 },
-  { name: 'Java',       pct: 12.7 },
-  { name: 'C#',         pct: 12.7 },
+  { name: 'Rust',       pct: 60.3, full: 35.9, n: 368   },
+  { name: 'Elixir',     pct: 46.6, full: 19.5, n: 483   },
+  { name: 'Go',         pct: 43.9, full: 26.5, n: 2942  },
+  { name: 'Vue',        pct: 42.1, full: 22.8, n: 2808  },
+  { name: 'TSX',        pct: 39.8, full: 24.8, n: 492   },
+  { name: 'CSS',        pct: 38.3, full: 27.8, n: 209   },
+  { name: 'PHP',        pct: 35.2, full: 12.2, n: 16492 },
+  { name: 'Python',     pct: 35.1, full: 20.8, n: 9365  },
+  { name: 'Ruby',       pct: 33.7, full: 15.3, n: 10411 },
+  { name: 'TypeScript', pct: 32.7, full: 17.3, n: 66331 },
+  { name: 'JavaScript', pct: 32.6, full: 14.8, n: 11524 },
+  { name: 'Kotlin',     pct: 28.9, full: 16.2, n: 1153  },
 ];
 ---
 
@@ -29,16 +32,17 @@ const langs = [
 
   <!-- ─── HERO ─────────────────────────────────────────────────────── -->
   <section class="atmos gridfield border-b border-night-50 relative overflow-hidden" id="hero">
-    <div class="max-w-[1320px] mx-auto px-6 md:px-10 pt-16 md:pt-24 pb-20 md:pb-28 relative">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 pt-12 md:pt-24 pb-16 md:pb-24 relative">
 
       <div class="flex items-center gap-3 mb-8 reveal reveal-1">
-        <span class="inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.22em] uppercase text-phosphor-500">
-          <span class="cursor-blink">●</span> Live field report · MMXXVI · Q2
+        <span class="cursor-blink phosphor">●</span>
+        <span class="font-mono text-[11px] font-medium tracking-[0.22em] uppercase text-phosphor-500">
+          Live field report · MMXXVI · Q2
         </span>
       </div>
 
-      <h1 class="font-display leading-[0.94] tracking-tight text-mist-50 reveal reveal-2 max-w-5xl"
-          style="font-size: clamp(2.5rem, 7vw, 6rem);">
+      <h1 class="font-display leading-[0.95] tracking-tight text-mist-50 reveal reveal-2 max-w-[16ch]"
+          style="font-size: clamp(2.5rem, 8vw, 7rem); overflow-wrap: anywhere;">
         What happens after<br/>
         the AI <span class="italic phosphor">comment lands</span>?
       </h1>
@@ -47,107 +51,115 @@ const langs = [
         We read the post-PR diff for 162,262 AI code review suggestions across 464 engineering teams. This is what shipped on those lines.
       </p>
 
-      <!-- Demo + Counter grid -->
-      <div class="mt-14 md:mt-20 grid grid-cols-12 gap-8 lg:gap-12 items-start reveal reveal-4">
-
-        <!-- LEFT: Code review demo (live, rotating) -->
-        <div class="col-span-12 lg:col-span-8">
-          <div class="code-demo relative" id="code-demo">
-
-            <!-- header -->
-            <div class="flex items-center justify-between px-4 py-3 border-b border-night-50">
-              <div class="font-mono text-[11px] text-mist-400 truncate">
-                <span class="text-phosphor-500">PR</span> <span class="text-mist-600">·</span>
-                <span id="demo-file">packages/auth/login.ts</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span class="font-mono text-[10px] tracking-[0.18em] uppercase text-mist-400" id="demo-lang">typescript</span>
-                <span class="font-mono text-[10px] tracking-[0.18em] uppercase px-2 py-0.5" id="demo-severity"
-                      style="background: var(--color-phosphor-500); color: var(--color-night-200);">critical</span>
-              </div>
-            </div>
-
-            <!-- code -->
-            <div class="py-3" id="demo-code"></div>
-
-            <!-- AI comment -->
-            <div class="ai-card mx-4 mb-4 border border-phosphor-500/40 bg-night-100 p-4" id="demo-ai">
-              <div class="flex items-baseline justify-between mb-2">
-                <span class="font-mono text-[10px] tracking-[0.22em] uppercase text-phosphor-500">▌ AI · review comment</span>
-                <span class="font-mono text-[10px] text-mist-600" id="demo-class">bug</span>
-              </div>
-              <p class="text-mist-200 text-[13.5px] leading-relaxed typing" id="demo-msg"></p>
-            </div>
-
-            <!-- Outcome stamp -->
-            <div class="flex items-center justify-between px-4 py-3 border-t border-night-50">
-              <div class="flex items-center gap-3 stamp-in" id="demo-outcome" key>
-                <span class="font-mono text-[10px] tracking-[0.22em] uppercase px-2 py-1"
-                      id="demo-stamp"
-                      style="background: oklch(45% 0.13 145 / 0.25); color: oklch(85% 0.15 145);">✓ applied</span>
-                <span class="font-mono text-[11px] text-mist-400" id="demo-meta">1 of every 6 lands like this</span>
-              </div>
-              <div class="font-mono text-[10px] text-mist-600" id="demo-counter">01 / 04</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- RIGHT: Counter + stats -->
-        <div class="col-span-12 lg:col-span-4">
-          <div class="font-mono text-[12px] font-medium tracking-[0.22em] uppercase text-mist-200 mb-4">
-            Of every 100 delivered
+      <!-- Big stat + mini live data band -->
+      <div class="mt-12 md:mt-16 grid grid-cols-12 gap-x-8 gap-y-10 items-end reveal reveal-4">
+        <div class="col-span-12 lg:col-span-7">
+          <div class="font-mono text-[11px] font-medium tracking-[0.22em] uppercase text-mist-200 mb-3">
+            Of every 100 delivered, this many earn a fix
           </div>
           <div class="flex items-baseline gap-2">
             <span class="font-display phosphor phosphor-pulse leading-none"
                   data-counter data-target="33"
-                  style="font-size: clamp(6rem, 12vw, 10rem);">0</span>
-            <span class="font-display phosphor leading-none" style="font-size: clamp(2.5rem, 5vw, 4rem);">%</span>
+                  style="font-size: clamp(7rem, 18vw, 14rem);">0</span>
+            <span class="font-display phosphor leading-none" style="font-size: clamp(3rem, 7vw, 6rem);">%</span>
           </div>
-          <div class="text-mist-50 text-[16px] leading-relaxed mt-5 max-w-sm">
-            earn a fix from the developer.
-          </div>
+        </div>
 
-          <div class="mt-10 space-y-4 border-t border-night-50 pt-6">
-            <div class="flex items-baseline justify-between">
-              <span class="font-mono text-[12px] font-medium tracking-[0.18em] uppercase text-mist-200">Suggestions</span>
+        <div class="col-span-12 lg:col-span-5 lg:pb-4">
+          <div class="space-y-4">
+            <div class="flex items-baseline justify-between border-b border-night-50 pb-3">
+              <span class="font-mono text-[11px] font-medium tracking-[0.18em] uppercase text-mist-200">Suggestions</span>
               <span class="font-display text-mist-50 text-xl tabular-nums" id="live-suggestions">162,262</span>
             </div>
-            <div class="flex items-baseline justify-between">
-              <span class="font-mono text-[12px] font-medium tracking-[0.18em] uppercase text-mist-200">Organizations</span>
+            <div class="flex items-baseline justify-between border-b border-night-50 pb-3">
+              <span class="font-mono text-[11px] font-medium tracking-[0.18em] uppercase text-mist-200">Organizations</span>
               <span class="font-display text-mist-50 text-xl">464</span>
             </div>
-            <div class="flex items-baseline justify-between">
-              <span class="font-mono text-[12px] font-medium tracking-[0.18em] uppercase text-mist-200">Window</span>
+            <div class="flex items-baseline justify-between border-b border-night-50 pb-3">
+              <span class="font-mono text-[11px] font-medium tracking-[0.18em] uppercase text-mist-200">Window</span>
               <span class="font-mono text-mist-50 text-[13px]">Sep '25 → May '26</span>
+            </div>
+            <div class="flex items-baseline justify-between">
+              <span class="font-mono text-[11px] font-medium tracking-[0.18em] uppercase text-mist-200">Models seen</span>
+              <span class="font-display text-mist-50 text-xl">20+</span>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Hero CTAs -->
-      <div class="mt-14 flex flex-wrap gap-3 reveal reveal-5">
-        <a href="#outcome"
-           class="font-mono text-[11px] tracking-[0.22em] uppercase bg-phosphor-500 text-night-200 px-6 py-3.5 hover:bg-phosphor-300 transition-colors">
-          ↓ See the breakdown
+      <div class="mt-12 md:mt-16 flex flex-wrap gap-3 reveal reveal-5">
+        <a href="#demo"
+           class="font-mono text-[11px] font-medium tracking-[0.22em] uppercase bg-phosphor-500 text-night-200 px-6 py-3.5 hover:bg-phosphor-300 transition-colors">
+          ↓ See it work
         </a>
-        <a href="/bugs/"
-           class="font-mono text-[11px] tracking-[0.22em] uppercase text-mist-50 border border-mist-400 px-6 py-3.5 hover:border-phosphor-500 hover:text-phosphor-500 transition-colors">
-          Read chapter 01 →
+        <a href="#chapters"
+           class="font-mono text-[11px] font-medium tracking-[0.22em] uppercase text-mist-50 border border-mist-400 px-6 py-3.5 hover:border-phosphor-500 hover:text-phosphor-500 transition-colors">
+          Chapter index
         </a>
       </div>
     </div>
   </section>
 
-  <!-- ─── IMPLEMENTATION RATE BY CLASS ──────────────────────────────── -->
-  <section id="outcome" class="border-b border-night-50 bg-night-200">
-    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-24 md:py-32">
+  <!-- ─── LIVE DEMO ────────────────────────────────────────────────── -->
+  <section id="demo" class="border-b border-night-50 bg-night-200">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-16 md:py-20">
+      <div class="flex items-baseline justify-between mb-8 flex-wrap gap-3">
+        <div class="font-mono text-[11px] font-medium tracking-[0.22em] uppercase text-phosphor-500">
+          ◆ Live · sample of what AI flags
+        </div>
+        <div class="font-mono text-[10px] tracking-[0.18em] uppercase text-mist-400" id="demo-counter">01 / 04</div>
+      </div>
 
-      <div class="grid grid-cols-12 gap-12 items-end mb-16">
+      <div class="code-demo relative max-w-[920px]" id="code-demo">
+        <!-- header -->
+        <div class="flex items-center justify-between px-4 py-3 border-b border-night-50">
+          <div class="font-mono text-[11px] text-mist-200 truncate">
+            <span class="text-phosphor-500">PR</span> <span class="text-mist-400">·</span>
+            <span id="demo-file">packages/auth/login.ts</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-mono text-[10px] tracking-[0.18em] uppercase text-mist-200" id="demo-lang">typescript</span>
+            <span class="font-mono text-[10px] tracking-[0.18em] uppercase px-2 py-0.5" id="demo-severity"
+                  style="background: var(--color-phosphor-500); color: var(--color-night-200);">critical</span>
+          </div>
+        </div>
+
+        <!-- code -->
+        <div class="py-3 overflow-x-auto" id="demo-code"></div>
+
+        <!-- AI comment -->
+        <div class="ai-card mx-4 mb-4 border border-phosphor-500/40 bg-night-100 p-4" id="demo-ai">
+          <div class="flex items-baseline justify-between mb-2">
+            <span class="font-mono text-[10px] font-medium tracking-[0.22em] uppercase text-phosphor-500">▌ AI · review comment</span>
+            <span class="font-mono text-[10px] text-mist-400" id="demo-class">bug</span>
+          </div>
+          <p class="text-mist-200 text-[13.5px] leading-relaxed typing" id="demo-msg"></p>
+        </div>
+
+        <!-- Outcome stamp -->
+        <div class="flex items-center justify-between px-4 py-3 border-t border-night-50">
+          <div class="flex items-center gap-3 stamp-in" id="demo-outcome">
+            <span class="font-mono text-[10px] tracking-[0.22em] uppercase px-2 py-1"
+                  id="demo-stamp"
+                  style="background: oklch(45% 0.13 145 / 0.25); color: oklch(85% 0.15 145);">✓ applied</span>
+            <span class="font-mono text-[11px] text-mist-200" id="demo-meta">1 of every 6 lands like this</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── IMPLEMENTATION RATE BY CLASS ─────────────────────────────── -->
+  <section id="outcome" class="border-b border-night-50 bg-night-100">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-20 md:py-28">
+
+      <div class="grid grid-cols-12 gap-8 md:gap-12 items-end mb-12 md:mb-16">
         <div class="col-span-12 md:col-span-7">
           <div class="font-mono text-[12px] font-medium tracking-[0.22em] uppercase text-phosphor-500 mb-5">
             ◆ Implementation rate · by finding class
           </div>
-          <h2 class="font-display leading-[0.98] tracking-tight text-mist-50" style="font-size: clamp(2rem, 5vw, 4rem);">
+          <h2 class="font-display leading-[0.98] tracking-tight text-mist-50" style="font-size: clamp(2rem, 5vw, 4rem); overflow-wrap: anywhere;">
             <span class="italic phosphor">Bugs at 33%.</span><br/>
             <span class="text-mist-200">Custom rules at 30%.</span>
           </h2>
@@ -159,18 +171,18 @@ const langs = [
         </div>
       </div>
 
-      <div class="space-y-3">
+      <div class="space-y-3 md:space-y-2">
         {[
           { label: 'Performance',   pct: 36.7, n: '4,265',  href: '/bugs/',           blurb: 'Caching, query patterns, async/await abuse' },
           { label: 'Bugs',          pct: 32.8, n: '90,527', href: '/bugs/',           blurb: 'Null access, race conditions, schema mismatches' },
           { label: 'Custom rules',  pct: 29.8, n: '60,918', href: '/rules/',          blurb: 'What 610 teams codified as their own enforcement layer' },
           { label: 'Security',      pct: 28.8, n: '6,552',  href: '/vulnerabilities/',blurb: 'SQL injection, path traversal, prompt injection (new in 2026)' },
         ].map((row, i) => (
-          <a href={row.href} class="group block border-b border-night-50 py-6 hover:bg-night-100/40 transition-colors -mx-3 md:-mx-6 px-3 md:px-6">
-            <div class="grid grid-cols-12 gap-4 md:gap-6 items-baseline">
+          <a href={row.href} class="group block border-b border-night-50 py-5 md:py-6 hover:bg-night-200/40 transition-colors -mx-3 md:-mx-6 px-3 md:px-6">
+            <div class="grid grid-cols-12 gap-3 md:gap-6 items-baseline">
               <div class="col-span-12 md:col-span-3">
                 <div class="font-display text-mist-50 text-[24px] md:text-[28px] leading-none group-hover:text-phosphor-500 transition-colors">{row.label}</div>
-                <div class="font-mono text-[11px] tracking-[0.18em] uppercase text-mist-400 mt-2">{row.n} delivered</div>
+                <div class="font-mono text-[11px] font-medium tracking-[0.18em] uppercase text-mist-400 mt-2">{row.n} delivered</div>
               </div>
               <div class="col-span-8 md:col-span-6">
                 <div class="h-[3px] bg-night-50 relative">
@@ -181,7 +193,7 @@ const langs = [
               <div class="col-span-3 md:col-span-2 text-right">
                 <span class="font-display phosphor leading-none" style="font-size: clamp(2rem, 3.5vw, 3rem);">{row.pct}%</span>
               </div>
-              <div class="col-span-1 text-right font-mono text-[11px] text-mist-400 group-hover:text-phosphor-500 transition-colors">
+              <div class="col-span-1 text-right font-mono text-[12px] text-mist-400 group-hover:text-phosphor-500 transition-colors">
                 →
               </div>
             </div>
@@ -190,34 +202,34 @@ const langs = [
       </div>
 
       <p class="font-mono text-[11px] text-mist-400 mt-10 max-w-3xl">
-        Rate = (fully implemented + partially implemented) / delivered. Computed from the post-PR diff, full population, no opt-in feedback. Bar scales 0–50%.
+        Rate = (fully implemented + partially implemented) / delivered. Computed from the post-PR diff, full population. Bar scales 0–50%.
       </p>
     </div>
   </section>
 
   <!-- ─── CHAPTERS ─────────────────────────────────────────────────── -->
-  <section class="bg-night-100 border-b border-night-50">
-    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-24 md:py-32">
+  <section id="chapters" class="bg-night-200 border-b border-night-50">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-20 md:py-28">
 
-      <div class="flex items-baseline justify-between mb-16 flex-wrap gap-4">
+      <div class="flex items-baseline justify-between mb-12 md:mb-16 flex-wrap gap-4">
         <h2 class="font-display italic text-mist-50" style="font-size: clamp(2rem, 4vw, 3.25rem);">
-          Five chapters.
+          Four chapters.
         </h2>
-        <span class="font-mono text-[11px] tracking-[0.22em] uppercase text-mist-600">// 01–05</span>
+        <span class="font-mono text-[11px] font-medium tracking-[0.22em] uppercase text-mist-200">// 01–04</span>
       </div>
 
       <div class="grid grid-cols-1 gap-px bg-night-50">
         {chapters.map((c) => (
-          <a href={c.href} class="group glow-on-hover relative bg-night-100 border border-night-50 px-6 md:px-10 py-10 block">
-            <div class="grid grid-cols-12 gap-6 items-baseline">
-              <div class="col-span-2 md:col-span-1 font-mono text-mist-600 text-sm tracking-wider group-hover:text-phosphor-500 transition-colors">
+          <a href={c.href} class="group glow-on-hover relative bg-night-200 border border-night-50 px-6 md:px-10 py-8 md:py-10 block">
+            <div class="grid grid-cols-12 gap-4 md:gap-6 items-baseline">
+              <div class="col-span-2 md:col-span-1 font-mono text-mist-400 text-sm tracking-wider group-hover:text-phosphor-500 transition-colors">
                 {c.num}
               </div>
               <div class="col-span-10 md:col-span-6">
-                <div class="font-mono text-[11px] tracking-[0.22em] uppercase text-mist-600 mb-2 group-hover:text-phosphor-500 transition-colors">
+                <div class="font-mono text-[11px] font-medium tracking-[0.22em] uppercase text-mist-200 mb-2 group-hover:text-phosphor-500 transition-colors">
                   {c.eyebrow}
                 </div>
-                <h3 class="font-display tracking-tight leading-[1.05] text-mist-50 group-hover:text-phosphor-500 transition-colors" style="font-size: clamp(1.5rem, 2.4vw, 2.25rem);">
+                <h3 class="font-display tracking-tight leading-[1.05] text-mist-50 group-hover:text-phosphor-500 transition-colors" style="font-size: clamp(1.5rem, 2.4vw, 2.25rem); overflow-wrap: anywhere;">
                   {c.title}
                 </h3>
                 {c.tag && (
@@ -228,9 +240,9 @@ const langs = [
               </div>
               <div class="col-span-9 md:col-span-4 md:text-right md:pl-6">
                 <div class="font-display text-mist-50" style="font-size: clamp(1.5rem, 2.5vw, 2rem); line-height: 1;">{c.metric}</div>
-                <div class="font-mono text-[10px] tracking-[0.18em] uppercase text-mist-600 mt-1">{c.metricLabel}</div>
+                <div class="font-mono text-[10px] font-medium tracking-[0.18em] uppercase text-mist-400 mt-1">{c.metricLabel}</div>
               </div>
-              <div class="col-span-3 md:col-span-1 text-right font-mono text-mist-600 text-sm group-hover:text-phosphor-500 transition-colors">
+              <div class="col-span-3 md:col-span-1 text-right font-mono text-mist-400 text-sm group-hover:text-phosphor-500 transition-colors">
                 →
               </div>
             </div>
@@ -240,103 +252,96 @@ const langs = [
     </div>
   </section>
 
-  <!-- ─── LANGUAGE STRIP ────────────────────────────────────────────── -->
-  <section class="bg-night-200 border-b border-night-50">
-    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-24 md:py-32">
+  <!-- ─── LANGUAGE STRIP ───────────────────────────────────────────── -->
+  <section class="bg-night-100 border-b border-night-50">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-20 md:py-28">
 
-      <div class="grid grid-cols-12 gap-10 items-baseline mb-12">
+      <div class="grid grid-cols-12 gap-8 md:gap-10 items-baseline mb-12">
         <div class="col-span-12 md:col-span-8">
-          <div class="font-mono text-[11px] tracking-[0.22em] uppercase text-mist-600 mb-4">
+          <div class="font-mono text-[11px] font-medium tracking-[0.22em] uppercase text-phosphor-500 mb-4">
             ◆ Implementation rate · by language
           </div>
-          <h2 class="font-display leading-[1.0] tracking-tight text-mist-50" style="font-size: clamp(2rem, 4.5vw, 3.75rem);">
-            <span class="phosphor italic">Rust at 37%.</span>
-            <span class="text-mist-400">Java at 12.7%.</span>
+          <h2 class="font-display leading-[1.0] tracking-tight text-mist-50" style="font-size: clamp(2rem, 4.5vw, 3.75rem); overflow-wrap: anywhere;">
+            <span class="phosphor italic">Rust at 60%.</span>
+            <span class="text-mist-200">Kotlin at 29%.</span>
           </h2>
         </div>
         <div class="col-span-12 md:col-span-4">
-          <p class="text-mist-400 leading-[1.7] text-[14px]">
-            Compiled and strongly-typed languages cluster at the top. Verbose enterprise and config files at the bottom.
+          <p class="text-mist-200 leading-[1.65] text-[14px]">
+            Compiled and strongly-typed languages cluster at the top. The variance is real: a 30-point spread between Rust and Kotlin on the same engine.
           </p>
         </div>
       </div>
 
       <div class="grid grid-cols-1 gap-2">
         {langs.map((l) => (
-          <div class="grid grid-cols-12 gap-4 items-center py-2.5">
-            <div class="col-span-3 md:col-span-2 font-display text-mist-50 text-[18px]">{l.name}</div>
-            <div class="col-span-7 md:col-span-9">
+          <div class="grid grid-cols-12 gap-3 md:gap-4 items-center py-2">
+            <div class="col-span-3 md:col-span-2 font-display text-mist-50 text-[17px] md:text-[18px]">{l.name}</div>
+            <div class="col-span-6 md:col-span-8">
               <div class="relative h-px bg-night-50">
-                <div class="absolute inset-y-0 left-0 bar-grow" style={`background: var(--color-phosphor-500); width: ${(l.pct / 40) * 100}%; height: 1px;`}></div>
+                <div class="absolute inset-y-0 left-0 bar-grow" style={`background: var(--color-phosphor-500); width: ${(l.pct / 65) * 100}%; height: 1px;`}></div>
               </div>
             </div>
-            <div class="col-span-2 md:col-span-1 text-right font-mono text-phosphor-500 text-[13px]">{l.pct}%</div>
+            <div class="col-span-3 md:col-span-2 text-right">
+              <span class="font-mono text-phosphor-500 text-[13px] md:text-[14px]">{l.pct}%</span>
+              <span class="font-mono text-mist-400 text-[10px] ml-2 hidden md:inline">{l.n.toLocaleString()}</span>
+            </div>
           </div>
         ))}
       </div>
+
+      <p class="font-mono text-[10.5px] tracking-wide text-mist-400 mt-8">
+        Languages with ≥ 200 delivered suggestions and ≥ 5 distinct organizations. Bar scales 0–65%. Source: query 09.
+      </p>
     </div>
   </section>
 
-  <!-- ─── MODEL PROVOCATION ─────────────────────────────────────────── -->
-  <section class="bg-night-100 border-b border-night-50 relative overflow-hidden">
-    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-24 md:py-32 relative">
-      <div class="font-mono text-[11px] tracking-[0.22em] uppercase text-mist-600 mb-8">
-        ◆ Chapter 05 preview
+  <!-- ─── MODEL PROVOCATION ────────────────────────────────────────── -->
+  <section class="bg-night-200 border-b border-night-50">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-20 md:py-28">
+      <div class="font-mono text-[11px] font-medium tracking-[0.22em] uppercase text-phosphor-500 mb-6">
+        ◆ Chapter 04 preview
       </div>
-      <div class="grid grid-cols-12 gap-10 items-baseline">
+      <div class="grid grid-cols-12 gap-8 md:gap-12 items-start">
         <div class="col-span-12 md:col-span-7">
-          <h2 class="font-display leading-[0.95] tracking-tight text-mist-50" style="font-size: clamp(2.5rem, 6vw, 5.5rem);">
+          <h2 class="font-display leading-[0.95] tracking-tight text-mist-50" style="font-size: clamp(2rem, 5vw, 4.5rem); overflow-wrap: anywhere;">
             The model barely <span class="italic phosphor">matters.</span>
           </h2>
-          <p class="text-mist-400 leading-[1.65] text-[16px] mt-8 max-w-xl">
+          <p class="text-mist-200 leading-[1.65] text-[15px] md:text-[16px] mt-6 max-w-xl">
             79 teams running 5 providers and 20+ distinct models. Anthropic, Gemini and OpenAI all land within 4 percentage points of each other. What predicts higher rates is how the team tunes their prompts and review rules — not which API they call.
           </p>
-          <a href="/models/" class="font-mono text-[11px] tracking-[0.22em] uppercase text-phosphor-500 hover:text-phosphor-300 mt-10 inline-block">
-            Read chapter 05 →
+          <a href="/models/" class="font-mono text-[11px] font-medium tracking-[0.22em] uppercase text-phosphor-500 hover:text-phosphor-300 mt-10 inline-block">
+            Read chapter 04 →
           </a>
         </div>
         <div class="col-span-12 md:col-span-5">
           <div class="space-y-1">
-            <div class="grid grid-cols-3 gap-3 items-baseline py-3 border-b border-night-50">
-              <span class="font-mono text-[11px] text-mist-600 col-span-1">ANTHROPIC</span>
-              <div class="col-span-1 h-px bg-night-50 relative">
-                <div class="absolute inset-y-0 left-0 bar-grow" style="background: var(--color-phosphor-500); width: 84%; height: 1px;"></div>
+            {[
+              { name: 'ANTHROPIC',  pct: 21.2, w: 84 },
+              { name: 'GEMINI',     pct: 20.5, w: 82 },
+              { name: 'OPENAI',     pct: 17.8, w: 71 },
+              { name: 'SELF-HOST',  pct: 15.4, w: 62, dim: true },
+            ].map((p, i) => (
+              <div class="grid grid-cols-12 gap-3 items-baseline py-3 border-b border-night-50 last:border-b-0">
+                <span class="font-mono text-[11px] text-mist-200 col-span-3">{p.name}</span>
+                <div class="col-span-7 h-px bg-night-50 relative">
+                  <div class="absolute inset-y-0 left-0 bar-grow" style={`background: ${p.dim ? 'var(--color-mist-400)' : 'var(--color-phosphor-500)'}; width: ${p.w}%; height: 1px; animation-delay: ${i * 0.1}s;`}></div>
+                </div>
+                <span class={`font-display ${p.dim ? 'text-mist-400' : 'phosphor'} col-span-2 text-right`}>{p.pct}%</span>
               </div>
-              <span class="font-display phosphor text-right">21.2%</span>
-            </div>
-            <div class="grid grid-cols-3 gap-3 items-baseline py-3 border-b border-night-50">
-              <span class="font-mono text-[11px] text-mist-600 col-span-1">GEMINI</span>
-              <div class="col-span-1 h-px bg-night-50 relative">
-                <div class="absolute inset-y-0 left-0 bar-grow" style="background: var(--color-phosphor-500); width: 82%; height: 1px; animation-delay: 0.1s;"></div>
-              </div>
-              <span class="font-display phosphor text-right">20.5%</span>
-            </div>
-            <div class="grid grid-cols-3 gap-3 items-baseline py-3 border-b border-night-50">
-              <span class="font-mono text-[11px] text-mist-600 col-span-1">OPENAI</span>
-              <div class="col-span-1 h-px bg-night-50 relative">
-                <div class="absolute inset-y-0 left-0 bar-grow" style="background: var(--color-phosphor-500); width: 71%; height: 1px; animation-delay: 0.2s;"></div>
-              </div>
-              <span class="font-display phosphor text-right">17.8%</span>
-            </div>
-            <div class="grid grid-cols-3 gap-3 items-baseline py-3">
-              <span class="font-mono text-[11px] text-mist-600 col-span-1">SELF-HOST</span>
-              <div class="col-span-1 h-px bg-night-50 relative">
-                <div class="absolute inset-y-0 left-0 bar-grow" style="background: var(--color-mist-400); width: 62%; height: 1px; animation-delay: 0.3s;"></div>
-              </div>
-              <span class="font-display text-mist-400 text-right">15.4%</span>
-            </div>
+            ))}
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ─── CITATION ──────────────────────────────────────────────────── -->
+  <!-- ─── CITATION ─────────────────────────────────────────────────── -->
   <section class="bg-night-100">
-    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-20">
-      <div class="grid grid-cols-12 gap-10 items-end">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-16 md:py-20">
+      <div class="grid grid-cols-12 gap-8 md:gap-10 items-end">
         <div class="col-span-12 md:col-span-6">
-          <div class="font-mono text-[11px] tracking-[0.22em] uppercase text-mist-600 mb-4">// Cite this</div>
+          <div class="font-mono text-[11px] font-medium tracking-[0.22em] uppercase text-mist-200 mb-4">// Cite this</div>
           <h2 class="font-display italic text-mist-50" style="font-size: clamp(1.5rem, 2.5vw, 2rem);">
             Reuse with attribution.
           </h2>
@@ -345,17 +350,17 @@ const langs = [
           <pre class="font-mono text-[12px] leading-relaxed text-mist-200 bg-night-200 border-l-2 border-phosphor-500 p-5 overflow-x-auto">State of AI Code Review (2026-Q2).
 Research by Kodus.
 https://stateofcodereview.com</pre>
-          <div class="mt-5 flex gap-6 flex-wrap font-mono text-[11px] tracking-[0.22em] uppercase">
-            <a href="/methodology/" class="text-mist-400 hover:text-phosphor-500">→ Methodology</a>
-            <a href="https://github.com/kodustech/stateofcodereview.com" class="text-mist-400 hover:text-phosphor-500">→ GitHub repo</a>
-            <a href="https://creativecommons.org/licenses/by/4.0/" class="text-mist-400 hover:text-phosphor-500">→ CC BY 4.0</a>
+          <div class="mt-5 flex gap-6 flex-wrap font-mono text-[11px] font-medium tracking-[0.22em] uppercase">
+            <a href="/methodology/" class="text-mist-200 hover:text-phosphor-500">→ Methodology</a>
+            <a href="https://github.com/kodustech/stateofcodereview.com" class="text-mist-200 hover:text-phosphor-500">→ GitHub repo</a>
+            <a href="https://creativecommons.org/licenses/by/4.0/" class="text-mist-200 hover:text-phosphor-500">→ CC BY 4.0</a>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Contextual scripts: mouse glow · counter · live ticker · suggestion tick -->
+  <!-- Contextual scripts -->
   <script is:inline>
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -371,7 +376,7 @@ https://stateofcodereview.com</pre>
       }, { passive: true });
     }
 
-    // ─── Counter animation via rAF (ease-out cubic) ────────────────────
+    // ─── Counter animation via rAF ─────────────────────────────────────
     function animateCounter(el, target, duration) {
       if (reducedMotion) { el.textContent = String(target); return; }
       const start = performance.now();
@@ -383,7 +388,6 @@ https://stateofcodereview.com</pre>
       }
       requestAnimationFrame(tick);
     }
-
     const counters = document.querySelectorAll('[data-counter]');
     if (counters.length) {
       if ('IntersectionObserver' in window) {
@@ -405,7 +409,7 @@ https://stateofcodereview.com</pre>
       }
     }
 
-    // ─── Live code review demo · rotates through real-flavor examples ──
+    // ─── Live code review demo ─────────────────────────────────────────
     const demo = document.getElementById('code-demo');
     if (demo) {
       const examples = [
@@ -422,7 +426,7 @@ https://stateofcodereview.com</pre>
           ],
           msg: 'Missing null check on user. db.users.find returns null for unknown tokens, and user.session.id will throw at runtime.',
           stamp: '✓ applied', stampBg: 'oklch(45% 0.13 145 / 0.25)', stampColor: 'oklch(85% 0.15 145)',
-          meta: '17% of suggestions land like this',
+          meta: 'bug findings: 33% land like this',
         },
         {
           file: 'internal/sql/repo.go:87', lang: 'go', cls: 'security', sev: 'critical',
@@ -436,7 +440,7 @@ https://stateofcodereview.com</pre>
           ],
           msg: 'SQL injection: name is interpolated directly into the query. Use a parameterized query with $1 binding.',
           stamp: '✓ applied', stampBg: 'oklch(45% 0.13 145 / 0.25)', stampColor: 'oklch(85% 0.15 145)',
-          meta: 'security findings: 65% acceptance on critical',
+          meta: 'security: 65% acceptance on critical',
         },
         {
           file: 'api/users/handler.py:45', lang: 'python', cls: 'bug', sev: 'high',
@@ -482,8 +486,7 @@ https://stateofcodereview.com</pre>
       const idxEl   = document.getElementById('demo-counter');
 
       let idx = 0;
-
-      function typeMessage(text, el, speed = 18, done) {
+      function typeMessage(text, el, speed = 16, done) {
         el.textContent = '';
         el.classList.add('typing');
         if (reducedMotion) { el.textContent = text; el.classList.remove('typing'); if (done) done(); return; }
@@ -499,7 +502,6 @@ https://stateofcodereview.com</pre>
           }
         })();
       }
-
       function render(ex) {
         fileEl.textContent  = ex.file;
         langEl.textContent  = ex.lang;
@@ -509,7 +511,6 @@ https://stateofcodereview.com</pre>
         classEl.textContent = ex.cls;
         idxEl.textContent   = `${String(idx + 1).padStart(2, '0')} / ${String(examples.length).padStart(2, '0')}`;
 
-        // Code lines with stagger
         codeEl.innerHTML = '';
         ex.lines.forEach((ln, i) => {
           const span = document.createElement('span');
@@ -522,12 +523,10 @@ https://stateofcodereview.com</pre>
           codeEl.appendChild(span);
         });
 
-        // AI card replays animation
         aiEl.classList.remove('ai-card');
         void aiEl.offsetWidth;
         aiEl.classList.add('ai-card');
 
-        // Outcome stamp
         outcEl.classList.remove('stamp-in');
         void outcEl.offsetWidth;
         outcEl.classList.add('stamp-in');
@@ -536,27 +535,24 @@ https://stateofcodereview.com</pre>
         stampEl.style.color       = ex.stampColor;
         metaEl.textContent        = ex.meta;
 
-        // Type the AI message after lines have settled
         const linesDoneAt = ex.lines.length * 60 + 200;
         setTimeout(() => typeMessage(ex.msg, msgEl, 16), linesDoneAt);
       }
-
       function next() {
         render(examples[idx % examples.length]);
         idx++;
       }
       next();
       if (!reducedMotion) {
-        setInterval(next, 7800);
+        setInterval(next, 8500);
       }
     }
 
-    // ─── Live suggestion counter · subtle real-time feel ─────────────────
+    // ─── Live suggestion counter ──────────────────────────────────────
     const liveSuggestions = document.getElementById('live-suggestions');
     if (liveSuggestions && !reducedMotion) {
       let value = 162262;
       setInterval(() => {
-        // increment by 1-3 every ~4-9 seconds
         if (Math.random() > 0.5) {
           value += Math.floor(Math.random() * 3) + 1;
           liveSuggestions.textContent = value.toLocaleString('en-US');

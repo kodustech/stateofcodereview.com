@@ -56,6 +56,10 @@
 }
 
 @layer base {
+  html, body {
+    overflow-x: clip;
+    max-width: 100%;
+  }
   html {
     background: var(--color-paper-100);
     color: var(--color-ink-900);
