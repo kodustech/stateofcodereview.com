@@ -2,169 +2,307 @@
 import Layout from '../layouts/Layout.astro';
 
 const stats = [
-  { n: '17,773', label: 'AI suggestions analyzed' },
-  { n: '200',    label: 'Engineering organizations' },
-  { n: '639',    label: 'Repositories' },
-  { n: '103',    label: 'Programming languages' },
+  { n: '17,773', label: 'AI suggestions analyzed',   tone: 'oxblood' },
+  { n: '200',    label: 'Engineering organizations', tone: 'ochre'   },
+  { n: '639',    label: 'Repositories',              tone: 'moss'    },
+  { n: '103',    label: 'Programming languages',     tone: 'cobalt'  },
+];
+
+const funnel = [
+  { label: 'Raw AI suggestions',              pct: 100, width: 100, color: 'paper',   note: 'Everything the model wants to flag.' },
+  { label: 'Pass severity filter',            pct: 73,  width: 73,  color: 'paper',   note: 'AI dropped 27% as too minor to ship.' },
+  { label: 'Pass quantity cap',               pct: 61,  width: 61,  color: 'paper',   note: '12% dropped to avoid flooding the PR.' },
+  { label: 'Pass false-positive safeguard',   pct: 50,  width: 50,  color: 'oxblood', note: '11% dropped by FP heuristics.' },
+  { label: 'Actually related to the PR diff', pct: 42,  width: 42,  color: 'oxblood', note: '8% were tangential to the change.' },
+  { label: 'Survive clustering / dedup',      pct: 37,  width: 37,  color: 'oxblood', note: '5% dropped as duplicates.' },
+  { label: 'Delivered to the developer',      pct: 19,  width: 19,  color: 'ochre',   note: 'Roughly 19 of every 100 reach a human.' },
+  { label: 'Implemented or thumbed up',       pct: 18,  width: 18,  color: 'moss',    note: '94.7% acceptance among delivered.' },
 ];
 
 const chapters = [
-  {
-    num: '01',
-    eyebrow: 'Bugs',
-    title: 'The 10 bugs AI catches most in production code.',
-    abstract: 'Null access on optional fields, race conditions, schema drift, async/await abuse. Categorized from 14,560 accepted bug findings.',
-    href: '/bugs/',
-    plate: 'I',
-  },
-  {
-    num: '02',
-    eyebrow: 'Vulnerabilities',
-    title: 'The 2026 vulnerability landscape.',
-    abstract: 'SQL injection still leads. Prompt injection enters the top 10 as a new class. From 7,483 accepted security findings.',
-    href: '/vulnerabilities/',
-    plate: 'II',
-  },
-  {
-    num: '03',
-    eyebrow: 'Cross-file',
-    title: 'What AI catches that linters cannot.',
-    abstract: 'Logic duplicated across files, schema drift between modules, N+1 queries split between controller and view. From 1,852 cross-file findings.',
-    href: '/cross-file/',
-    plate: 'III',
-  },
-  {
-    num: '04',
-    eyebrow: 'Rules',
-    title: 'What 610 engineering teams codified as review standards.',
-    abstract: '7,276 codified rules from 610 organizations. A behavioral snapshot of what teams chose to enforce in 2026.',
-    href: '/rules/',
-    plate: 'IV',
-  },
+  { num: '01', plate: 'I',   eyebrow: 'Bugs',            title: 'The 10 bugs AI catches most.',                  abstract: '14,560 accepted bug findings, sorted into 10 named classes.',                     href: '/bugs/',           metric: '14,560', metricLabel: 'bug findings',      accent: 'oxblood' },
+  { num: '02', plate: 'II',  eyebrow: 'Vulnerabilities', title: 'The 2026 vulnerability landscape.',            abstract: '7,483 accepted security findings. Prompt injection enters the top 10.',            href: '/vulnerabilities/',metric: '7,483',  metricLabel: 'security findings', accent: 'ochre',   new: true },
+  { num: '03', plate: 'III', eyebrow: 'Cross-file',      title: 'What AI catches that linters cannot.',          abstract: '1,852 cross-file findings: DRY violations, schema drift, N+1.',                    href: '/cross-file/',     metric: '1,852',  metricLabel: 'cross-file findings', accent: 'cobalt' },
+  { num: '04', plate: 'IV',  eyebrow: 'Rules',           title: 'What 610 teams codified.',                      abstract: '7,276 review rules authored by real engineering teams.',                            href: '/rules/',          metric: '7,276',  metricLabel: 'codified rules',     accent: 'moss' },
+];
+
+const langs = [
+  { name: 'TypeScript', pct: 95.2, n: 8253 },
+  { name: 'Python',     pct: 97.9, n: 1199 },
+  { name: 'JavaScript', pct: 88.8, n: 1198 },
+  { name: 'C#',         pct: 94.2, n: 999  },
+  { name: 'Java',       pct: 95.5, n: 974  },
+  { name: 'PHP',        pct: 99.6, n: 827  },
+  { name: 'Ruby',       pct: 82.7, n: 567  },
+  { name: 'Go',         pct: 98.7, n: 530  },
+  { name: 'Rust',       pct: 98.6, n: 142  },
+  { name: 'Kotlin',     pct: 94.9, n: 118  },
 ];
 ---
 
 <Layout page="Frontispiece">
 
-  <section class="max-w-[1280px] mx-auto px-8 pt-16 md:pt-24 pb-12">
-    <div class="grid grid-cols-12 gap-8 items-start">
-      <div class="col-span-12 md:col-span-8">
-        <div class="tracked text-ink-500 reveal reveal-1">A field report · MMXXVI · Q2</div>
-        <h1 class="font-display leading-[0.95] tracking-tight text-ink-900 mt-6 reveal reveal-2"
-            style="font-size: clamp(3.5rem, 11vw, 9.5rem);">
-          A field report on
-          <span class="italic text-oxblood-500">AI code review.</span>
-        </h1>
-      </div>
-      <aside class="col-span-12 md:col-span-4 md:pt-12 reveal reveal-3">
-        <div class="border-l border-ink-900 pl-6">
-          <p class="text-ink-700 leading-[1.65] text-[17px]">
-            Public research on how AI code review actually performs when reviewing pull requests at scale. <span class="font-display italic text-ink-900">No benchmarks, no synthetic data.</span> Every finding is sourced from production code reviews shipped between September 2025 and May 2026.
+  <!-- HERO -->
+  <section class="border-b-2 border-ink-900 overflow-hidden relative">
+    <svg class="absolute inset-0 w-full h-full opacity-[0.06] pointer-events-none" aria-hidden="true">
+      <defs>
+        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" stroke-width="1" class="text-ink-900"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid)" />
+    </svg>
+
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 pt-12 md:pt-20 pb-16 relative">
+      <div class="grid grid-cols-12 gap-8 items-start">
+        <div class="col-span-12 md:col-span-8">
+          <div class="flex items-center gap-3 flex-wrap reveal reveal-1">
+            <span class="stamp text-oxblood-500">Field report</span>
+            <span class="tracked text-ink-500">MMXXVI · Q2</span>
+            <span class="tracked text-ink-500 hidden md:inline">· Snapshot frozen 2026-05-19</span>
+          </div>
+
+          <h1 class="font-display leading-[0.92] tracking-tight text-ink-900 mt-6 reveal reveal-2"
+              style="font-size: clamp(3.25rem, 10.5vw, 9rem);">
+            What AI code review<br/>
+            <span class="italic text-oxblood-500">actually catches.</span>
+          </h1>
+
+          <p class="text-ink-700 mt-8 max-w-2xl leading-[1.6] text-[18px] reveal reveal-3">
+            Public research on how AI code review performs at scale. Every finding sourced from production pull requests shipped between September 2025 and May 2026. No benchmarks. No synthetic data.
           </p>
-          <div class="tracked text-ink-500 mt-6">
-            <a href="/methodology/" class="hover:text-oxblood-500">↳ Read the methodology</a>
+
+          <div class="mt-10 flex flex-wrap gap-3 reveal reveal-4">
+            <a href="#funnel" class="tracked bg-ink-900 text-paper-50 px-5 py-3 hover:bg-oxblood-500 transition-colors">↓ See the funnel</a>
+            <a href="/bugs/" class="tracked text-ink-900 border border-ink-900 px-5 py-3 hover:bg-ink-900 hover:text-paper-50 transition-colors">Read chapter 01 →</a>
           </div>
         </div>
-      </aside>
+
+        <aside class="col-span-12 md:col-span-4 reveal reveal-3">
+          <div class="border-2 border-ink-900 bg-paper-200 p-6">
+            <div class="tracked text-oxblood-500 mb-3">At a glance</div>
+            <ul class="space-y-3 text-ink-900">
+              <li class="flex items-baseline justify-between border-b border-paper-400/60 pb-2"><span>AI suggestions</span>     <span class="font-mono font-medium">17,773</span></li>
+              <li class="flex items-baseline justify-between border-b border-paper-400/60 pb-2"><span>Organizations</span>     <span class="font-mono font-medium">200</span></li>
+              <li class="flex items-baseline justify-between border-b border-paper-400/60 pb-2"><span>Repositories</span>      <span class="font-mono font-medium">639</span></li>
+              <li class="flex items-baseline justify-between border-b border-paper-400/60 pb-2"><span>Languages</span>         <span class="font-mono font-medium">103</span></li>
+              <li class="flex items-baseline justify-between border-b border-paper-400/60 pb-2"><span>Acceptance rate</span>   <span class="font-mono font-medium text-moss-700">94.7%</span></li>
+              <li class="flex items-baseline justify-between"><span>Window</span><span class="font-mono text-xs">Sep'25 – May'26</span></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
     </div>
   </section>
 
-  <section class="border-y-2 border-ink-900 bg-paper-200 reveal reveal-4">
-    <div class="max-w-[1280px] mx-auto px-8">
-      <div class="grid grid-cols-2 md:grid-cols-4">
-        {stats.map((s, i) => (
-          <div class={`py-10 md:py-14 ${i < 3 ? 'md:border-r' : ''} ${i % 2 === 0 ? 'border-r' : ''} ${i < 2 ? 'border-b md:border-b-0' : ''} border-ink-900/30 ${i % 2 !== 0 ? 'md:pl-10' : ''} md:px-8 px-4 relative`}>
-            <div class="tracked text-ink-500 absolute top-3 left-4 md:left-8">No. {String(i + 1).padStart(2, '0')}</div>
-            <div class="font-display text-ink-900 leading-none mt-2" style="font-size: clamp(2.5rem, 6vw, 5rem);">
-              {s.n}
+  <!-- STAT STRIP -->
+  <section class="border-b-2 border-ink-900">
+    <div class="grid grid-cols-2 md:grid-cols-4 max-w-[1320px] mx-auto">
+      {stats.map((s, i) => (
+        <div class={`relative px-6 md:px-8 py-10 md:py-14 ${i < stats.length - 1 ? 'border-r border-ink-900/20' : ''} ${i < 2 ? 'border-b md:border-b-0 border-ink-900/20' : ''} group hover:bg-paper-200 transition-colors`}>
+          <span class={`absolute top-3 left-6 md:left-8 tracked ${s.tone === 'oxblood' ? 'text-oxblood-500' : s.tone === 'ochre' ? 'text-ochre-500' : s.tone === 'moss' ? 'text-moss-500' : 'text-cobalt-500'}`}>No. {String(i + 1).padStart(2, '0')}</span>
+          <div class="font-display text-ink-900 leading-none mt-3" style="font-size: clamp(2.5rem, 6.5vw, 5.5rem);">{s.n}</div>
+          <div class="tracked text-ink-700 mt-3">{s.label}</div>
+          <div class={`absolute left-0 right-0 bottom-0 h-1 ${s.tone === 'oxblood' ? 'bg-oxblood-500' : s.tone === 'ochre' ? 'bg-ochre-500' : s.tone === 'moss' ? 'bg-moss-500' : 'bg-cobalt-500'} scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500`}></div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- FUNNEL -->
+  <section id="funnel" class="dark-section border-b-2 border-ink-900">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-20 md:py-28">
+      <div class="grid grid-cols-12 gap-8 items-start mb-12">
+        <div class="col-span-12 md:col-span-7">
+          <div class="stamp text-ochre-300">The hidden funnel</div>
+          <h2 class="font-display leading-[1.0] tracking-tight text-paper-100 mt-5" style="font-size: clamp(2.5rem, 6vw, 5rem);">
+            Of every 100 raw suggestions,<br/>
+            <span class="italic text-ochre-300">only 19 reach the developer.</span>
+          </h2>
+        </div>
+        <div class="col-span-12 md:col-span-5 md:pt-10">
+          <p class="text-paper-300 leading-[1.65] text-[16px]">
+            The orchestration layer matters as much as the LLM. Severity gates, false-positive safeguards, quantity caps, code-diff relevance checks, and clustering deduplication prune the model's raw output before any comment lands on a PR.
+          </p>
+          <a href="https://github.com/kodustech/stateofcodereview.com/blob/main/methodology/queries/03-suggestion-funnel.sql" class="tracked text-ochre-300 hover:text-paper-100 inline-block mt-5">↳ SQL query 03</a>
+        </div>
+      </div>
+
+      <div class="space-y-2.5">
+        {funnel.map((step, i) => (
+          <div class="funnel-step grid grid-cols-12 gap-4 items-center group">
+            <div class="col-span-12 md:col-span-4 flex items-baseline gap-3">
+              <span class="font-mono text-paper-300 text-xs">{String(i + 1).padStart(2, '0')}</span>
+              <span class="text-paper-100 text-[15px]">{step.label}</span>
             </div>
-            <div class="tracked text-ink-700 mt-3">{s.label}</div>
+            <div class="col-span-9 md:col-span-6">
+              <div class="relative h-9 bg-ink-700/40">
+                <div
+                  class={`absolute inset-y-0 left-0 bar-grow ${step.color === 'oxblood' ? 'bg-oxblood-500' : step.color === 'ochre' ? 'bg-ochre-500' : step.color === 'moss' ? 'bg-moss-500' : 'bg-paper-300'}`}
+                  style={`width: ${step.width}%; animation-delay: ${0.15 + i * 0.07}s;`}
+                ></div>
+                <div class="absolute inset-0 flex items-center justify-end pr-3 font-mono text-[11px] text-paper-50/90">{step.pct}%</div>
+              </div>
+            </div>
+            <div class="col-span-3 md:col-span-2 text-right">
+              <span class="font-mono text-paper-300 text-[11px] hidden md:inline">{step.note}</span>
+            </div>
           </div>
         ))}
       </div>
-    </div>
-  </section>
 
-  <section class="max-w-[1280px] mx-auto px-8 py-24">
-    <div class="grid grid-cols-12 gap-8">
-      <div class="hidden md:block md:col-span-3">
-        <div class="tracked text-ink-500 sticky top-8">Editor's note</div>
-      </div>
-      <div class="col-span-12 md:col-span-7">
-        <p class="dropcap font-display text-[26px] md:text-[30px] leading-[1.35] text-ink-900">
-          Most reporting on AI code review measures the model. This report measures what the model produces, after the developer sees it and decides what to do. Every finding here comes from a human accepting or rejecting a real suggestion on a real pull request. The dataset is large enough to talk about classes, not anecdotes. Where a class is too small to publish, we say so.
-        </p>
-        <p class="text-ink-700 leading-[1.7] text-[17px] mt-8 max-w-prose">
-          Four chapters follow. The first names the ten bug classes AI catches most in production code. The second maps the 2026 vulnerability landscape, including the first appearance of prompt injection in our top ten. The third documents the cross-file findings that single-file linters cannot reach. The fourth, drawn from a separate dataset, records what 610 engineering teams have written down as their own review standards in 2026.
-        </p>
-      </div>
-      <div class="col-span-12 md:col-span-2">
-        <div class="margin-note border-l border-paper-400 pl-3 md:mt-2">
-          Filed under: code review, software quality, applied AI, security research, engineering culture.
+      <div class="mt-12 border-t border-paper-300/20 pt-8 grid grid-cols-12 gap-8">
+        <div class="col-span-12 md:col-span-5">
+          <p class="font-display italic text-ochre-300 leading-tight text-3xl">
+            "AI code review" is not just the model. It is everything that decides what reaches the human.
+          </p>
+        </div>
+        <div class="col-span-6 md:col-span-3">
+          <div class="tracked text-paper-300 mb-2">Compound rate</div>
+          <div class="font-display text-paper-100 text-5xl">~18 / 100</div>
+          <div class="text-paper-300 text-sm mt-2">raw suggestions become accepted code.</div>
+        </div>
+        <div class="col-span-6 md:col-span-4">
+          <div class="tracked text-paper-300 mb-2">Acceptance among delivered</div>
+          <div class="font-display text-moss-300 text-5xl">94.7%</div>
+          <div class="text-paper-300 text-sm mt-2">Implemented + thumbs-up of all delivered.</div>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="max-w-[1280px] mx-auto px-8 pb-24">
-    <div class="flex items-baseline justify-between border-b border-ink-900 pb-3 mb-12">
-      <h2 class="font-display italic text-ink-900" style="font-size: clamp(2rem, 4vw, 3rem);">Contents</h2>
-      <span class="tracked text-ink-500">Four chapters · Plates I — IV</span>
+  <!-- CHAPTERS -->
+  <section class="max-w-[1320px] mx-auto px-6 md:px-10 py-20 md:py-28">
+    <div class="flex items-baseline justify-between border-b-2 border-ink-900 pb-4 mb-12 flex-wrap gap-2">
+      <h2 class="font-display italic text-ink-900" style="font-size: clamp(2.25rem, 4.5vw, 3.5rem);">Four chapters.</h2>
+      <span class="tracked text-ink-500">Plates I – IV</span>
     </div>
 
-    <ol class="space-y-0">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       {chapters.map((c) => (
-        <li class="border-b border-paper-300 last:border-b-0">
-          <a href={c.href} class="block py-10 group">
-            <div class="grid grid-cols-12 gap-6 items-baseline">
-              <div class="col-span-2 md:col-span-1">
-                <div class="font-display italic text-oxblood-500 leading-none" style="font-size: clamp(2.5rem, 4vw, 3.75rem);">{c.num}</div>
-              </div>
-              <div class="col-span-10 md:col-span-7">
-                <div class="tracked text-ink-500 mb-3">Chapter {c.num} · {c.eyebrow}</div>
-                <h3 class="font-display text-ink-900 leading-[1.05] tracking-tight group-hover:text-oxblood-500 transition-colors" style="font-size: clamp(1.8rem, 3.5vw, 2.75rem);">{c.title}</h3>
-              </div>
-              <div class="col-span-12 md:col-span-3 md:pl-4">
-                <p class="text-ink-500 leading-[1.55] text-[14px]">{c.abstract}</p>
-              </div>
-              <div class="col-span-12 md:col-span-1 text-right">
-                <div class="tracked text-ink-300 group-hover:text-oxblood-500 transition-colors">Plate {c.plate} →</div>
+        <a href={c.href} class="group lift block border-2 border-ink-900 bg-paper-50 hover:bg-ink-950 hover:text-paper-100 p-8 md:p-10 relative">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <div class={`tracked ${c.accent === 'oxblood' ? 'text-oxblood-500 group-hover:text-oxblood-300' : c.accent === 'ochre' ? 'text-ochre-500 group-hover:text-ochre-300' : c.accent === 'cobalt' ? 'text-cobalt-500 group-hover:text-paper-300' : 'text-moss-500 group-hover:text-moss-300'}`}>Chapter {c.num} · {c.eyebrow}</div>
+              <div class="flex items-baseline gap-3 mt-2">
+                <div class="font-display italic leading-none" style="font-size: clamp(3rem, 5vw, 5rem);">{c.num}</div>
+                {c.new && <span class="pill pill-new pulse-mark">New in 2026</span>}
               </div>
             </div>
-          </a>
-        </li>
+            <div class="text-right">
+              <div class="font-display leading-none text-ink-900 group-hover:text-paper-100" style="font-size: clamp(1.75rem, 3vw, 2.5rem);">{c.metric}</div>
+              <div class="tracked-xs text-ink-500 group-hover:text-paper-300 mt-2">{c.metricLabel}</div>
+            </div>
+          </div>
+
+          <h3 class="font-display tracking-tight leading-[1.05] mt-8 text-ink-900 group-hover:text-paper-100 transition-colors" style="font-size: clamp(1.9rem, 3vw, 2.5rem);">{c.title}</h3>
+
+          <p class="text-ink-500 group-hover:text-paper-300 leading-[1.55] mt-4 text-[15px]">{c.abstract}</p>
+
+          <div class="flex items-center justify-between mt-10 pt-5 border-t border-ink-900/20 group-hover:border-paper-300/30">
+            <span class="tracked text-ink-500 group-hover:text-paper-300">Plate {c.plate}</span>
+            <span class="tracked text-ink-900 group-hover:text-ochre-300 transition-colors">Read chapter →</span>
+          </div>
+        </a>
       ))}
-    </ol>
+    </div>
   </section>
 
-  <section class="max-w-[1280px] mx-auto px-8 py-20 border-t border-ink-900">
-    <div class="grid grid-cols-12 gap-8">
-      <div class="col-span-12 md:col-span-4 border-r border-paper-300 md:pr-8">
-        <div class="tracked text-oxblood-500 mb-3">i. Methodology</div>
-        <p class="font-display italic text-2xl text-ink-900 leading-[1.25] mb-4">Real reviews. Filtered honestly. Privacy enforced.</p>
-        <p class="text-ink-700 leading-relaxed text-[15px]">
-          All data sourced from production code reviews of organizations using Kodus. Engine cutoff at 2025-09-01 excludes the deprecated label taxonomy. No slice with fewer than 50 suggestions is published.
-        </p>
-        <a href="/methodology/" class="tracked text-ink-500 hover:text-oxblood-500 mt-5 inline-block">↳ Read full methodology</a>
+  <!-- LANGUAGE LEADERBOARD -->
+  <section class="border-y-2 border-ink-900 bg-paper-200">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-20 md:py-28">
+      <div class="grid grid-cols-12 gap-8 items-start mb-12">
+        <div class="col-span-12 md:col-span-7">
+          <div class="stamp text-ink-900">Preview · Language acceptance</div>
+          <h2 class="font-display leading-[1.0] tracking-tight text-ink-900 mt-5" style="font-size: clamp(2.25rem, 5.5vw, 4.5rem);">
+            Developers implement <span class="italic text-oxblood-500">94.7%</span> of suggestions.<br/>
+            <span class="text-ink-700 italic">Even on Ruby.</span>
+          </h2>
+        </div>
+        <div class="col-span-12 md:col-span-5 md:pt-10">
+          <p class="text-ink-700 leading-[1.65] text-[16px]">
+            Across the modern engine, acceptance is uniformly high and barely varies by language. TypeScript dominates volume but the median across the top 10 sits around 95%. The remaining variance concentrates in a handful of languages where one or two large organizations skew the distribution.
+          </p>
+        </div>
       </div>
 
-      <div class="col-span-12 md:col-span-4 border-r border-paper-300 md:pr-8">
-        <div class="tracked text-oxblood-500 mb-3">ii. Reproducible</div>
-        <p class="font-display italic text-2xl text-ink-900 leading-[1.25] mb-4">Every chart, one SQL query, in the open.</p>
-        <p class="text-ink-700 leading-relaxed text-[15px]">
-          The full query set is committed to GitHub for inspection, replication, and academic citation. Each chapter links the queries that produced its figures.
-        </p>
-        <a href="https://github.com/kodustech/stateofcodereview.com" class="tracked text-ink-500 hover:text-oxblood-500 mt-5 inline-block">↳ Repository on GitHub</a>
+      <div class="grid grid-cols-1 gap-2.5">
+        {langs.map((l, i) => (
+          <div class="grid grid-cols-12 gap-3 items-center bg-paper-50 border border-ink-900/20 px-4 py-3 hover:border-ink-900 transition-colors">
+            <div class="col-span-1 font-mono text-xs text-ink-500">{String(i + 1).padStart(2, '0')}</div>
+            <div class="col-span-3 md:col-span-2 font-display text-[20px] text-ink-900">{l.name}</div>
+            <div class="col-span-6 md:col-span-7">
+              <div class="relative h-3 bg-paper-300">
+                <div
+                  class={`absolute inset-y-0 left-0 bar-grow ${l.pct >= 95 ? 'bg-moss-500' : l.pct >= 85 ? 'bg-ochre-500' : 'bg-oxblood-500'}`}
+                  style={`width: ${l.pct}%; animation-delay: ${0.1 + i * 0.05}s;`}
+                ></div>
+              </div>
+            </div>
+            <div class="col-span-2 md:col-span-1 text-right font-mono text-sm text-ink-900">{l.pct.toFixed(1)}%</div>
+            <div class="hidden md:block md:col-span-1 text-right font-mono text-xs text-ink-500">{l.n.toLocaleString()}</div>
+          </div>
+        ))}
       </div>
 
-      <div class="col-span-12 md:col-span-4">
-        <div class="tracked text-oxblood-500 mb-3">iii. Refreshed quarterly</div>
-        <p class="font-display italic text-2xl text-ink-900 leading-[1.25] mb-4">Snapshots stay immutable. Citations never break.</p>
-        <p class="text-ink-700 leading-relaxed text-[15px]">
-          Each quarter adds a new snapshot folder; the published one stays frozen. Subsequent issues compare like with like across time.
-        </p>
-        <p class="tracked text-ink-500 mt-5">Next issue · 2026-Q3 · August</p>
+      <div class="flex flex-wrap items-center gap-4 mt-6 text-[12px] text-ink-500">
+        <span class="flex items-center gap-2"><span class="inline-block w-3 h-3 bg-moss-500"></span> ≥ 95%</span>
+        <span class="flex items-center gap-2"><span class="inline-block w-3 h-3 bg-ochre-500"></span> 85–95%</span>
+        <span class="flex items-center gap-2"><span class="inline-block w-3 h-3 bg-oxblood-500"></span> &lt; 85%</span>
+        <span class="ml-auto tracked">Source · Query 02</span>
       </div>
+    </div>
+  </section>
+
+  <!-- WHAT'S NEW IN 2026 -->
+  <section class="dark-section border-b-2 border-ink-900">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-20 md:py-28">
+      <div class="grid grid-cols-12 gap-8 items-center">
+        <div class="col-span-12 md:col-span-5">
+          <div class="stamp text-ochre-300">New in 2026</div>
+          <h2 class="font-display tracking-tight leading-[0.95] text-paper-100 mt-5" style="font-size: clamp(2.75rem, 6.5vw, 5.5rem);">
+            <span class="italic text-ochre-300">Prompt injection</span> enters the top 10.
+          </h2>
+          <p class="text-paper-300 leading-[1.65] text-[16px] mt-6">
+            User-controlled strings concatenated into system prompts. Structurally similar to SQL injection from twenty years ago, freshly relevant as more production code paths route through LLMs.
+          </p>
+          <a href="/vulnerabilities/" class="tracked text-ochre-300 hover:text-paper-100 mt-6 inline-block">↳ Read the vulnerability landscape</a>
+        </div>
+        <div class="col-span-12 md:col-span-7">
+          <div class="border-2 border-paper-100/20 p-8 bg-ink-900 relative">
+            <div class="tracked text-paper-300 mb-3">Excerpt · review comment, accepted</div>
+            <p class="font-mono text-paper-100 leading-[1.7] text-[13px]">
+              "el prompt del sistema concatena directamente datos potencialmente controlados por el usuario sin ningun tipo de delimitador o instruccion de saneamiento. esto crea una vulnerabilidad de inyeccion de prompt."
+            </p>
+            <div class="mt-6 flex items-center gap-3 flex-wrap">
+              <span class="pill pill-critical">Critical</span>
+              <span class="pill pill-new pulse-mark">New class · 2026</span>
+              <span class="tracked-xs text-paper-300">Language · Python</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THREE PILLARS -->
+  <section class="max-w-[1320px] mx-auto px-6 md:px-10 py-20">
+    <div class="grid grid-cols-12 gap-6">
+      {[
+        { num: 'i',   eyebrow: 'Methodology',         title: 'Real reviews. Filtered honestly.',     body: 'Engine cutoff at 2025-09-01. No slice with fewer than 50 suggestions is published. Organizations are never identified.', cta: 'Read full methodology', href: '/methodology/' },
+        { num: 'ii',  eyebrow: 'Reproducible',         title: 'Every chart is one SQL query.',         body: 'The full query set is committed to GitHub for inspection, replication, and academic citation.',                          cta: 'Repository on GitHub',  href: 'https://github.com/kodustech/stateofcodereview.com' },
+        { num: 'iii', eyebrow: 'Refreshed quarterly',  title: 'Snapshots stay immutable.',             body: 'Each quarter adds a new snapshot folder; the published one stays frozen. Citations never break.',                       cta: 'Next issue · 2026-Q3',  href: '/methodology/' },
+      ].map((p) => (
+        <div class="col-span-12 md:col-span-4 border border-ink-900 bg-paper-50 p-7 hover:bg-ink-950 hover:text-paper-100 group lift">
+          <div class="flex items-baseline gap-3">
+            <span class="font-display italic text-oxblood-500 group-hover:text-ochre-300 text-3xl leading-none">{p.num}.</span>
+            <span class="tracked text-ink-500 group-hover:text-paper-300">{p.eyebrow}</span>
+          </div>
+          <p class="font-display italic text-2xl text-ink-900 group-hover:text-paper-100 leading-[1.2] mt-4">{p.title}</p>
+          <p class="text-ink-700 group-hover:text-paper-300 leading-relaxed text-[15px] mt-4">{p.body}</p>
+          <a href={p.href} class="tracked text-ink-500 group-hover:text-ochre-300 mt-5 inline-block">↳ {p.cta}</a>
+        </div>
+      ))}
     </div>
   </section>
 </Layout>

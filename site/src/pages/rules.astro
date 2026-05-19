@@ -2,106 +2,160 @@
 import Layout from '../layouts/Layout.astro';
 
 const topRules = [
-  { rank: 1, title: 'Write a clear, scoped PR title', orgs: 45 },
-  { rank: 2, title: 'Always sanitize user inputs', orgs: 36 },
-  { rank: 3, title: 'Prohibit hardcoded secrets', orgs: 30 },
-  { rank: 4, title: 'Avoid using eval', orgs: 29 },
-  { rank: 5, title: 'Always validate JSON parsing', orgs: 27 },
-  { rank: 6, title: 'Avoid equality operators in loop termination conditions', orgs: 27 },
-  { rank: 7, title: 'Prevent SQL injection in queries', orgs: 25 },
-  { rank: 8, title: 'Enforce TypeScript strict mode', orgs: 25 },
-  { rank: 9, title: 'Mark unchanged variables as const', orgs: 24 },
-  { rank: 10, title: 'Avoid asynchronous operations in constructors', orgs: 24 },
-  { rank: 11, title: 'Prevent hardcoded secrets', orgs: 24 },
-  { rank: 12, title: 'Ensure React list keys are stable between renders', orgs: 22 },
-  { rank: 13, title: 'Enforce strict TypeScript configuration', orgs: 22 },
-  { rank: 14, title: 'Do not nest React components', orgs: 21 },
-  { rank: 15, title: 'Do not export mutable variables', orgs: 20 },
-  { rank: 16, title: 'Do not ignore exceptions', orgs: 19 },
-  { rank: 17, title: 'Avoid building system commands from user input', orgs: 18 },
-  { rank: 18, title: 'React children should not be passed as props', orgs: 18 },
-  { rank: 19, title: 'Prevent open redirect vulnerabilities in DOM updates', orgs: 17 },
-  { rank: 20, title: 'Prevent SQL injection via string concatenation', orgs: 16 },
+  { rank: 1,  title: 'Write a clear, scoped PR title',                       orgs: 45, cat: 'process' },
+  { rank: 2,  title: 'Always sanitize user inputs',                          orgs: 36, cat: 'security' },
+  { rank: 3,  title: 'Prohibit hardcoded secrets',                           orgs: 30, cat: 'security' },
+  { rank: 4,  title: 'Avoid using eval',                                     orgs: 29, cat: 'security' },
+  { rank: 5,  title: 'Always validate JSON parsing',                         orgs: 27, cat: 'reliability' },
+  { rank: 6,  title: 'Avoid equality operators in loop termination',         orgs: 27, cat: 'correctness' },
+  { rank: 7,  title: 'Prevent SQL injection in queries',                     orgs: 25, cat: 'security' },
+  { rank: 8,  title: 'Enforce TypeScript strict mode',                       orgs: 25, cat: 'types' },
+  { rank: 9,  title: 'Mark unchanged variables as const',                    orgs: 24, cat: 'correctness' },
+  { rank: 10, title: 'Avoid asynchronous operations in constructors',        orgs: 24, cat: 'correctness' },
+  { rank: 11, title: 'Prevent hardcoded secrets',                            orgs: 24, cat: 'security' },
+  { rank: 12, title: 'Ensure React list keys are stable between renders',    orgs: 22, cat: 'framework' },
+  { rank: 13, title: 'Enforce strict TypeScript configuration',              orgs: 22, cat: 'types' },
+  { rank: 14, title: 'Do not nest React components',                         orgs: 21, cat: 'framework' },
+  { rank: 15, title: 'Do not export mutable variables',                      orgs: 20, cat: 'correctness' },
+  { rank: 16, title: 'Do not ignore exceptions',                             orgs: 19, cat: 'reliability' },
+  { rank: 17, title: 'Avoid building system commands from user input',       orgs: 18, cat: 'security' },
+  { rank: 18, title: 'React children should not be passed as props',         orgs: 18, cat: 'framework' },
+  { rank: 19, title: 'Prevent open redirect vulnerabilities in DOM updates', orgs: 17, cat: 'security' },
+  { rank: 20, title: 'Prevent SQL injection via string concatenation',       orgs: 16, cat: 'security' },
 ];
 
+const catTone: Record<string, string> = {
+  security:    'oxblood',
+  correctness: 'ochre',
+  reliability: 'moss',
+  types:       'cobalt',
+  framework:   'ink',
+  process:     'paper-400',
+};
+
 const maxOrgs = Math.max(...topRules.map((r) => r.orgs));
+
+// Category counts for legend
+const catCounts = topRules.reduce<Record<string, number>>((acc, r) => {
+  acc[r.cat] = (acc[r.cat] || 0) + 1;
+  return acc;
+}, {});
 ---
 
 <Layout
   title="What 610 engineering teams codified · State of AI Code Review"
-  description="7,276 codified review rules from 610 organizations. The top 20 rules adopted across distinct teams: a behavioral snapshot of what engineering teams chose to enforce in 2026."
+  description="7,276 codified review rules from 610 organizations. The top 20 rules adopted across distinct teams."
   runningHead="§ 04 Rules"
   page="Plate IV"
 >
 
-  <section class="max-w-[1280px] mx-auto px-8 pt-16 md:pt-20 pb-12">
-    <div class="grid grid-cols-12 gap-8 items-start">
-      <div class="col-span-12 md:col-span-2">
-        <div class="font-display italic text-oxblood-500 leading-none reveal reveal-1" style="font-size: clamp(5rem, 8vw, 7.5rem);">IV</div>
-        <div class="tracked text-ink-500 mt-3 reveal reveal-1">Plate IV</div>
-      </div>
-      <div class="col-span-12 md:col-span-7">
-        <div class="tracked text-ink-500 mb-4 reveal reveal-2">Chapter § 04 · Rules</div>
-        <h1 class="font-display leading-[0.98] tracking-tight text-ink-900 reveal reveal-2" style="font-size: clamp(3rem, 6.5vw, 5.5rem);">
-          What 610 engineering teams <span class="italic">codified.</span>
-        </h1>
-      </div>
-      <aside class="col-span-12 md:col-span-3 md:pt-8 reveal reveal-3">
-        <div class="border-l border-ink-900 pl-5">
-          <p class="text-ink-700 leading-[1.6] text-[15px]">
-            Teams using Kodus can write custom review rules that supplement the model's defaults. 610 organizations have authored 7,276 rules between them. Median 11.9 rules per organization. The largest rule library contains 328 rules.
-          </p>
+  <!-- HERO -->
+  <section class="border-b-2 border-ink-900">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 pt-16 md:pt-20 pb-16">
+      <div class="grid grid-cols-12 gap-8 items-start">
+        <div class="col-span-12 md:col-span-2">
+          <div class="font-display italic text-oxblood-500 leading-[0.85] reveal reveal-1" style="font-size: clamp(6rem, 12vw, 11rem);">IV</div>
+          <div class="tracked text-ink-500 mt-2 reveal reveal-1">Plate IV</div>
         </div>
-      </aside>
+        <div class="col-span-12 md:col-span-7">
+          <div class="stamp text-oxblood-500 reveal reveal-2">Chapter § 04 · Rules</div>
+          <h1 class="font-display leading-[0.95] tracking-tight text-ink-900 mt-5 reveal reveal-2" style="font-size: clamp(2.75rem, 7vw, 6rem);">
+            What 610 engineering teams<br/><span class="italic">codified.</span>
+          </h1>
+        </div>
+        <aside class="col-span-12 md:col-span-3 md:pt-6 reveal reveal-3">
+          <div class="border-2 border-ink-900 bg-paper-200 p-5">
+            <div class="tracked text-oxblood-500 mb-3">At a glance</div>
+            <ul class="space-y-2 text-ink-900">
+              <li class="flex items-baseline justify-between border-b border-paper-400/60 pb-1">
+                <span class="text-sm">Total rules</span>
+                <span class="font-mono text-sm">7,276</span>
+              </li>
+              <li class="flex items-baseline justify-between border-b border-paper-400/60 pb-1">
+                <span class="text-sm">Organizations</span>
+                <span class="font-mono text-sm">610</span>
+              </li>
+              <li class="flex items-baseline justify-between border-b border-paper-400/60 pb-1">
+                <span class="text-sm">Median per org</span>
+                <span class="font-mono text-sm">11.9</span>
+              </li>
+              <li class="flex items-baseline justify-between">
+                <span class="text-sm">Largest library</span>
+                <span class="font-mono text-sm">328</span>
+              </li>
+            </ul>
+          </div>
+        </aside>
+      </div>
     </div>
   </section>
 
-  <!-- Summary metrics -->
-  <section class="border-y border-ink-900 bg-paper-200 reveal reveal-4">
-    <div class="max-w-[1280px] mx-auto px-8 grid grid-cols-2 md:grid-cols-4">
-      <div class="py-10 md:py-12 px-4 md:px-8 border-r border-ink-900/30 relative">
-        <div class="tracked text-ink-500 absolute top-3 left-4 md:left-8">i</div>
-        <div class="font-display text-ink-900 leading-none mt-2" style="font-size: clamp(2.5rem, 5vw, 4rem);">7,276</div>
-        <div class="tracked text-ink-700 mt-3">Total codified rules</div>
-      </div>
-      <div class="py-10 md:py-12 px-4 md:px-8 md:border-r border-ink-900/30 relative">
-        <div class="tracked text-ink-500 absolute top-3 left-4 md:left-8">ii</div>
-        <div class="font-display text-ink-900 leading-none mt-2" style="font-size: clamp(2.5rem, 5vw, 4rem);">610</div>
-        <div class="tracked text-ink-700 mt-3">Organizations</div>
-      </div>
-      <div class="py-10 md:py-12 px-4 md:px-8 border-r border-ink-900/30 relative border-t md:border-t-0">
-        <div class="tracked text-ink-500 absolute top-3 left-4 md:left-8">iii</div>
-        <div class="font-display text-ink-900 leading-none mt-2" style="font-size: clamp(2.5rem, 5vw, 4rem);">11.9</div>
-        <div class="tracked text-ink-700 mt-3">Median rules per org</div>
-      </div>
-      <div class="py-10 md:py-12 px-4 md:px-8 relative border-t md:border-t-0">
-        <div class="tracked text-ink-500 absolute top-3 left-4 md:left-8">iv</div>
-        <div class="font-display text-ink-900 leading-none mt-2" style="font-size: clamp(2.5rem, 5vw, 4rem);">328</div>
-        <div class="tracked text-ink-700 mt-3">Largest library</div>
-      </div>
+  <!-- STAT STRIP -->
+  <section class="border-b-2 border-ink-900 bg-paper-200">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 grid grid-cols-2 md:grid-cols-4">
+      {[
+        { tone: 'oxblood', n: '7,276', l: 'Total codified rules' },
+        { tone: 'ochre',   n: '610',   l: 'Organizations' },
+        { tone: 'moss',    n: '11.9',  l: 'Median rules per org' },
+        { tone: 'cobalt',  n: '328',   l: 'Largest library' },
+      ].map((s, i) => (
+        <div class={`relative px-6 md:px-8 py-10 md:py-14 ${i < 3 ? 'md:border-r' : ''} ${i % 2 === 0 ? 'border-r' : ''} ${i < 2 ? 'border-b md:border-b-0' : ''} border-ink-900/20 group`}>
+          <span class={`absolute top-3 left-6 md:left-8 tracked text-${s.tone}-500`}>{['i','ii','iii','iv'][i]}</span>
+          <div class="font-display text-ink-900 leading-none mt-3" style="font-size: clamp(2.5rem, 6vw, 5rem);">{s.n}</div>
+          <div class="tracked text-ink-700 mt-3">{s.l}</div>
+        </div>
+      ))}
     </div>
   </section>
 
-  <!-- Ranked table styled as encyclopedia entry -->
-  <section class="max-w-[1280px] mx-auto px-8 py-20">
+  <!-- LEGEND -->
+  <section class="border-b border-ink-900/20 bg-paper-50">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-4 flex flex-wrap items-center gap-4 text-[12px] text-ink-500">
+      <span class="tracked">Categories</span>
+      {Object.entries(catCounts).map(([k, v]) => {
+        const tone = catTone[k];
+        return (
+          <span class="flex items-center gap-2">
+            <span class={`inline-block w-3 h-3 ${tone === 'oxblood' ? 'bg-oxblood-500' : tone === 'ochre' ? 'bg-ochre-500' : tone === 'moss' ? 'bg-moss-500' : tone === 'cobalt' ? 'bg-cobalt-500' : tone === 'ink' ? 'bg-ink-900' : 'bg-paper-400'}`}></span>
+            <span class="capitalize">{k}</span>
+            <span class="font-mono text-ink-300">{v}</span>
+          </span>
+        );
+      })}
+      <span class="ml-auto tracked">Bar · orgs adopting the rule</span>
+    </div>
+  </section>
+
+  <!-- BAR CHART TABLE -->
+  <section class="max-w-[1320px] mx-auto px-6 md:px-10 py-16">
     <div class="flex items-baseline justify-between border-b-2 border-ink-900 pb-3 mb-2">
-      <h2 class="font-display italic text-ink-900" style="font-size: clamp(1.75rem, 3vw, 2.5rem);">The Common List</h2>
+      <h2 class="font-display italic text-ink-900" style="font-size: clamp(1.75rem, 3vw, 2.5rem);">The Common List.</h2>
       <span class="tracked text-ink-500">Top 20 by distinct organization count</span>
     </div>
 
     <div>
       {topRules.map((r) => {
         const pct = (r.orgs / maxOrgs) * 100;
+        const tone = catTone[r.cat];
+        const barClass =
+          tone === 'oxblood' ? 'bg-oxblood-500' :
+          tone === 'ochre'   ? 'bg-ochre-500'   :
+          tone === 'moss'    ? 'bg-moss-500'    :
+          tone === 'cobalt'  ? 'bg-cobalt-500'  :
+          tone === 'ink'     ? 'bg-ink-900'     : 'bg-paper-400';
         return (
-          <div class="grid grid-cols-12 gap-4 items-center py-4 border-b border-paper-300 group hover:bg-paper-200/60 transition-colors">
-            <div class="col-span-1 font-mono text-sm text-ink-300">{String(r.rank).padStart(2, '0')}</div>
-            <div class="col-span-7 md:col-span-6 font-display text-ink-900 text-[18px] md:text-[20px] leading-snug group-hover:text-oxblood-700 transition-colors">{r.title}</div>
-            <div class="hidden md:block md:col-span-4">
-              <div class="h-[6px] bg-paper-300 relative">
-                <div class="absolute inset-y-0 left-0 bg-oxblood-500" style={`width: ${pct}%`}></div>
+          <div class="grid grid-cols-12 gap-3 md:gap-4 items-center py-3.5 border-b border-paper-300 group hover:bg-paper-200/70 transition-colors">
+            <div class="col-span-1 font-mono text-[12px] text-ink-300">{String(r.rank).padStart(2, '0')}</div>
+            <div class="col-span-11 md:col-span-5 font-display text-ink-900 text-[17px] md:text-[19px] leading-snug group-hover:text-oxblood-700 transition-colors">{r.title}</div>
+            <div class="col-span-7 md:col-span-4">
+              <div class="h-[8px] bg-paper-300 relative">
+                <div class={`absolute inset-y-0 left-0 ${barClass} bar-grow`} style={`width: ${pct}%; animation-delay: ${0.05 + r.rank * 0.025}s;`}></div>
               </div>
             </div>
-            <div class="col-span-4 md:col-span-1 text-right font-mono text-sm text-ink-700">
+            <div class="col-span-3 md:col-span-1 text-right">
+              <span class={`pill ${tone === 'oxblood' ? 'pill-critical' : tone === 'ochre' ? 'pill-high' : ''}`} style={tone !== 'oxblood' && tone !== 'ochre' ? `background: var(--color-${tone}-500); color: var(--color-paper-50);` : ''}>{r.cat}</span>
+            </div>
+            <div class="col-span-2 md:col-span-1 text-right font-mono text-sm text-ink-900">
               {r.orgs}<span class="text-ink-300"> orgs</span>
             </div>
           </div>
@@ -110,15 +164,18 @@ const maxOrgs = Math.max(...topRules.map((r) => r.orgs));
     </div>
   </section>
 
-  <section class="max-w-[1280px] mx-auto px-8 pb-20">
-    <div class="grid grid-cols-12 gap-8">
-      <div class="col-span-12 md:col-span-3">
-        <div class="tracked text-ink-500">What this measures</div>
-      </div>
-      <div class="col-span-12 md:col-span-9">
-        <p class="font-display italic text-ink-700 leading-[1.45] text-2xl">
-          Each row is a rule title that appears verbatim or near-verbatim in at least three distinct organizations. Counts represent distinct organizations, not total rule instances. A team that copies the same rule twice still counts once. Rules with organization count below three are excluded as not yet a pattern.
-        </p>
+  <!-- CLOSER -->
+  <section class="border-t-2 border-ink-900 dark-section">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-20">
+      <div class="grid grid-cols-12 gap-8 items-start">
+        <div class="col-span-12 md:col-span-3">
+          <div class="tracked text-ochre-300">What this measures</div>
+        </div>
+        <div class="col-span-12 md:col-span-9">
+          <p class="font-display italic text-paper-100 leading-[1.35]" style="font-size: clamp(1.5rem, 2.4vw, 2.25rem);">
+            Each row is a rule title that appears verbatim or near-verbatim in at least three distinct organizations. Counts represent distinct organizations, not total rule instances. A team that copies the same rule twice still counts once.
+          </p>
+        </div>
       </div>
     </div>
   </section>

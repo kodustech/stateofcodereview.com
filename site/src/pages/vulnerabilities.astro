@@ -2,19 +2,21 @@
 import Layout from '../layouts/Layout.astro';
 
 const vulns = [
-  { n: '01', title: 'SQL injection', note: 'Still the most common class in 2026.', sample: 'fmt.sprintf to directly embed user-controllable string variables into sql queries creating critical sql injection vulnerabilities' },
-  { n: '02', title: 'Path traversal', note: 'Often via unsanitized URL parameters used to construct file paths.', sample: 'path traversal vulnerability in resolvepath. the function allows absolute paths (e.g. etc passwd) to be used directly completely bypassing the repository directory jail' },
-  { n: '03', title: 'Missing authorization', note: 'Endpoints without permission checks, or routers that lost their auth dependency during a refactor.', sample: 'the authorization dependencies have been removed from the api_keys clients and marketplace routers. previously these routers were protected by depends(require_scopes(...))' },
-  { n: '04', title: 'XSS via unescaped attributes', note: 'User-controlled values written into HTML attributes without escaping.', sample: 'html for the tooltips concatenando diretamente valores lidos de atributos data- em um atributo title sem qualquer tipo de sanitizacao' },
-  { n: '05', title: 'SSRF', note: 'URL parameters fed directly into outbound HTTP requests, allowing attackers to reach internal services.', sample: 'the getmerchantid function is vulnerable to server-side request forgery (ssrf). it directly uses the link parameter which can be controlled by a user in an axios.get call without validation' },
-  { n: '06', title: 'Hardcoded secrets in source', note: 'Tokens, API keys, and access credentials committed alongside code.', sample: 'hardcoding the cf-access-client-id and cf-access-client-secret directly into the source code is a critical security vulnerability. these credentials will be committed to the version control history permanently' },
-  { n: '07', title: 'Open redirect', note: 'Redirect helpers that block obvious schemes but miss protocol-relative URLs.', sample: 'the safe_return_to_path method is vulnerable to open redirection. it correctly blocks schemes like http and javascript but it allows protocol-relative urls such as evil.com' },
-  { n: '08', title: 'Sensitive data exposure in logs', note: 'Raw error objects, internal IDs, or full request payloads logged for debugging and never sanitized.', sample: 'the error message in banking.ts (lines 166-169) leaks internal workspaceid when a transaction is found but does not belong to the requesting store. this information leak allows verifying the existence of settlements' },
-  { n: '09', title: 'Prompt injection', isNew: true, note: 'New top-10 entrant in 2026. System prompts that concatenate user-controlled strings without delimiters or sanitization.', sample: 'el prompt del sistema concatena directamente datos potencialmente controlados por el usuario sin ningun tipo de delimitador o instruccion de saneamiento. esto crea una vulnerabilidad de inyeccion de prompt' },
-  { n: '10', title: 'Default credentials', note: 'Services deployed with well-known default usernames and passwords.', sample: 'the rabbitmq service is configured with the default well-known credentials guest guest. this is a significant security risk. the guest user is intended for local development' },
-  { n: '11', title: 'Command injection', note: 'User input passed unsanitized into shell commands.', sample: 'the basebranch parameter is used directly in a shell command without sanitization creating a command injection vulnerability. an attacker who can control the value can execute arbitrary commands' },
-  { n: '12', title: 'PostMessage origin not validated', note: 'Window message listeners that process events from any origin.', sample: 'the message event listener is missing a crucial security check to validate the origin of the incoming event. without verifying event.origin the application will process messages sent from any website' },
+  { n: '01', title: 'SQL injection',                  severity: 'critical', note: 'Still the most common class in 2026.', sample: 'fmt.sprintf to directly embed user-controllable string variables into sql queries creating critical sql injection vulnerabilities' },
+  { n: '02', title: 'Path traversal',                  severity: 'critical', note: 'Unsanitized URL parameters used to construct file paths.', sample: 'path traversal vulnerability in resolvepath. the function allows absolute paths (e.g. etc passwd) to be used directly completely bypassing the repository directory jail' },
+  { n: '03', title: 'Missing authorization',           severity: 'critical', note: 'Endpoints without permission checks, or routers that lost auth during a refactor.', sample: 'the authorization dependencies have been removed from the api_keys clients and marketplace routers. previously these routers were protected by depends(require_scopes(...))' },
+  { n: '04', title: 'XSS via unescaped attributes',    severity: 'high',     note: 'User-controlled values written into HTML attributes without escaping.', sample: 'html for the tooltips concatenando diretamente valores lidos de atributos data- em um atributo title sem qualquer tipo de sanitizacao' },
+  { n: '05', title: 'SSRF',                            severity: 'high',     note: 'URL parameters fed into outbound HTTP requests, reaching internal services.', sample: 'the getmerchantid function is vulnerable to server-side request forgery (ssrf). it directly uses the link parameter which can be controlled by a user in an axios.get call without validation' },
+  { n: '06', title: 'Hardcoded secrets in source',     severity: 'critical', note: 'Tokens, API keys, and credentials committed alongside code.', sample: 'hardcoding the cf-access-client-id and cf-access-client-secret directly into the source code is a critical security vulnerability. these credentials will be committed to the version control history permanently' },
+  { n: '07', title: 'Open redirect',                   severity: 'medium',   note: 'Redirect helpers that block obvious schemes but miss protocol-relative URLs.', sample: 'the safe_return_to_path method is vulnerable to open redirection. it correctly blocks schemes like http and javascript but it allows protocol-relative urls such as evil.com' },
+  { n: '08', title: 'Sensitive data in logs',          severity: 'high',     note: 'Raw error objects, internal IDs, or full payloads logged and never sanitized.', sample: 'the error message in banking.ts (lines 166-169) leaks internal workspaceid when a transaction is found but does not belong to the requesting store. this information leak allows verifying the existence of settlements' },
+  { n: '09', title: 'Prompt injection',                severity: 'critical', isNew: true, note: 'System prompts that concatenate user-controlled strings without delimiters.', sample: 'el prompt del sistema concatena directamente datos potencialmente controlados por el usuario sin ningun tipo de delimitador o instruccion de saneamiento. esto crea una vulnerabilidad de inyeccion de prompt' },
+  { n: '10', title: 'Default credentials',             severity: 'high',     note: 'Services deployed with well-known default usernames and passwords.', sample: 'the rabbitmq service is configured with the default well-known credentials guest guest. this is a significant security risk. the guest user is intended for local development' },
+  { n: '11', title: 'Command injection',               severity: 'critical', note: 'User input passed unsanitized into shell commands.', sample: 'the basebranch parameter is used directly in a shell command without sanitization creating a command injection vulnerability. an attacker who can control the value can execute arbitrary commands' },
+  { n: '12', title: 'PostMessage origin not validated', severity: 'high',    note: 'Window message listeners that process events from any origin.', sample: 'the message event listener is missing a crucial security check to validate the origin of the incoming event. without verifying event.origin the application will process messages sent from any website' },
 ];
+
+const sevRank = { critical: 3, high: 2, medium: 1 } as const;
 ---
 
 <Layout
@@ -24,66 +26,119 @@ const vulns = [
   page="Plate II"
 >
 
-  <section class="max-w-[1280px] mx-auto px-8 pt-16 md:pt-20 pb-12">
-    <div class="grid grid-cols-12 gap-8 items-start">
-      <div class="col-span-12 md:col-span-2">
-        <div class="font-display italic text-oxblood-500 leading-none reveal reveal-1" style="font-size: clamp(5rem, 8vw, 7.5rem);">II</div>
-        <div class="tracked text-ink-500 mt-3 reveal reveal-1">Plate II</div>
-      </div>
-      <div class="col-span-12 md:col-span-7">
-        <div class="tracked text-ink-500 mb-4 reveal reveal-2">Chapter § 02 · Vulnerabilities</div>
-        <h1 class="font-display leading-[0.98] tracking-tight text-ink-900 reveal reveal-2" style="font-size: clamp(3rem, 7vw, 6rem);">
-          The 2026 vulnerability <span class="italic">landscape.</span>
-        </h1>
-      </div>
-      <aside class="col-span-12 md:col-span-3 md:pt-8 reveal reveal-3">
-        <div class="border-l border-ink-900 pl-5">
-          <p class="text-ink-700 leading-[1.6] text-[15px]">
-            Drawn from 7,483 accepted security findings across 200 organizations. SQL injection is still the most common class. A new category, prompt injection, enters the top 10 in 2026 as more applications expose LLM-backed endpoints.
-          </p>
+  <!-- HERO -->
+  <section class="border-b-2 border-ink-900">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 pt-16 md:pt-20 pb-16">
+      <div class="grid grid-cols-12 gap-8 items-start">
+        <div class="col-span-12 md:col-span-2">
+          <div class="font-display italic text-oxblood-500 leading-[0.85] reveal reveal-1" style="font-size: clamp(6rem, 12vw, 11rem);">II</div>
+          <div class="tracked text-ink-500 mt-2 reveal reveal-1">Plate II</div>
         </div>
-      </aside>
+        <div class="col-span-12 md:col-span-7">
+          <div class="stamp text-oxblood-500 reveal reveal-2">Chapter § 02 · Vulnerabilities</div>
+          <h1 class="font-display leading-[0.95] tracking-tight text-ink-900 mt-5 reveal reveal-2" style="font-size: clamp(2.75rem, 7vw, 6rem);">
+            The 2026 vulnerability <span class="italic">landscape.</span>
+          </h1>
+        </div>
+        <aside class="col-span-12 md:col-span-3 md:pt-6 reveal reveal-3">
+          <div class="border-2 border-ink-900 bg-paper-200 p-5">
+            <div class="tracked text-oxblood-500 mb-3">At a glance</div>
+            <ul class="space-y-2 text-ink-900">
+              <li class="flex items-baseline justify-between border-b border-paper-400/60 pb-1">
+                <span class="text-sm">Security findings</span>
+                <span class="font-mono text-sm">7,483</span>
+              </li>
+              <li class="flex items-baseline justify-between border-b border-paper-400/60 pb-1">
+                <span class="text-sm">Classes in top 10</span>
+                <span class="font-mono text-sm">12</span>
+              </li>
+              <li class="flex items-baseline justify-between">
+                <span class="text-sm">New in 2026</span>
+                <span class="font-mono text-sm text-oxblood-500">1</span>
+              </li>
+            </ul>
+          </div>
+        </aside>
+      </div>
     </div>
   </section>
 
-  <section class="max-w-[1280px] mx-auto px-8 pb-32">
-    <div class="border-t-2 border-ink-900">
-      {vulns.map((v) => (
-        <article class="border-b border-paper-300 py-12">
-          <div class="grid grid-cols-12 gap-8">
-            <div class="col-span-2 md:col-span-1">
-              <div class="font-display italic text-oxblood-500 leading-none" style="font-size: clamp(2rem, 3vw, 3rem);">{v.n}</div>
-            </div>
-            <div class="col-span-10 md:col-span-7">
-              <div class="flex items-baseline gap-4 flex-wrap mb-3">
-                <h2 class="font-display text-ink-900 tracking-tight leading-[1.05]" style="font-size: clamp(1.5rem, 2.25vw, 2.25rem);">{v.title}</h2>
-                {v.isNew && (
-                  <span class="font-mono text-[10px] tracking-[0.22em] uppercase bg-oxblood-500 text-paper-50 px-2.5 py-1">New in 2026</span>
-                )}
-              </div>
-              <p class="text-ink-700 leading-[1.7] mt-2 max-w-prose text-[16px]">{v.note}</p>
-            </div>
-            <div class="col-span-12 md:col-span-4">
-              <div class="margin-note">Excerpt · review comment</div>
-              <blockquote class="font-mono text-[12.5px] leading-[1.7] text-ink-700 mt-2 pl-4 border-l-2 border-oxblood-500">
-                {v.sample}
-              </blockquote>
-            </div>
+  <!-- PROMPT INJECTION HIGHLIGHT -->
+  <section class="dark-section border-b-2 border-ink-900 relative overflow-hidden">
+    <svg class="absolute right-0 top-0 h-full opacity-[0.07] pointer-events-none" viewBox="0 0 400 400" aria-hidden="true">
+      <text x="0" y="380" font-family="serif" font-style="italic" font-size="400" fill="#fff">!</text>
+    </svg>
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-16 relative">
+      <div class="grid grid-cols-12 gap-8 items-center">
+        <div class="col-span-12 md:col-span-7">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="pill pill-new pulse-mark">New class · 2026</span>
+            <span class="pill pill-critical">Critical</span>
           </div>
+          <h2 class="font-display tracking-tight leading-[0.95] text-paper-100" style="font-size: clamp(2.5rem, 6vw, 5rem);">
+            <span class="italic text-ochre-300">Prompt injection</span><br/>enters the top 10.
+          </h2>
+          <p class="text-paper-300 leading-[1.65] text-[16px] mt-6 max-w-xl">
+            User-controlled strings concatenated into system prompts without delimiters or sanitization. Structurally similar to SQL injection from twenty years ago, freshly relevant as more production code paths route through LLMs. Expect this class to rise in subsequent snapshots.
+          </p>
+        </div>
+        <div class="col-span-12 md:col-span-5">
+          <div class="border-2 border-paper-100/20 p-6 bg-ink-900">
+            <div class="tracked text-ochre-300 mb-3">Excerpt · accepted finding</div>
+            <p class="font-mono text-paper-100 leading-[1.7] text-[12.5px]">
+              "el prompt del sistema concatena directamente datos potencialmente controlados por el usuario sin ningun tipo de delimitador o instruccion de saneamiento. esto crea una vulnerabilidad de inyeccion de prompt."
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VULN GRID -->
+  <section class="max-w-[1320px] mx-auto px-6 md:px-10 py-16">
+    <div class="flex flex-wrap items-center gap-6 text-[12px] text-ink-500 mb-8">
+      <span class="tracked">Severity</span>
+      <span class="flex items-center gap-2"><span class="pill pill-critical">Critical</span></span>
+      <span class="flex items-center gap-2"><span class="pill pill-high">High</span></span>
+      <span class="flex items-center gap-2"><span class="pill pill-medium">Medium</span></span>
+      <span class="ml-auto tracked">Sorted by frequency</span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      {vulns.map((v) => (
+        <article class={`group lift border-2 ${v.isNew ? 'border-oxblood-500' : 'border-ink-900'} bg-paper-50 hover:bg-ink-950 hover:text-paper-100 p-6 relative`}>
+          {v.isNew && (
+            <div class="absolute -top-3 -right-3 pulse-mark">
+              <span class="pill pill-new">NEW · 2026</span>
+            </div>
+          )}
+          <div class="flex items-baseline justify-between">
+            <span class="font-display italic text-oxblood-500 group-hover:text-ochre-300 leading-none" style="font-size: 2.5rem;">{v.n}</span>
+            <span class={`pill pill-${v.severity}`}>{v.severity}</span>
+          </div>
+          <h2 class="font-display tracking-tight leading-[1.05] mt-4 text-ink-900 group-hover:text-paper-100" style="font-size: 1.5rem;">{v.title}</h2>
+          <p class="text-ink-700 group-hover:text-paper-300 leading-[1.55] mt-3 text-[14px]">{v.note}</p>
+          <div class="margin-note mt-5 group-hover:text-paper-300">Excerpt</div>
+          <blockquote class="font-mono text-[11.5px] leading-[1.65] text-ink-700 group-hover:text-paper-100 mt-2 pl-3 border-l-2 border-oxblood-500">
+            {v.sample}
+          </blockquote>
         </article>
       ))}
     </div>
   </section>
 
-  <section class="max-w-[1280px] mx-auto px-8 pb-20">
-    <div class="grid grid-cols-12 gap-8">
-      <div class="col-span-12 md:col-span-3">
-        <div class="tracked text-ink-500">Note on prompt injection</div>
-      </div>
-      <div class="col-span-12 md:col-span-9">
-        <p class="font-display italic text-ink-700 leading-[1.45] text-2xl">
-          Prompt injection appears as a distinct category for the first time in this dataset. It is structurally similar to SQL injection: user-controlled strings concatenated into a sensitive context, a system prompt instead of a SQL query. Expect this class to rise in subsequent quarterly snapshots as more production code paths route through LLMs.
-        </p>
+  <!-- CLOSER -->
+  <section class="border-t-2 border-ink-900 bg-paper-200">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-20">
+      <div class="grid grid-cols-12 gap-8 items-start">
+        <div class="col-span-12 md:col-span-3">
+          <div class="tracked text-oxblood-500">Forecast</div>
+        </div>
+        <div class="col-span-12 md:col-span-9">
+          <p class="font-display italic text-ink-900 leading-[1.35]" style="font-size: clamp(1.5rem, 2.4vw, 2.25rem);">
+            Prompt injection appears as a distinct category for the first time. Expect it to climb the ranking through 2026 as more code paths route through LLMs and as the population of AI-backed endpoints grows. The next snapshot will publish counts.
+          </p>
+        </div>
       </div>
     </div>
   </section>
