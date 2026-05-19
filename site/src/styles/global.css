@@ -207,16 +207,25 @@
   }
   .atmos > * { position: relative; z-index: 1; }
 
-  /* Fine grid backdrop — masked by a soft vignette so it doesn't compete with content */
+  /* Fine grid backdrop · subtle, no mask (mask was cutting the headline) */
   .gridfield {
+    position: relative;
+  }
+  .gridfield::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
     background-image:
       linear-gradient(to right, oklch(22% 0.01 250 / 0.22) 1px, transparent 1px),
       linear-gradient(to bottom, oklch(22% 0.01 250 / 0.22) 1px, transparent 1px);
     background-size: 80px 80px;
     background-position: -1px -1px;
-    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 50%, black 40%, transparent 100%);
-            mask-image: radial-gradient(ellipse 90% 70% at 50% 50%, black 40%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 90% 75% at 50% 50%, black 35%, transparent 95%);
+            mask-image: radial-gradient(ellipse 90% 75% at 50% 50%, black 35%, transparent 95%);
   }
+  .gridfield > * { position: relative; z-index: 2; }
 
   /* Big stat phosphor glow + pulse */
   .phosphor {
@@ -323,11 +332,11 @@
     0%, 100% { opacity: 0.55; }
     50%      { opacity: 0.85; }
   }
-  .gridfield {
+  .gridfield::after {
     animation: grid-breath 7s ease-in-out infinite;
   }
   @media (prefers-reduced-motion: reduce) {
-    .gridfield { animation: none; }
+    .gridfield::after { animation: none; }
     .cursor-blink { animation: none; opacity: 1; }
   }
 
