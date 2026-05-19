@@ -1,27 +1,32 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-// Sorted by implementation rate (desc) — the actual question this chart answers.
-const providers = [
-  { label: 'OpenAI-compatible', pct: 28.6, n: 2125, orgs: 11 },
-  { label: 'OpenRouter',        pct: 22.4, n: 2750, orgs: 10 },
-  { label: 'Anthropic',         pct: 21.2, n: 2316, orgs: 15 },
-  { label: 'Google Gemini',     pct: 20.5, n: 7294, orgs: 24 },
-  { label: 'OpenAI',            pct: 17.8, n: 2696, orgs: 19 },
+// Endpoints sorted by implementation rate.
+// Single-org rows kept with a flag so readers can discount them.
+const endpoints = [
+  { label: 'Synthetic.new',             pct: 46.2, n: 1040, orgs: 1, single: true  },
+  { label: 'OpenRouter',                pct: 22.4, n: 2750, orgs: 7,  note: 'aggregator · routes to many models' },
+  { label: 'Anthropic (direct)',        pct: 21.2, n: 2316, orgs: 10 },
+  { label: 'Google Gemini (direct)',    pct: 20.5, n: 7294, orgs: 17 },
+  { label: 'OpenAI (direct)',           pct: 17.8, n: 2696, orgs: 13 },
+  { label: 'Self-hosted / private',     pct: 15.4, n: 649,  orgs: 3  },
+  { label: 'Z.AI (direct)',             pct: 14.3, n: 105,  orgs: 1, single: true  },
+  { label: 'MiniMax (direct)',          pct:  3.0, n: 304,  orgs: 1, single: true  },
 ];
 
-const models = [
-  { model: 'gpt-5.2-codex',           provider: 'openai',           pct: 29.3, n: 618,  orgs: 4 },
-  { model: 'gemini-2.5-flash',        provider: 'google_gemini',    pct: 24.2, n: 372,  orgs: 2 },
-  { model: 'claude-sonnet-4-5',       provider: 'anthropic',        pct: 22.9, n: 1784, orgs: 6 },
-  { model: 'gemini-3-flash-preview',  provider: 'google_gemini',    pct: 21.7, n: 3620, orgs: 6 },
-  { model: 'gemini-3-pro-preview',    provider: 'google_gemini',    pct: 19.8, n: 2048, orgs: 4 },
-  { model: 'gemini-2.5-pro',          provider: 'google_gemini',    pct: 16.9, n: 1247, orgs: 4 },
-  { model: 'gpt-5.2',                 provider: 'openai',           pct: 15.5, n: 619,  orgs: 2 },
-  { model: 'claude-sonnet-4-6',       provider: 'anthropic',        pct:  8.3, n: 169,  orgs: 2 },
+// What's flowing through OpenRouter
+const openrouterModels = [
+  { model: 'moonshotai/kimi-k2.5',      orgs: 1, note: 'Chinese MoE coder' },
+  { model: 'openai/gpt-5.3-codex',      orgs: 1 },
+  { model: 'openai/gpt-5.4',            orgs: 1 },
+  { model: 'qwen/qwen3-coder-plus',     orgs: 1, note: 'Alibaba code model' },
+  { model: 'z-ai/glm-4.7-flash',        orgs: 1, note: 'Zhipu GLM family' },
+  { model: 'z-ai/glm-4.5-air:free',     orgs: 1, note: 'Zhipu, free tier' },
+  { model: 'kwaipilot/kat-coder-pro',   orgs: 1, note: 'Kuaishou code model' },
+  { model: 'deepseek/deepseek-v3.2',    orgs: 2 },
+  { model: 'google/gemini-2.5-flash-lite', orgs: 1 },
 ];
 
-// Helper for color tier (sorted from best to worst)
 function tier(pct: number): string {
   if (pct >= 25) return 'moss';
   if (pct >= 18) return 'ochre';
@@ -35,7 +40,7 @@ function barClass(pct: number): string {
 
 <Layout
   title="The model comparison · State of AI Code Review"
-  description="79 BYOK engineering teams. 5 LLM providers. Implementation rate ranges from 18% to 29%, depending on the provider."
+  description="Implementation rate by LLM endpoint. Anthropic, OpenAI, Google Gemini, OpenRouter, Groq, Bedrock, and self-hosted. 79 BYOK teams across 20+ models."
   runningHead="§ 05 Models"
   page="Plate V"
 >
@@ -51,45 +56,51 @@ function barClass(pct: number): string {
         <div class="col-span-12 md:col-span-10">
           <div class="stamp text-oxblood-500">Chapter § 05 · Models</div>
           <h1 class="font-display leading-[0.95] tracking-tight text-ink-900 mt-5" style="font-size: clamp(2.75rem, 6.5vw, 5.5rem);">
-            Best LLM provider:<br/>
-            <span class="italic text-oxblood-500">28.6% implementation.</span><br/>
-            Worst: <span class="italic">17.8%.</span>
+            Anthropic 21%. Gemini 21%.<br/>
+            OpenAI 18%. <span class="italic text-oxblood-500">Self-hosted 15%.</span>
           </h1>
-          <p class="text-ink-700 mt-8 max-w-2xl leading-[1.6] text-[18px]">
-            79 engineering teams chose their own LLM. We measured how often the developer kept the suggestion. The gap between providers is real but narrower than the marketing suggests.
+          <p class="text-ink-700 mt-8 max-w-2xl leading-[1.55] text-[18px]">
+            79 engineering teams chose their own LLM endpoint. The big three commercial APIs cluster within 4 percentage points of each other. The outliers are smaller endpoints with one or two adopters, where the team's prompt tuning matters more than the model.
           </p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- PROVIDER CHART -->
+  <!-- ENDPOINT CHART -->
   <section class="dark-section border-b-2 border-ink-900">
     <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-20">
       <h2 class="font-display tracking-tight leading-[0.95] text-paper-100 mb-12" style="font-size: clamp(2rem, 4.5vw, 3.25rem);">
-        Implementation rate <span class="italic text-ochre-300">by provider.</span>
+        Implementation rate <span class="italic text-ochre-300">by endpoint.</span>
       </h2>
 
-      <div class="space-y-5">
-        {providers.map((p) => (
+      <div class="space-y-4">
+        {endpoints.map((e) => (
           <div class="grid grid-cols-12 gap-4 items-center">
-            <div class="col-span-12 md:col-span-3 text-paper-100 font-display text-[22px]">{p.label}</div>
-            <div class="col-span-9 md:col-span-7">
-              <div class="relative h-12 bg-ink-700/40">
+            <div class="col-span-12 md:col-span-4">
+              <div class="text-paper-100 font-display text-[20px] leading-tight">{e.label}</div>
+              {e.single && <div class="tracked-xs text-oxblood-300 mt-1">single-org sample</div>}
+              {e.note && <div class="tracked-xs text-paper-300 mt-1">{e.note}</div>}
+            </div>
+            <div class="col-span-9 md:col-span-6">
+              <div class="relative h-11 bg-ink-700/40">
                 <div
-                  class={`absolute inset-y-0 left-0 bar-grow ${barClass(p.pct)}`}
-                  style={`width: ${(p.pct / 30) * 100}%;`}
+                  class={`absolute inset-y-0 left-0 bar-grow ${barClass(e.pct)} ${e.single ? 'opacity-50' : ''}`}
+                  style={`width: ${(e.pct / 50) * 100}%;`}
                 ></div>
               </div>
             </div>
             <div class="col-span-3 md:col-span-2 text-right">
-              <span class="font-display text-paper-100 text-[28px] md:text-[32px]">{p.pct}%</span>
+              <span class="font-display text-paper-100 text-[28px]">{e.pct}%</span>
+              <div class="tracked-xs text-paper-300">{e.n.toLocaleString()} · {e.orgs} {e.orgs === 1 ? 'org' : 'orgs'}</div>
             </div>
           </div>
         ))}
       </div>
 
-      <p class="margin-note text-paper-300 mt-8">Percent of delivered suggestions the developer fully implemented. Bar scales 0–30%. Source: query 10.</p>
+      <p class="margin-note text-paper-300 mt-10 max-w-3xl">
+        Percent of delivered suggestions the developer fully implemented. Bar scales 0–50%. Single-org rows are shown at lower opacity so the reader can discount them. Source: query 10.
+      </p>
     </div>
   </section>
 
@@ -100,44 +111,46 @@ function barClass(pct: number): string {
         <div class="tracked text-oxblood-500">What this means</div>
       </div>
       <div class="col-span-12 md:col-span-8">
-        <p class="font-display italic text-ink-900 leading-[1.2]" style="font-size: clamp(1.75rem, 3.5vw, 2.5rem);">
-          Self-hosted and Groq-style inference leads. Big-name commercial APIs cluster a step behind.
+        <p class="font-display italic text-ink-900 leading-[1.2]" style="font-size: clamp(1.6rem, 3vw, 2.25rem);">
+          The big three commercial APIs are within 4 points of each other. The model-of-the-week barely matters.
         </p>
         <p class="text-ink-700 leading-[1.7] mt-5 max-w-prose">
-          The gap is not "open beats closed". Several openai-compatible orgs run frontier closed-source models behind Azure or Groq. The signal is that teams investing in their own inference stack tend to also tune their prompts and rules more carefully. Confounders are real. The number is real too.
+          Anthropic, Google, and OpenAI all land between 18% and 21% full-implementation. What predicts higher rates is not the provider, it is how carefully the team tunes their prompts and Kody Rules. Synthetic.new tops the chart at 46%, but it is one team running Kimi K2.5 with a careful setup. The signal is "tuning beats picking", not "this brand wins".
         </p>
       </div>
     </div>
   </section>
 
-  <!-- MODEL CHART -->
+  <!-- INSIDE OPENROUTER -->
   <section class="border-y-2 border-ink-900 bg-paper-200">
     <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-20">
-      <div class="flex items-baseline justify-between border-b-2 border-ink-900 pb-3 mb-10 flex-wrap gap-2">
-        <h2 class="font-display italic text-ink-900" style="font-size: clamp(1.75rem, 3.5vw, 2.5rem);">By model.</h2>
-        <span class="tracked text-ink-500">Multi-org models · 80+ delivered · sorted by implementation rate</span>
+      <div class="grid grid-cols-12 gap-8 mb-10">
+        <div class="col-span-12 md:col-span-7">
+          <div class="stamp text-ink-900">Inside OpenRouter</div>
+          <h2 class="font-display tracking-tight leading-tight text-ink-900 mt-5" style="font-size: clamp(2rem, 4vw, 3rem);">
+            What teams route to <span class="italic">when they pick OpenRouter.</span>
+          </h2>
+        </div>
+        <div class="col-span-12 md:col-span-5 md:pt-6">
+          <p class="text-ink-700 leading-[1.6] text-[15px]">
+            OpenRouter aggregates dozens of models behind one API. The 7 teams using it picked very different things. Chinese coder models dominate the list. No model is shared by more than 2 of them.
+          </p>
+        </div>
       </div>
 
-      <div class="space-y-3">
-        {models.map((m) => (
-          <div class="grid grid-cols-12 gap-3 items-center">
-            <div class="col-span-12 md:col-span-4 font-display text-ink-900 text-[18px]">{m.model}</div>
-            <div class="col-span-9 md:col-span-6">
-              <div class="relative h-9 bg-paper-300">
-                <div
-                  class={`absolute inset-y-0 left-0 bar-grow ${barClass(m.pct)}`}
-                  style={`width: ${(m.pct / 30) * 100}%;`}
-                ></div>
-              </div>
-            </div>
-            <div class="col-span-3 md:col-span-2 text-right">
-              <span class="font-display text-ink-900 text-[24px]">{m.pct}%</span>
-            </div>
+      <div class="border-t border-ink-900/20">
+        {openrouterModels.map((m) => (
+          <div class="grid grid-cols-12 gap-3 items-baseline py-3 border-b border-ink-900/15">
+            <div class="col-span-12 md:col-span-6 font-display text-ink-900 text-[18px]">{m.model}</div>
+            <div class="col-span-8 md:col-span-4 text-ink-500 text-sm">{m.note ?? ''}</div>
+            <div class="col-span-4 md:col-span-2 text-right font-mono text-sm text-ink-700">{m.orgs} {m.orgs === 1 ? 'org' : 'orgs'}</div>
           </div>
         ))}
       </div>
 
-      <p class="margin-note text-ink-500 mt-8">Bar scales 0–30%. Single-org models excluded to avoid sample-size skew (see full table on GitHub). Source: query 11.</p>
+      <p class="margin-note text-ink-500 mt-6">
+        Each row is one team's main model. Single-team usage means we cannot publish per-model implementation rates with confidence yet. Future snapshots will, as adoption grows.
+      </p>
     </div>
   </section>
 
@@ -147,6 +160,8 @@ function barClass(pct: number): string {
       <span class="flex items-center gap-2"><span class="inline-block w-4 h-4 bg-moss-500"></span> ≥ 25%</span>
       <span class="flex items-center gap-2"><span class="inline-block w-4 h-4 bg-ochre-500"></span> 18–25%</span>
       <span class="flex items-center gap-2"><span class="inline-block w-4 h-4 bg-oxblood-500"></span> &lt; 18%</span>
+      <span class="text-ink-300">·</span>
+      <span class="tracked">Source · Query 10 · GitHub</span>
     </div>
   </section>
 </Layout>
