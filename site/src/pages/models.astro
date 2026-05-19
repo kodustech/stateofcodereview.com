@@ -1,30 +1,26 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-// Endpoints sorted by implementation rate.
-// Single-org rows kept with a flag so readers can discount them.
+// Endpoints sorted by implementation rate. Multi-org only.
 const endpoints = [
-  { label: 'Synthetic.new',             pct: 46.2, n: 1040, orgs: 1, single: true  },
   { label: 'OpenRouter',                pct: 22.4, n: 2750, orgs: 7,  note: 'aggregator · routes to many models' },
   { label: 'Anthropic (direct)',        pct: 21.2, n: 2316, orgs: 10 },
   { label: 'Google Gemini (direct)',    pct: 20.5, n: 7294, orgs: 17 },
   { label: 'OpenAI (direct)',           pct: 17.8, n: 2696, orgs: 13 },
   { label: 'Self-hosted / private',     pct: 15.4, n: 649,  orgs: 3  },
-  { label: 'Z.AI (direct)',             pct: 14.3, n: 105,  orgs: 1, single: true  },
-  { label: 'MiniMax (direct)',          pct:  3.0, n: 304,  orgs: 1, single: true  },
 ];
 
-// What's flowing through OpenRouter
+// Models flowing through OpenRouter (qualitative — no implementation rate)
 const openrouterModels = [
-  { model: 'moonshotai/kimi-k2.5',      orgs: 1, note: 'Chinese MoE coder' },
-  { model: 'openai/gpt-5.3-codex',      orgs: 1 },
-  { model: 'openai/gpt-5.4',            orgs: 1 },
-  { model: 'qwen/qwen3-coder-plus',     orgs: 1, note: 'Alibaba code model' },
-  { model: 'z-ai/glm-4.7-flash',        orgs: 1, note: 'Zhipu GLM family' },
-  { model: 'z-ai/glm-4.5-air:free',     orgs: 1, note: 'Zhipu, free tier' },
-  { model: 'kwaipilot/kat-coder-pro',   orgs: 1, note: 'Kuaishou code model' },
-  { model: 'deepseek/deepseek-v3.2',    orgs: 2 },
-  { model: 'google/gemini-2.5-flash-lite', orgs: 1 },
+  { model: 'moonshotai/kimi-k2.5',         note: 'Chinese MoE coder' },
+  { model: 'qwen/qwen3-coder-plus',        note: 'Alibaba code model' },
+  { model: 'z-ai/glm-4.7-flash',           note: 'Zhipu GLM family' },
+  { model: 'z-ai/glm-4.5-air:free',        note: 'Zhipu, free tier' },
+  { model: 'kwaipilot/kat-coder-pro',      note: 'Kuaishou code model' },
+  { model: 'deepseek/deepseek-v3.2',       note: '' },
+  { model: 'openai/gpt-5.3-codex',         note: 'OpenAI via aggregator' },
+  { model: 'openai/gpt-5.4',               note: 'OpenAI via aggregator' },
+  { model: 'google/gemini-2.5-flash-lite', note: 'Gemini via aggregator' },
 ];
 
 function tier(pct: number): string {
@@ -57,10 +53,10 @@ function barClass(pct: number): string {
           <div class="stamp text-oxblood-500">Chapter § 05 · Models</div>
           <h1 class="font-display leading-[0.95] tracking-tight text-ink-900 mt-5" style="font-size: clamp(2.75rem, 6.5vw, 5.5rem);">
             Anthropic 21%. Gemini 21%.<br/>
-            OpenAI 18%. <span class="italic text-oxblood-500">Self-hosted 15%.</span>
+            <span class="italic text-oxblood-500">OpenAI 18%.</span>
           </h1>
           <p class="text-ink-700 mt-8 max-w-2xl leading-[1.55] text-[18px]">
-            79 engineering teams chose their own LLM endpoint. The big three commercial APIs cluster within 4 percentage points of each other. The outliers are smaller endpoints with one or two adopters, where the team's prompt tuning matters more than the model.
+            79 engineering teams chose their own LLM endpoint. The big three commercial APIs cluster within 4 percentage points of each other. The model-of-the-week barely matters compared to how the team tunes their prompts and rules.
           </p>
         </div>
       </div>
@@ -79,27 +75,25 @@ function barClass(pct: number): string {
           <div class="grid grid-cols-12 gap-4 items-center">
             <div class="col-span-12 md:col-span-4">
               <div class="text-paper-100 font-display text-[20px] leading-tight">{e.label}</div>
-              {e.single && <div class="tracked-xs text-oxblood-300 mt-1">single-org sample</div>}
               {e.note && <div class="tracked-xs text-paper-300 mt-1">{e.note}</div>}
             </div>
             <div class="col-span-9 md:col-span-6">
               <div class="relative h-11 bg-ink-700/40">
                 <div
-                  class={`absolute inset-y-0 left-0 bar-grow ${barClass(e.pct)} ${e.single ? 'opacity-50' : ''}`}
-                  style={`width: ${(e.pct / 50) * 100}%;`}
+                  class={`absolute inset-y-0 left-0 bar-grow ${barClass(e.pct)}`}
+                  style={`width: ${(e.pct / 30) * 100}%;`}
                 ></div>
               </div>
             </div>
             <div class="col-span-3 md:col-span-2 text-right">
               <span class="font-display text-paper-100 text-[28px]">{e.pct}%</span>
-              <div class="tracked-xs text-paper-300">{e.n.toLocaleString()} · {e.orgs} {e.orgs === 1 ? 'org' : 'orgs'}</div>
             </div>
           </div>
         ))}
       </div>
 
       <p class="margin-note text-paper-300 mt-10 max-w-3xl">
-        Percent of delivered suggestions the developer fully implemented. Bar scales 0–50%. Single-org rows are shown at lower opacity so the reader can discount them. Source: query 10.
+        Percent of delivered suggestions the developer fully implemented. Bar scales 0–30%. Source: query 10.
       </p>
     </div>
   </section>
@@ -133,7 +127,7 @@ function barClass(pct: number): string {
         </div>
         <div class="col-span-12 md:col-span-5 md:pt-6">
           <p class="text-ink-700 leading-[1.6] text-[15px]">
-            OpenRouter aggregates dozens of models behind one API. The 7 teams using it picked very different things. Chinese coder models dominate the list. No model is shared by more than 2 of them.
+            OpenRouter aggregates dozens of models behind one API. The teams using it picked very different things. Chinese coder models dominate the list.
           </p>
         </div>
       </div>
@@ -142,15 +136,10 @@ function barClass(pct: number): string {
         {openrouterModels.map((m) => (
           <div class="grid grid-cols-12 gap-3 items-baseline py-3 border-b border-ink-900/15">
             <div class="col-span-12 md:col-span-6 font-display text-ink-900 text-[18px]">{m.model}</div>
-            <div class="col-span-8 md:col-span-4 text-ink-500 text-sm">{m.note ?? ''}</div>
-            <div class="col-span-4 md:col-span-2 text-right font-mono text-sm text-ink-700">{m.orgs} {m.orgs === 1 ? 'org' : 'orgs'}</div>
+            <div class="col-span-12 md:col-span-6 text-ink-500 text-sm">{m.note}</div>
           </div>
         ))}
       </div>
-
-      <p class="margin-note text-ink-500 mt-6">
-        Each row is one team's main model. Single-team usage means we cannot publish per-model implementation rates with confidence yet. Future snapshots will, as adoption grows.
-      </p>
     </div>
   </section>
 
