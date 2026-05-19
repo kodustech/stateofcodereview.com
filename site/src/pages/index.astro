@@ -139,60 +139,60 @@ const langs = [
     </div>
   </section>
 
-  <!-- ─── OUTCOME SPLIT ────────────────────────────────────────────── -->
+  <!-- ─── IMPLEMENTATION RATE BY CLASS ──────────────────────────────── -->
   <section id="outcome" class="border-b border-night-50 bg-night-200">
     <div class="max-w-[1320px] mx-auto px-6 md:px-10 py-24 md:py-32">
 
-      <div class="grid grid-cols-12 gap-12 items-start mb-16">
-        <div class="col-span-12 md:col-span-6">
-          <div class="font-mono text-[11px] tracking-[0.22em] uppercase text-mist-600 mb-6">
-            ◆ The 33%
+      <div class="grid grid-cols-12 gap-12 items-end mb-16">
+        <div class="col-span-12 md:col-span-7">
+          <div class="font-mono text-[12px] font-medium tracking-[0.22em] uppercase text-phosphor-500 mb-5">
+            ◆ Implementation rate · by finding class
           </div>
           <h2 class="font-display leading-[0.98] tracking-tight text-mist-50" style="font-size: clamp(2rem, 5vw, 4rem);">
-            Half land <span class="italic phosphor">exactly</span> as written.<br/>
-            Half get <span class="italic" style="color: var(--color-signal-cyan);">adapted</span> by the dev.
+            <span class="italic phosphor">Cross-file at 39%.</span><br/>
+            <span class="text-mist-200">Security at 29%.</span>
           </h2>
         </div>
-        <div class="col-span-12 md:col-span-6 md:pt-4">
-          <p class="text-mist-400 leading-[1.7] text-[15px] max-w-md">
-            Implementation status comes from the actual post-PR diff. We compared the suggested code against what shipped on those exact lines.
+        <div class="col-span-12 md:col-span-5">
+          <p class="text-mist-200 leading-[1.65] text-[15px] max-w-md">
+            The 33% headline rate hides real variance. Cross-file findings — the class single-file linters cannot reach — earn the highest implementation. Security trails despite being the highest-stakes category.
           </p>
         </div>
       </div>
 
-      <div class="grid grid-cols-12 gap-x-12 gap-y-10">
-        <div class="col-span-12 md:col-span-6 group">
-          <div class="flex items-baseline justify-between mb-4">
-            <div>
-              <div class="font-mono text-[11px] tracking-[0.22em] uppercase text-mist-600">Applied exactly</div>
-              <div class="font-display phosphor mt-2" style="font-size: clamp(3.5rem, 7vw, 6rem); line-height: 1;">17%</div>
+      <div class="space-y-3">
+        {[
+          { label: 'Cross-file',    pct: 39.2, n: '10,992', href: '/cross-file/',     blurb: 'DRY violations, schema drift, type incompatibility' },
+          { label: 'Performance',   pct: 36.7, n: '4,265',  href: '/bugs/',           blurb: 'Caching, query patterns, async/await abuse' },
+          { label: 'Bugs',          pct: 32.8, n: '90,527', href: '/bugs/',           blurb: 'Null access, race conditions, schema mismatches' },
+          { label: 'Security',      pct: 28.8, n: '6,552',  href: '/vulnerabilities/',blurb: 'SQL injection, path traversal, prompt injection (new in 2026)' },
+        ].map((row, i) => (
+          <a href={row.href} class="group block border-b border-night-50 py-6 hover:bg-night-100/40 transition-colors -mx-3 md:-mx-6 px-3 md:px-6">
+            <div class="grid grid-cols-12 gap-4 md:gap-6 items-baseline">
+              <div class="col-span-12 md:col-span-3">
+                <div class="font-display text-mist-50 text-[24px] md:text-[28px] leading-none group-hover:text-phosphor-500 transition-colors">{row.label}</div>
+                <div class="font-mono text-[11px] tracking-[0.18em] uppercase text-mist-400 mt-2">{row.n} delivered</div>
+              </div>
+              <div class="col-span-8 md:col-span-6">
+                <div class="h-[3px] bg-night-50 relative">
+                  <div class="absolute inset-y-0 left-0 bar-grow" style={`background: var(--color-phosphor-500); width: ${(row.pct / 50) * 100}%; animation-delay: ${i * 0.12}s;`}></div>
+                </div>
+                <div class="font-mono text-[12px] text-mist-200 mt-3">{row.blurb}</div>
+              </div>
+              <div class="col-span-3 md:col-span-2 text-right">
+                <span class="font-display phosphor leading-none" style="font-size: clamp(2rem, 3.5vw, 3rem);">{row.pct}%</span>
+              </div>
+              <div class="col-span-1 text-right font-mono text-[11px] text-mist-400 group-hover:text-phosphor-500 transition-colors">
+                →
+              </div>
             </div>
-            <div class="font-mono text-xs text-mist-600">~19,107 / 112,336</div>
-          </div>
-          <div class="h-[2px] bg-night-50 relative overflow-hidden">
-            <div class="absolute inset-y-0 left-0 bar-grow" style="background: var(--color-phosphor-500); width: 51%;"></div>
-          </div>
-          <p class="text-mist-400 text-[13px] mt-4 leading-relaxed">
-            Dev pasted or kept the suggested code as-is on the flagged lines.
-          </p>
-        </div>
-
-        <div class="col-span-12 md:col-span-6 group">
-          <div class="flex items-baseline justify-between mb-4">
-            <div>
-              <div class="font-mono text-[11px] tracking-[0.22em] uppercase text-mist-600">Adapted to fit</div>
-              <div class="font-display mt-2" style="font-size: clamp(3.5rem, 7vw, 6rem); line-height: 1; color: var(--color-signal-cyan);">16%</div>
-            </div>
-            <div class="font-mono text-xs text-mist-600">~18,390 / 112,336</div>
-          </div>
-          <div class="h-[2px] bg-night-50 relative overflow-hidden">
-            <div class="absolute inset-y-0 left-0 bar-grow" style="background: var(--color-signal-cyan); width: 49%; animation-delay: 0.25s;"></div>
-          </div>
-          <p class="text-mist-400 text-[13px] mt-4 leading-relaxed">
-            Dev took the idea and rewrote those lines in their own way.
-          </p>
-        </div>
+          </a>
+        ))}
       </div>
+
+      <p class="font-mono text-[11px] text-mist-400 mt-10 max-w-3xl">
+        Rate = (fully implemented + partially implemented) / delivered. Computed from the post-PR diff, full population, no opt-in feedback. Bar scales 0–50%.
+      </p>
     </div>
   </section>
 
