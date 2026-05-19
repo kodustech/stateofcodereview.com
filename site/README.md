@@ -1,56 +1,43 @@
-# Site
-
-The published web report at https://stateofcodereview.com.
-
-## Stack
-
-- **Astro** — chosen to match the codereviewbench.com precedent (which produced 2,133 organic backlinks)
-- **Vercel** — deploy target; domain DNS already points at NS{1,2}.vercel-dns.com
-- **MDX** — for chapter content (lets us mix prose with chart components)
-
-## Bootstrap
-
-Not yet initialized. Run from this directory:
+# Astro Starter Kit: Minimal
 
 ```sh
-npm create astro@latest . -- --template minimal --typescript strict --no-install
-npm install
-npm install @astrojs/mdx @astrojs/sitemap @astrojs/tailwind
+npm create astro@latest -- --template minimal
 ```
 
-Then add to `astro.config.mjs`:
+> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
 
-```js
-import { defineConfig } from 'astro/config';
-import mdx from '@astrojs/mdx';
-import sitemap from '@astrojs/sitemap';
+## 🚀 Project Structure
 
-export default defineConfig({
-  site: 'https://stateofcodereview.com',
-  integrations: [mdx(), sitemap()],
-});
+Inside of your Astro project, you'll see the following folders and files:
+
+```text
+/
+├── public/
+├── src/
+│   └── pages/
+│       └── index.astro
+└── package.json
 ```
 
-## Planned page structure
+Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
 
-```
-/                              landing — TL;DR + chapter cards
-/methodology/                  filters, queries, citation format
-/bugs/                         Chapter 1: bug taxonomy
-/vulnerabilities/              Chapter 2: 2026 vulnerability landscape
-/cross-file/                   Chapter 3: what AI catches that linters miss
-/rules/                        Chapter 4: KodyRules census
-/data/                         CSV downloads + machine-readable JSON
-/about/                        attribution, contact, license
-```
+There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
 
-## SEO essentials
+Any static assets, like images, can be placed in the `public/` directory.
 
-- `<title>` and `<meta name="description">` per page
-- JSON-LD `ResearchProject` schema on the landing page
-- JSON-LD `Dataset` schema on `/data/`
-- JSON-LD `sameAs` linking to https://kodus.io (research attribution)
-- Open Graph + Twitter card per page with custom OG image per chapter
-- `sitemap.xml` (handled by @astrojs/sitemap)
-- `robots.txt` allowing all crawlers including AI training (for AEO citations)
-- Reciprocal footer link to kodus.io with `rel="noopener"` (NOT `nofollow`)
+## 🧞 Commands
+
+All commands are run from the root of the project, from a terminal:
+
+| Command                   | Action                                           |
+| :------------------------ | :----------------------------------------------- |
+| `npm install`             | Installs dependencies                            |
+| `npm run dev`             | Starts local dev server at `localhost:4321`      |
+| `npm run build`           | Build your production site to `./dist/`          |
+| `npm run preview`         | Preview your build locally, before deploying     |
+| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
+| `npm run astro -- --help` | Get help using the Astro CLI                     |
+
+## 👀 Want to learn more?
+
+Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
