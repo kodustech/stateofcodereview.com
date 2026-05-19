@@ -30,73 +30,111 @@ const langs = [
 
   <!-- ─── HERO ─────────────────────────────────────────────────────── -->
   <section class="atmos gridfield border-b border-night-50 relative overflow-hidden" id="hero">
-    <div class="max-w-[1320px] mx-auto px-6 md:px-10 pt-20 md:pt-32 pb-24 md:pb-40 relative">
+    <div class="max-w-[1320px] mx-auto px-6 md:px-10 pt-16 md:pt-24 pb-20 md:pb-28 relative">
 
-      <div class="font-mono text-[11px] tracking-[0.22em] uppercase text-phosphor-500 mb-10 reveal reveal-1">
-        // Field report · MMXXVI · Q2
+      <div class="flex items-center gap-3 mb-8 reveal reveal-1">
+        <span class="inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.22em] uppercase text-phosphor-500">
+          <span class="cursor-blink">●</span> Live field report · MMXXVI · Q2
+        </span>
       </div>
 
-      <h1 class="font-display leading-[0.92] tracking-tight text-mist-50 reveal reveal-2 max-w-5xl"
-          style="font-size: clamp(2.75rem, 9vw, 8rem);">
-        What happens<br/>
-        after the AI <span class="italic phosphor phosphor-pulse">comment lands</span>?<span class="cursor-blink phosphor ml-1">▌</span>
+      <h1 class="font-display leading-[0.94] tracking-tight text-mist-50 reveal reveal-2 max-w-5xl"
+          style="font-size: clamp(2.5rem, 7vw, 6rem);">
+        What happens after<br/>
+        the AI <span class="italic phosphor">comment lands</span>?
       </h1>
 
-      <!-- Big animated stat -->
-      <div class="mt-20 md:mt-28 grid grid-cols-12 gap-8 items-end reveal reveal-3">
-        <div class="col-span-12 md:col-span-7">
-          <div class="font-mono text-[11px] tracking-[0.22em] uppercase text-mist-600 mb-4">
-            Of every 100 delivered AI suggestions
-          </div>
-          <div class="flex items-baseline gap-5">
-            <span
-              class="font-display phosphor leading-none"
-              data-counter
-              data-target="33"
-              style="font-size: clamp(7rem, 22vw, 17rem);"
-            >0</span>
-            <span class="font-display phosphor leading-none" style="font-size: clamp(3rem, 7vw, 6rem);">%</span>
-          </div>
-          <div class="font-mono text-[13px] text-mist-400 mt-6 max-w-md leading-relaxed">
-            earn a fix. We read the post-PR diff for every single one. No opt-in feedback, no selection bias.
+      <p class="text-mist-200 text-[17px] md:text-[19px] leading-[1.55] max-w-2xl mt-8 reveal reveal-3">
+        We read the post-PR diff for 112,336 AI code review suggestions across 456 engineering teams. This is what shipped on those lines.
+      </p>
+
+      <!-- Demo + Counter grid -->
+      <div class="mt-14 md:mt-20 grid grid-cols-12 gap-8 lg:gap-12 items-start reveal reveal-4">
+
+        <!-- LEFT: Code review demo (live, rotating) -->
+        <div class="col-span-12 lg:col-span-8">
+          <div class="code-demo relative" id="code-demo">
+
+            <!-- header -->
+            <div class="flex items-center justify-between px-4 py-3 border-b border-night-50">
+              <div class="font-mono text-[11px] text-mist-400 truncate">
+                <span class="text-phosphor-500">PR</span> <span class="text-mist-600">·</span>
+                <span id="demo-file">packages/auth/login.ts</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="font-mono text-[10px] tracking-[0.18em] uppercase text-mist-400" id="demo-lang">typescript</span>
+                <span class="font-mono text-[10px] tracking-[0.18em] uppercase px-2 py-0.5" id="demo-severity"
+                      style="background: var(--color-phosphor-500); color: var(--color-night-200);">critical</span>
+              </div>
+            </div>
+
+            <!-- code -->
+            <div class="py-3" id="demo-code"></div>
+
+            <!-- AI comment -->
+            <div class="ai-card mx-4 mb-4 border border-phosphor-500/40 bg-night-100 p-4" id="demo-ai">
+              <div class="flex items-baseline justify-between mb-2">
+                <span class="font-mono text-[10px] tracking-[0.22em] uppercase text-phosphor-500">▌ AI · review comment</span>
+                <span class="font-mono text-[10px] text-mist-600" id="demo-class">bug</span>
+              </div>
+              <p class="text-mist-200 text-[13.5px] leading-relaxed typing" id="demo-msg"></p>
+            </div>
+
+            <!-- Outcome stamp -->
+            <div class="flex items-center justify-between px-4 py-3 border-t border-night-50">
+              <div class="flex items-center gap-3 stamp-in" id="demo-outcome" key>
+                <span class="font-mono text-[10px] tracking-[0.22em] uppercase px-2 py-1"
+                      id="demo-stamp"
+                      style="background: oklch(45% 0.13 145 / 0.25); color: oklch(85% 0.15 145);">✓ applied</span>
+                <span class="font-mono text-[11px] text-mist-400" id="demo-meta">1 of every 6 lands like this</span>
+              </div>
+              <div class="font-mono text-[10px] text-mist-600" id="demo-counter">01 / 04</div>
+            </div>
           </div>
         </div>
 
-        <div class="col-span-12 md:col-span-5 md:pl-8 md:border-l border-night-50 md:pb-6">
-          <div class="space-y-5">
+        <!-- RIGHT: Counter + stats -->
+        <div class="col-span-12 lg:col-span-4">
+          <div class="font-mono text-[11px] tracking-[0.22em] uppercase text-mist-400 mb-4">
+            Of every 100 delivered
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span class="font-display phosphor phosphor-pulse leading-none"
+                  data-counter data-target="33"
+                  style="font-size: clamp(6rem, 12vw, 10rem);">0</span>
+            <span class="font-display phosphor leading-none" style="font-size: clamp(2.5rem, 5vw, 4rem);">%</span>
+          </div>
+          <div class="text-mist-200 text-[15px] leading-relaxed mt-5 max-w-sm">
+            earn a fix from the developer.
+          </div>
+
+          <div class="mt-10 space-y-4 border-t border-night-50 pt-6">
             <div class="flex items-baseline justify-between">
-              <span class="font-mono text-[11px] tracking-[0.18em] uppercase text-mist-600">Suggestions</span>
-              <span class="font-display text-mist-50 text-2xl tabular-nums" id="live-suggestions">112,336</span>
+              <span class="font-mono text-[11px] tracking-[0.18em] uppercase text-mist-400">Suggestions</span>
+              <span class="font-display text-mist-50 text-xl tabular-nums" id="live-suggestions">112,336</span>
             </div>
-            <div class="flex items-baseline justify-between border-t border-night-50 pt-5">
-              <span class="font-mono text-[11px] tracking-[0.18em] uppercase text-mist-600">Organizations</span>
-              <span class="font-display text-mist-50 text-2xl">456</span>
+            <div class="flex items-baseline justify-between">
+              <span class="font-mono text-[11px] tracking-[0.18em] uppercase text-mist-400">Organizations</span>
+              <span class="font-display text-mist-50 text-xl">456</span>
             </div>
-            <div class="flex items-baseline justify-between border-t border-night-50 pt-5">
-              <span class="font-mono text-[11px] tracking-[0.18em] uppercase text-mist-600">Window</span>
-              <span class="font-mono text-mist-50 text-base">Sep '25 → May '26</span>
+            <div class="flex items-baseline justify-between">
+              <span class="font-mono text-[11px] tracking-[0.18em] uppercase text-mist-400">Window</span>
+              <span class="font-mono text-mist-50 text-[13px]">Sep '25 → May '26</span>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Hero CTAs -->
-      <div class="mt-16 flex flex-wrap gap-3 reveal reveal-4">
+      <div class="mt-14 flex flex-wrap gap-3 reveal reveal-5">
         <a href="#outcome"
            class="font-mono text-[11px] tracking-[0.22em] uppercase bg-phosphor-500 text-night-200 px-6 py-3.5 hover:bg-phosphor-300 transition-colors">
-          ↓ See the split
+          ↓ See the breakdown
         </a>
         <a href="/bugs/"
-           class="font-mono text-[11px] tracking-[0.22em] uppercase text-mist-50 border border-mist-600 px-6 py-3.5 hover:border-phosphor-500 hover:text-phosphor-500 transition-colors">
-          Chapter 01 →
+           class="font-mono text-[11px] tracking-[0.22em] uppercase text-mist-50 border border-mist-400 px-6 py-3.5 hover:border-phosphor-500 hover:text-phosphor-500 transition-colors">
+          Read chapter 01 →
         </a>
-      </div>
-
-      <!-- Live ticker -->
-      <div class="mt-20 pt-6 border-t border-night-50 reveal reveal-5">
-        <div class="font-mono text-[10.5px] tracking-wider text-mist-400 truncate" id="live-ticker">
-          <span class="text-phosphor-500">▌</span> <span class="text-mist-600">now reviewing</span> · typescript / packages/auth/login.ts:128 · null access · <span class="text-phosphor-500">critical</span>
-        </div>
       </div>
     </div>
   </section>
@@ -368,34 +406,150 @@ https://stateofcodereview.com</pre>
       }
     }
 
-    // ─── Live ticker · simulates ongoing AI reviews ────────────────────
-    const ticker = document.getElementById('live-ticker');
-    if (ticker && !reducedMotion) {
-      const reviews = [
-        { lang: 'typescript', path: 'packages/auth/login.ts:128',     issue: 'null access',           sev: 'critical' },
-        { lang: 'python',     path: 'api/users/handler.py:45',         issue: 'race condition',        sev: 'high' },
-        { lang: 'go',         path: 'internal/sql/repo.go:87',         issue: 'sql injection',         sev: 'critical' },
-        { lang: 'java',       path: 'src/payments/Webhook.java:212',   issue: 'missing authorization', sev: 'critical' },
-        { lang: 'ruby',       path: 'app/jobs/contract_worker.rb:34',  issue: 'critical logic disabled', sev: 'critical' },
-        { lang: 'php',        path: 'src/Controllers/Admin.php:88',    issue: 'hardcoded secret',      sev: 'critical' },
-        { lang: 'rust',       path: 'crates/api/src/handler.rs:163',   issue: 'unbounded loop',        sev: 'high' },
-        { lang: 'csharp',     path: 'Services/PaymentSvc.cs:401',      issue: 'schema drift',          sev: 'high' },
-        { lang: 'vue',        path: 'src/views/Dashboard.vue:99',      issue: 'async in constructor',  sev: 'high' },
-        { lang: 'javascript', path: 'lib/parser/index.js:240',         issue: 'off-by-one',            sev: 'medium' },
+    // ─── Live code review demo · rotates through real-flavor examples ──
+    const demo = document.getElementById('code-demo');
+    if (demo) {
+      const examples = [
+        {
+          file: 'packages/auth/login.ts:42', lang: 'typescript', cls: 'bug', sev: 'critical',
+          severityColor: 'var(--color-phosphor-500)', severityText: 'var(--color-night-200)',
+          lines: [
+            { n: 40, t: 'function authenticate(token: string) {' },
+            { n: 41, t: '  const user = db.users.find({ token });' },
+            { n: 42, t: '  return user.session.id;', state: 'minus' },
+            { n: 42, t: '  if (!user) throw new Error("Invalid token");', state: 'plus' },
+            { n: 43, t: '  return user.session.id;', state: 'plus' },
+            { n: 44, t: '}' },
+          ],
+          msg: 'Missing null check on user. db.users.find returns null for unknown tokens, and user.session.id will throw at runtime.',
+          stamp: '✓ applied', stampBg: 'oklch(45% 0.13 145 / 0.25)', stampColor: 'oklch(85% 0.15 145)',
+          meta: '17% of suggestions land like this',
+        },
+        {
+          file: 'internal/sql/repo.go:87', lang: 'go', cls: 'security', sev: 'critical',
+          severityColor: 'var(--color-phosphor-500)', severityText: 'var(--color-night-200)',
+          lines: [
+            { n: 85, t: 'func GetUser(name string) (*User, error) {' },
+            { n: 86, t: '  q := fmt.Sprintf("SELECT * FROM users WHERE name = \'%s\'", name)', state: 'flag' },
+            { n: 87, t: '  return db.QueryRow(q).Scan(&u)', state: 'minus' },
+            { n: 86, t: '  return db.QueryRow("SELECT * FROM users WHERE name = $1", name).Scan(&u)', state: 'plus' },
+            { n: 88, t: '}' },
+          ],
+          msg: 'SQL injection: name is interpolated directly into the query. Use a parameterized query with $1 binding.',
+          stamp: '✓ applied', stampBg: 'oklch(45% 0.13 145 / 0.25)', stampColor: 'oklch(85% 0.15 145)',
+          meta: 'security findings: 65% acceptance on critical',
+        },
+        {
+          file: 'api/users/handler.py:45', lang: 'python', cls: 'bug', sev: 'high',
+          severityColor: 'oklch(86% 0.14 80)', severityText: 'var(--color-night-200)',
+          lines: [
+            { n: 43, t: 'async def get_certificate(user_id):' },
+            { n: 44, t: '  cached = cache.get(user_id)' },
+            { n: 45, t: '  if cached: return cached', state: 'flag' },
+            { n: 46, t: '  cert = await issue_cert(user_id)' },
+            { n: 47, t: '  cache.set(user_id, cert)' },
+            { n: 48, t: '  return cert' },
+          ],
+          msg: 'Race condition: two concurrent requests for the same user will both call issue_cert(). Wrap the cache check + issue in an asyncio.Lock keyed by user_id.',
+          stamp: '~ adapted', stampBg: 'oklch(78% 0.18 75 / 0.18)', stampColor: 'var(--color-phosphor-500)',
+          meta: 'dev applied a different fix on these lines',
+        },
+        {
+          file: 'src/prompts/system.py:18', lang: 'python', cls: 'security', sev: 'critical',
+          severityColor: 'var(--color-phosphor-500)', severityText: 'var(--color-night-200)',
+          lines: [
+            { n: 16, t: 'def build_prompt(user_input, request_data):' },
+            { n: 17, t: '  return f"""You are a helpful assistant.', state: 'minus' },
+            { n: 18, t: '  Request: {request_data}', state: 'minus' },
+            { n: 19, t: '  Input: {user_input}"""', state: 'minus' },
+            { n: 17, t: '  return SYSTEM + delimit(user_input) + delimit(request_data)', state: 'plus' },
+          ],
+          msg: 'Prompt injection: user_input concatenated into the system prompt without delimiters. Sanitize and wrap user-controlled strings in dedicated boundaries.',
+          stamp: '✓ applied', stampBg: 'oklch(45% 0.13 145 / 0.25)', stampColor: 'oklch(85% 0.15 145)',
+          meta: 'prompt injection · new top-10 class in 2026',
+        },
       ];
-      const sevColor = (s) => s === 'critical' ? 'text-phosphor-500' : s === 'high' ? 'text-phosphor-300' : 'text-mist-400';
-      let i = Math.floor(Math.random() * reviews.length);
-      function rotate() {
-        const r = reviews[i % reviews.length];
-        ticker.innerHTML = `<span class="text-phosphor-500">▌</span> <span class="text-mist-600">now reviewing</span> · ${r.lang} / ${r.path} · ${r.issue} · <span class="${sevColor(r.sev)}">${r.sev}</span>`;
-        ticker.classList.remove('ticker-line');
-        // force reflow so animation restarts
-        void ticker.offsetWidth;
-        ticker.classList.add('ticker-line');
-        i++;
+
+      const fileEl  = document.getElementById('demo-file');
+      const langEl  = document.getElementById('demo-lang');
+      const sevEl   = document.getElementById('demo-severity');
+      const codeEl  = document.getElementById('demo-code');
+      const aiEl    = document.getElementById('demo-ai');
+      const msgEl   = document.getElementById('demo-msg');
+      const classEl = document.getElementById('demo-class');
+      const outcEl  = document.getElementById('demo-outcome');
+      const stampEl = document.getElementById('demo-stamp');
+      const metaEl  = document.getElementById('demo-meta');
+      const idxEl   = document.getElementById('demo-counter');
+
+      let idx = 0;
+
+      function typeMessage(text, el, speed = 18, done) {
+        el.textContent = '';
+        el.classList.add('typing');
+        if (reducedMotion) { el.textContent = text; el.classList.remove('typing'); if (done) done(); return; }
+        let i = 0;
+        (function step() {
+          if (i <= text.length) {
+            el.textContent = text.slice(0, i);
+            i++;
+            setTimeout(step, speed);
+          } else {
+            el.classList.remove('typing');
+            if (done) done();
+          }
+        })();
       }
-      rotate();
-      setInterval(rotate, 2600);
+
+      function render(ex) {
+        fileEl.textContent  = ex.file;
+        langEl.textContent  = ex.lang;
+        sevEl.textContent   = ex.sev;
+        sevEl.style.background = ex.severityColor;
+        sevEl.style.color      = ex.severityText;
+        classEl.textContent = ex.cls;
+        idxEl.textContent   = `${String(idx + 1).padStart(2, '0')} / ${String(examples.length).padStart(2, '0')}`;
+
+        // Code lines with stagger
+        codeEl.innerHTML = '';
+        ex.lines.forEach((ln, i) => {
+          const span = document.createElement('span');
+          const stateCls = ln.state === 'minus' ? 'line-minus' : ln.state === 'plus' ? 'line-plus' : ln.state === 'flag' ? 'line-flag' : '';
+          span.className = `code-line line-num anim-line ${stateCls}`;
+          span.setAttribute('data-ln', ln.n);
+          span.style.animationDelay = `${i * 0.06}s`;
+          const prefix = ln.state === 'minus' ? '- ' : ln.state === 'plus' ? '+ ' : '  ';
+          span.textContent = prefix + ln.t;
+          codeEl.appendChild(span);
+        });
+
+        // AI card replays animation
+        aiEl.classList.remove('ai-card');
+        void aiEl.offsetWidth;
+        aiEl.classList.add('ai-card');
+
+        // Outcome stamp
+        outcEl.classList.remove('stamp-in');
+        void outcEl.offsetWidth;
+        outcEl.classList.add('stamp-in');
+        stampEl.textContent       = ex.stamp;
+        stampEl.style.background  = ex.stampBg;
+        stampEl.style.color       = ex.stampColor;
+        metaEl.textContent        = ex.meta;
+
+        // Type the AI message after lines have settled
+        const linesDoneAt = ex.lines.length * 60 + 200;
+        setTimeout(() => typeMessage(ex.msg, msgEl, 16), linesDoneAt);
+      }
+
+      function next() {
+        render(examples[idx % examples.length]);
+        idx++;
+      }
+      next();
+      if (!reducedMotion) {
+        setInterval(next, 7800);
+      }
     }
 
     // ─── Live suggestion counter · subtle real-time feel ─────────────────
