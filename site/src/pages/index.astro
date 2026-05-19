@@ -47,111 +47,116 @@ const modelRows = [
   theme="dark"
 >
 
-  <!-- ─── HERO · oversized editorial ───────────────────────────────── -->
+  <!-- ─── HERO · stat-led, no meta noise ───────────────────────────── -->
   <section class="atmos mesh-bg border-b border-night-50 relative overflow-hidden" id="hero">
-    <div class="max-w-[1440px] mx-auto px-6 md:px-10 lg:px-14 pt-10 md:pt-16 pb-16 md:pb-20 relative">
+    <div class="max-w-[1440px] mx-auto px-6 md:px-10 lg:px-14 pt-16 md:pt-24 pb-20 md:pb-28 relative">
 
-      <!-- Top metadata strip -->
-      <div class="flex items-baseline justify-between font-mono text-[10.5px] tracking-[0.2em] uppercase text-mist-400 mb-12 md:mb-16 reveal reveal-1">
-        <span class="flex items-center gap-2.5">
-          <span class="cursor-blink phosphor">●</span>
-          <span class="text-mist-200">Snapshot 2026-Q2</span>
-        </span>
-        <span class="hidden md:inline">
-          <span class="text-mist-600">Frozen</span> 2026-05-19
-        </span>
-      </div>
+      <!-- Question + answer, balanced spread -->
+      <div class="grid grid-cols-12 gap-y-16 gap-x-8 items-center">
 
-      <!-- Massive editorial headline · asymmetric -->
-      <div class="grid grid-cols-12 gap-y-12 gap-x-8 items-start">
-        <div class="col-span-12 md:col-span-12 lg:col-span-7">
+        <!-- LEFT — the question, the setup -->
+        <div class="col-span-12 lg:col-span-6">
+          <span class="inline-flex relative items-center justify-center w-2.5 h-2.5 mb-8 reveal reveal-1">
+            <span class="absolute inline-flex h-full w-full rounded-full opacity-75 cursor-blink" style="background: var(--color-phosphor-500);"></span>
+            <span class="relative inline-flex rounded-full w-2.5 h-2.5" style="background: var(--color-phosphor-500);"></span>
+          </span>
           <h1 class="font-display tracking-tight text-mist-50 reveal reveal-2"
-              style="font-size: clamp(3.25rem, 11vw, 11rem); line-height: 0.92; overflow-wrap: anywhere;">
+              style="font-size: clamp(2.75rem, 7.5vw, 7rem); line-height: 0.95; overflow-wrap: anywhere;">
             What happens<br/>
-            after the<br/>
-            <span class="italic phosphor">AI comment</span><br/>
-            lands<span class="phosphor">?</span>
+            after the AI<br/>
+            <span class="italic phosphor">comment lands</span>?
           </h1>
+          <div class="mt-12 flex flex-wrap gap-3 reveal reveal-4">
+            <a href="#demo"
+               class="font-mono text-[11px] font-medium tracking-[0.22em] uppercase bg-phosphor-500 text-night-200 px-6 py-3.5 hover:bg-phosphor-300 transition-colors">
+              ↓ See it work
+            </a>
+            <a href="#chapters"
+               class="font-mono text-[11px] font-medium tracking-[0.22em] uppercase text-mist-50 border border-mist-400 px-6 py-3.5 hover:border-phosphor-500 hover:text-phosphor-500 transition-colors">
+              Chapter index
+            </a>
+          </div>
         </div>
 
-        <aside class="col-span-12 lg:col-span-5 lg:pl-8 lg:pt-6 reveal reveal-3">
-          <p class="text-mist-200 leading-[1.5] text-[18px] md:text-[20px] max-w-md">
-            We read the post-PR diff for <span class="text-mist-50 font-medium">162,262</span> AI code review suggestions across <span class="text-mist-50 font-medium">464</span> engineering teams. This is what shipped on those exact lines.
-          </p>
-        </aside>
-      </div>
-
-      <!-- Stat slab + persistent demo, side by side -->
-      <div class="mt-20 md:mt-28 grid grid-cols-12 gap-y-12 gap-x-8 items-end reveal reveal-4">
-
-        <!-- Big architectural counter -->
-        <div class="col-span-12 lg:col-span-5">
-          <div class="font-mono text-[10.5px] tracking-[0.22em] uppercase text-mist-200 mb-3">
-            Of every 100 delivered <span class="text-mist-400">·</span> earn a fix
-          </div>
+        <!-- RIGHT — the answer, the stat -->
+        <div class="col-span-12 lg:col-span-6 lg:pl-8 reveal reveal-3">
           <div class="flex items-baseline gap-2">
             <span class="archi-num phosphor-pulse"
                   data-counter data-target="33"
-                  style="font-size: clamp(8rem, 22vw, 18rem);">0</span>
-            <span class="archi-num leading-none" style="font-size: clamp(3rem, 8vw, 7rem);">%</span>
+                  style="font-size: clamp(8rem, 20vw, 16rem);">0</span>
+            <span class="archi-num leading-none" style="font-size: clamp(3rem, 7vw, 6rem);">%</span>
           </div>
+          <p class="font-display text-mist-50 leading-[1.15] mt-4 max-w-md" style="font-size: clamp(1.5rem, 2.4vw, 2rem);">
+            earn a fix from the developer.
+          </p>
 
-          <div class="mt-10 grid grid-cols-3 gap-3 max-w-xl">
+          <div class="mt-12 grid grid-cols-3 gap-4">
             <div class="border-t border-night-50 pt-3">
               <div class="font-display text-mist-50 text-[22px] md:text-[26px] leading-none tabular-nums" id="live-suggestions">162,262</div>
-              <div class="font-mono text-[9.5px] tracking-[0.18em] uppercase text-mist-400 mt-2">Suggestions</div>
+              <div class="font-mono text-[9.5px] tracking-[0.2em] uppercase text-mist-400 mt-2">AI suggestions</div>
             </div>
             <div class="border-t border-night-50 pt-3">
               <div class="font-display text-mist-50 text-[22px] md:text-[26px] leading-none">464</div>
-              <div class="font-mono text-[9.5px] tracking-[0.18em] uppercase text-mist-400 mt-2">Organizations</div>
+              <div class="font-mono text-[9.5px] tracking-[0.2em] uppercase text-mist-400 mt-2">Engineering teams</div>
             </div>
             <div class="border-t border-night-50 pt-3">
-              <div class="font-display text-mist-50 text-[22px] md:text-[26px] leading-none">20+</div>
-              <div class="font-mono text-[9.5px] tracking-[0.18em] uppercase text-mist-400 mt-2">LLM models</div>
+              <div class="font-display text-mist-50 text-[22px] md:text-[26px] leading-none">8 mo</div>
+              <div class="font-mono text-[9.5px] tracking-[0.2em] uppercase text-mist-400 mt-2">Window</div>
             </div>
+          </div>
+
+          <p class="text-mist-400 text-[13px] leading-[1.55] mt-6 max-w-md">
+            Read from the post-PR diff. Every delivered suggestion is counted, including the ones the developer scrolled past.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── LIVE DEMO ─────────────────────────────────────────────────── -->
+  <section id="demo" class="border-b border-night-50 bg-night-200">
+    <div class="max-w-[1440px] mx-auto px-6 md:px-10 lg:px-14 py-16 md:py-24">
+      <div class="flex items-baseline justify-between mb-10 flex-wrap gap-3">
+        <div class="font-mono text-[11px] font-medium tracking-[0.22em] uppercase text-phosphor-500">
+          ◆ Live · sample of what AI flags
+        </div>
+        <div class="font-mono text-[10px] tracking-[0.18em] uppercase text-mist-400" id="demo-counter">01 / 04</div>
+      </div>
+
+      <div class="code-demo max-w-[960px]" id="code-demo">
+        <div class="flex items-center justify-between px-4 py-2.5 border-b border-night-50">
+          <div class="font-mono text-[10.5px] text-mist-200 truncate flex items-center gap-2">
+            <span class="cursor-blink phosphor">▌</span>
+            <span class="text-phosphor-500">live</span>
+            <span class="text-mist-600">·</span>
+            <span id="demo-file">packages/auth/login.ts</span>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <span class="font-mono text-[10px] tracking-[0.18em] uppercase text-mist-200" id="demo-lang">typescript</span>
+            <span class="font-mono text-[10px] tracking-[0.18em] uppercase px-2 py-0.5" id="demo-severity"
+                  style="background: var(--color-phosphor-500); color: var(--color-night-200);">critical</span>
           </div>
         </div>
 
-        <!-- Persistent terminal demo -->
-        <div class="col-span-12 lg:col-span-7">
-          <div class="code-demo" id="code-demo">
-            <div class="flex items-center justify-between px-4 py-2.5 border-b border-night-50">
-              <div class="font-mono text-[10.5px] text-mist-200 truncate flex items-center gap-2">
-                <span class="cursor-blink phosphor">▌</span>
-                <span class="text-phosphor-500">live</span>
-                <span class="text-mist-600">·</span>
-                <span id="demo-file">packages/auth/login.ts</span>
-              </div>
-              <div class="flex items-center gap-2 shrink-0">
-                <span class="font-mono text-[10px] tracking-[0.18em] uppercase text-mist-200" id="demo-lang">typescript</span>
-                <span class="font-mono text-[10px] tracking-[0.18em] uppercase px-2 py-0.5" id="demo-severity"
-                      style="background: var(--color-phosphor-500); color: var(--color-night-200);">critical</span>
-              </div>
-            </div>
+        <div class="py-3 overflow-x-auto min-h-[180px]" id="demo-code"></div>
 
-            <div class="py-3 overflow-x-auto min-h-[180px]" id="demo-code"></div>
+        <div class="ai-card mx-3 mb-3 border border-phosphor-500/40 bg-night-100 p-3.5" id="demo-ai">
+          <div class="flex items-baseline justify-between mb-1.5">
+            <span class="font-mono text-[9.5px] tracking-[0.22em] uppercase text-phosphor-500">▌ AI · review comment</span>
+            <span class="font-mono text-[9.5px] text-mist-400" id="demo-class">bug</span>
+          </div>
+          <p class="text-mist-200 text-[12.5px] leading-relaxed typing" id="demo-msg"></p>
+        </div>
 
-            <div class="ai-card mx-3 mb-3 border border-phosphor-500/40 bg-night-100 p-3.5" id="demo-ai">
-              <div class="flex items-baseline justify-between mb-1.5">
-                <span class="font-mono text-[9.5px] tracking-[0.22em] uppercase text-phosphor-500">▌ AI · review comment</span>
-                <span class="font-mono text-[9.5px] text-mist-400" id="demo-class">bug</span>
-              </div>
-              <p class="text-mist-200 text-[12.5px] leading-relaxed typing" id="demo-msg"></p>
-            </div>
-
-            <div class="flex items-center justify-between px-4 py-2.5 border-t border-night-50">
-              <div class="flex items-center gap-3 stamp-in" id="demo-outcome">
-                <span class="font-mono text-[10px] tracking-[0.22em] uppercase px-2 py-1"
-                      id="demo-stamp"
-                      style="background: oklch(45% 0.13 145 / 0.25); color: oklch(85% 0.15 145);">✓ applied</span>
-                <span class="font-mono text-[10.5px] text-mist-200" id="demo-meta">bug findings: 33% land like this</span>
-              </div>
-              <div class="font-mono text-[10px] tracking-[0.18em] uppercase text-mist-400" id="demo-counter">01 / 04</div>
-            </div>
+        <div class="flex items-center justify-between px-4 py-2.5 border-t border-night-50">
+          <div class="flex items-center gap-3 stamp-in" id="demo-outcome">
+            <span class="font-mono text-[10px] tracking-[0.22em] uppercase px-2 py-1"
+                  id="demo-stamp"
+                  style="background: oklch(45% 0.13 145 / 0.25); color: oklch(85% 0.15 145);">✓ applied</span>
+            <span class="font-mono text-[10.5px] text-mist-200" id="demo-meta">bug findings: 33% land like this</span>
           </div>
         </div>
       </div>
-
     </div>
   </section>
 
