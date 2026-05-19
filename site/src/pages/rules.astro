@@ -1,0 +1,60 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const topRules = [
+  { rank: 1, title: 'Write a clear, scoped PR title', orgs: 45 },
+  { rank: 2, title: 'Always sanitize user inputs', orgs: 36 },
+  { rank: 3, title: 'Prohibit hardcoded secrets', orgs: 30 },
+  { rank: 4, title: 'Avoid using eval', orgs: 29 },
+  { rank: 5, title: 'Always validate JSON parsing', orgs: 27 },
+  { rank: 6, title: 'Avoid equality operators in loop termination conditions', orgs: 27 },
+  { rank: 7, title: 'Prevent SQL injection in queries', orgs: 25 },
+  { rank: 8, title: 'Enforce TypeScript strict mode', orgs: 25 },
+  { rank: 9, title: 'Mark unchanged variables as const', orgs: 24 },
+  { rank: 10, title: 'Avoid asynchronous operations in constructors', orgs: 24 },
+  { rank: 11, title: 'Prevent hardcoded secrets', orgs: 24 },
+  { rank: 12, title: 'Ensure React list keys are stable between renders', orgs: 22 },
+  { rank: 13, title: 'Enforce strict TypeScript configuration', orgs: 22 },
+  { rank: 14, title: 'Do not nest React components', orgs: 21 },
+  { rank: 15, title: 'Do not export mutable variables', orgs: 20 },
+  { rank: 16, title: 'Do not ignore exceptions', orgs: 19 },
+  { rank: 17, title: 'Avoid building system commands from user input', orgs: 18 },
+  { rank: 18, title: 'React children should not be passed as props', orgs: 18 },
+  { rank: 19, title: 'Prevent open redirect vulnerabilities in DOM updates', orgs: 17 },
+  { rank: 20, title: 'Prevent SQL injection via string concatenation', orgs: 16 },
+];
+---
+
+<Layout
+  title="What 610 engineering teams codified · State of AI Code Review"
+  description="7,276 codified review rules from 610 organizations. The top 20 rules adopted across distinct teams: a behavioral snapshot of what engineering teams chose to enforce in 2026."
+>
+  <section class="max-w-3xl mx-auto px-6 pt-20 pb-12">
+    <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-accent-500 mb-6">Chapter 04 · Rules</p>
+    <h1 class="text-4xl md:text-6xl font-medium tracking-tight leading-[1.05]">
+      What 610 engineering teams codified as review standards.
+    </h1>
+    <p class="text-lg text-ink-500 mt-8 leading-relaxed">
+      Teams using Kodus can write custom review rules that supplement the model's defaults. 610 organizations have authored 7,276 rules between them. Median 11.9 rules per organization. The largest rule library contains 328 rules. Below, the rules that appear most often across distinct teams. This is a behavioral snapshot, not a survey.
+    </p>
+  </section>
+
+  <section class="max-w-3xl mx-auto px-6 pb-20">
+    <div class="border-t border-ink-200">
+      {topRules.map((r) => (
+        <div class="flex items-baseline gap-6 py-4 border-b border-ink-200">
+          <span class="font-mono text-sm text-ink-300 w-8 shrink-0">{String(r.rank).padStart(2, '0')}</span>
+          <span class="flex-1 text-ink-900">{r.title}</span>
+          <span class="font-mono text-sm text-ink-500 shrink-0">{r.orgs} <span class="text-ink-300">orgs</span></span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="max-w-3xl mx-auto px-6 py-12 border-t border-ink-200">
+    <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500 mb-3">What this measures</p>
+    <p class="text-ink-700 leading-relaxed">
+      Each row is a rule title that appears verbatim or near-verbatim in at least 3 distinct organizations. Counts represent distinct organizations, not total rule instances. A team that copies the same rule twice still counts once. Rules with org count below 3 are excluded as not yet a pattern.
+    </p>
+  </section>
+</Layout>

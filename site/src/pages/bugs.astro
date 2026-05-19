@@ -1,0 +1,103 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const bugClasses = [
+  {
+    n: '01',
+    title: 'Null access on optional fields',
+    description: 'The most common bug class. Reading nested properties of objects that can be null or undefined, often because the field was added in a later migration and older records do not have it.',
+    sample: 'accesses integrationsstore.integrations.ads without checking if integrationsstore.integrations is null or undefined. if the integrations data has not yet been loaded into the store this property could be nullish causing a typeerror',
+  },
+  {
+    n: '02',
+    title: 'Race conditions in init, cache, or ID generation',
+    description: 'Concurrent execution paths that step on each other. Often appears when async operations are kicked off before initialization completes, or when timestamps are used as unique identifiers.',
+    sample: 'race condition en la generacion de ids. el uso de date.now() para generar ids de ubicacion no garantiza la unicidad. si dos acciones addlocation se despachan en el mismo milisegundo recibiran el mismo id',
+  },
+  {
+    n: '03',
+    title: 'Schema drift between create and update validators',
+    description: 'Two Zod or JSON schemas describing the same entity that disagree on which fields are required. Bugs appear when records pass one validator and fail the other.',
+    sample: 'the updatetechnicalplanningschema allows targetdate to be set to null but the createtechnicalplanningschema requires it to be a non-nullable string. this creates a logical inconsistency where a mandatory field at create time becomes optional at update time',
+  },
+  {
+    n: '04',
+    title: 'Critical business logic commented out',
+    description: 'Workers, scheduled jobs, or middleware that get disabled during refactors and silently never come back. AI flags this by reading the surrounding context for what the code is supposed to do.',
+    sample: 'desativacao de processo de negocio critico. o contractrenewalworker foi comentado desativando-o em todos os ambientes',
+  },
+  {
+    n: '05',
+    title: 'Async / await pattern abuse',
+    description: 'Calls to async APIs from sync contexts, manual commits inside transaction blocks that already commit on exit, blocking IO inside async functions.',
+    sample: 'calls await uow.commit() explicitly inside an async with self.uow as uow block. this pattern is incorrect and will cause the application to crash',
+  },
+  {
+    n: '06',
+    title: 'Inverted boolean or off-by-one condition',
+    description: 'Conditions that evaluate the opposite of what the developer intended. Often introduced when refactoring `if` statements or flipping a sign during a fix.',
+    sample: 'incorrect time calculation for future dates. when a future date is passed as an argument now.diff(postdate, second) returns a negative number. the condition if (diffseconds < 60) is true for all negative numbers',
+  },
+  {
+    n: '07',
+    title: 'Hardcoded values where dynamic values are required',
+    description: 'Session IDs, model identifiers, environment-specific configuration values committed as string literals.',
+    sample: 'o socketsessionid foi alterado de um uuid gerado dinamicamente para um valor estatico e fixo. cada conexao de socket iniciada pela aplicacao usara o mesmo id',
+  },
+  {
+    n: '08',
+    title: 'Downstream breakage from schema change',
+    description: 'Dropping a column, renaming a field, or changing a serialization format that other consumers depend on. AI catches this by tracing usage across the repository.',
+    sample: 'dropping the temperature column from the deals table breaks multiple consumers. the fetchdeals function and the search_deals database function both still attempt to read this column',
+  },
+  {
+    n: '09',
+    title: 'Resource leaks and unmanaged lifetimes',
+    description: 'Memory leaks from raw pointers in C++, unclosed file handles, timers that never get cleared, listeners that never get removed.',
+    sample: 'memory leak due to unmanaged raw pointer. the new member m_progressindicator is a raw pointer requiring a manual delete in the destructor',
+  },
+  {
+    n: '10',
+    title: 'Database edge cases',
+    description: 'ToDictionary failures on duplicate keys, missing transactions around multi-statement updates, queries that assume non-empty result sets.',
+    sample: 'uso de todictionary sem tratamento de duplicatas causa falha total. as chamadas em debtsinwindow.todictionary irao lancar uma argumentexception se as colecoes de entrada contiverem multiplos elementos com a mesma chave',
+  },
+];
+---
+
+<Layout
+  title="The 10 bugs AI catches most in production code · State of AI Code Review"
+  description="Categorized from 14,560 accepted bug findings across 200 organizations. Null access, race conditions, schema drift, and seven more bug classes most common in 2026."
+>
+  <section class="max-w-3xl mx-auto px-6 pt-20 pb-12">
+    <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-accent-500 mb-6">Chapter 01 · Bugs</p>
+    <h1 class="text-4xl md:text-6xl font-medium tracking-tight leading-[1.05]">
+      The 10 bugs AI catches most in production code.
+    </h1>
+    <p class="text-lg text-ink-500 mt-8 leading-relaxed">
+      Of 14,560 bug findings across 200 organizations between September 2025 and May 2026, developers implemented roughly 95 percent. These are the 10 classes that account for most accepted bug findings, with anonymized excerpts from real review comments.
+    </p>
+  </section>
+
+  <section class="max-w-3xl mx-auto px-6 pb-24 space-y-16">
+    {bugClasses.map((b) => (
+      <article class="border-t border-ink-200 pt-10">
+        <div class="flex items-baseline gap-4 mb-4">
+          <span class="font-mono text-sm text-ink-300">{b.n}</span>
+          <h2 class="text-2xl font-medium leading-tight">{b.title}</h2>
+        </div>
+        <p class="text-ink-700 leading-relaxed">{b.description}</p>
+        <blockquote class="font-mono text-[13px] leading-relaxed text-ink-500 border-l-2 border-accent-500 pl-4 mt-5 max-w-prose">
+          {b.sample}
+        </blockquote>
+      </article>
+    ))}
+  </section>
+
+  <section class="max-w-3xl mx-auto px-6 py-12 border-t border-ink-200">
+    <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500 mb-3">Note</p>
+    <p class="text-ink-700 leading-relaxed">
+      Class boundaries are approximate. Semantic clustering of the full suggestion text is ongoing. The 2026-Q2 snapshot will publish counts per class, language breakdowns, and acceptance rates per class. Methodology and SQL queries are in the <a href="https://github.com/kodustech/stateofcodereview.com" class="underline decoration-1 underline-offset-4 hover:text-accent-700">GitHub repository</a>.
+    </p>
+  </section>
+</Layout>

@@ -1,0 +1,119 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const vulns = [
+  {
+    n: '01',
+    title: 'SQL injection',
+    note: 'Still the most common class in 2026.',
+    sample: 'fmt.sprintf to directly embed user-controllable string variables into sql queries creating critical sql injection vulnerabilities',
+  },
+  {
+    n: '02',
+    title: 'Path traversal',
+    note: 'Often via unsanitized URL parameters used to construct file paths.',
+    sample: 'path traversal vulnerability in resolvepath. the function allows absolute paths (e.g. etc passwd) to be used directly completely bypassing the repository directory jail',
+  },
+  {
+    n: '03',
+    title: 'Missing authorization',
+    note: 'Endpoints without permission checks, or routers that lost their auth dependency during a refactor.',
+    sample: 'the authorization dependencies have been removed from the api_keys clients and marketplace routers. previously these routers were protected by depends(require_scopes(...))',
+  },
+  {
+    n: '04',
+    title: 'XSS via unescaped attributes',
+    note: 'User-controlled values written into HTML attributes without escaping.',
+    sample: 'html for the tooltips concatenando diretamente valores lidos de atributos data- em um atributo title sem qualquer tipo de sanitizacao',
+  },
+  {
+    n: '05',
+    title: 'SSRF',
+    note: 'URL parameters fed directly into outbound HTTP requests, allowing attackers to reach internal services.',
+    sample: 'the getmerchantid function is vulnerable to server-side request forgery (ssrf). it directly uses the link parameter which can be controlled by a user in an axios.get call without validation',
+  },
+  {
+    n: '06',
+    title: 'Hardcoded secrets in source',
+    note: 'Tokens, API keys, and access credentials committed alongside code.',
+    sample: 'hardcoding the cf-access-client-id and cf-access-client-secret directly into the source code is a critical security vulnerability. these credentials will be committed to the version control history permanently',
+  },
+  {
+    n: '07',
+    title: 'Open redirect',
+    note: 'Redirect helpers that block obvious schemes (http, javascript) but miss protocol-relative URLs.',
+    sample: 'the safe_return_to_path method is vulnerable to open redirection. it correctly blocks schemes like http and javascript but it allows protocol-relative urls such as evil.com',
+  },
+  {
+    n: '08',
+    title: 'Sensitive data exposure in logs',
+    note: 'Raw error objects, internal IDs, or full request payloads logged for debugging and never sanitized.',
+    sample: 'the error message in banking.ts (lines 166-169) leaks internal workspaceid when a transaction is found but does not belong to the requesting store. this information leak allows verifying the existence of settlements',
+  },
+  {
+    n: '09',
+    title: 'Prompt injection',
+    isNew: true,
+    note: 'New top-10 entrant in 2026. System prompts that concatenate user-controlled strings without delimiters or sanitization.',
+    sample: 'el prompt del sistema concatena directamente datos potencialmente controlados por el usuario sin ningun tipo de delimitador o instruccion de saneamiento. esto crea una vulnerabilidad de inyeccion de prompt',
+  },
+  {
+    n: '10',
+    title: 'Default credentials',
+    note: 'Services deployed with well-known default usernames and passwords.',
+    sample: 'the rabbitmq service is configured with the default well-known credentials guest guest. this is a significant security risk. the guest user is intended for local development',
+  },
+  {
+    n: '11',
+    title: 'Command injection',
+    note: 'User input passed unsanitized into shell commands.',
+    sample: 'the basebranch parameter is used directly in a shell command without sanitization creating a command injection vulnerability. an attacker who can control the value can execute arbitrary commands',
+  },
+  {
+    n: '12',
+    title: 'PostMessage origin not validated',
+    note: 'Window message listeners that process events from any origin.',
+    sample: 'the message event listener is missing a crucial security check to validate the origin of the incoming event. without verifying event.origin the application will process messages sent from any website',
+  },
+];
+---
+
+<Layout
+  title="The 2026 vulnerability landscape · State of AI Code Review"
+  description="The top security vulnerability classes AI code review caught on production pull requests in 2026. SQL injection is still #1. Prompt injection enters the top 10."
+>
+  <section class="max-w-3xl mx-auto px-6 pt-20 pb-12">
+    <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-accent-500 mb-6">Chapter 02 · Vulnerabilities</p>
+    <h1 class="text-4xl md:text-6xl font-medium tracking-tight leading-[1.05]">
+      The 2026 vulnerability landscape.
+    </h1>
+    <p class="text-lg text-ink-500 mt-8 leading-relaxed">
+      Drawn from 7,483 accepted security findings across 200 organizations. SQL injection is still the most common class. A new category, prompt injection, enters the top 10 in 2026 as more applications expose LLM-backed endpoints.
+    </p>
+  </section>
+
+  <section class="max-w-3xl mx-auto px-6 pb-24 space-y-12">
+    {vulns.map((v) => (
+      <article class="border-t border-ink-200 pt-8">
+        <div class="flex items-baseline gap-4 mb-3">
+          <span class="font-mono text-sm text-ink-300">{v.n}</span>
+          <h2 class="text-2xl font-medium leading-tight">{v.title}</h2>
+          {v.isNew && (
+            <span class="font-mono text-[10px] uppercase tracking-[0.18em] bg-accent-500 text-ink-50 px-2 py-1">New in 2026</span>
+          )}
+        </div>
+        <p class="text-ink-700 leading-relaxed">{v.note}</p>
+        <blockquote class="font-mono text-[13px] leading-relaxed text-ink-500 border-l-2 border-accent-500 pl-4 mt-4 max-w-prose">
+          {v.sample}
+        </blockquote>
+      </article>
+    ))}
+  </section>
+
+  <section class="max-w-3xl mx-auto px-6 py-12 border-t border-ink-200">
+    <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500 mb-3">Note on prompt injection</p>
+    <p class="text-ink-700 leading-relaxed">
+      Prompt injection appears as a distinct category for the first time in this dataset. It is structurally similar to SQL injection: user-controlled strings concatenated into a sensitive context (a system prompt instead of a SQL query). Expect this class to rise in subsequent quarterly snapshots as more production code paths route through LLMs.
+    </p>
+  </section>
+</Layout>

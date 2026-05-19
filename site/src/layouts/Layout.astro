@@ -1,0 +1,68 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'State of AI Code Review (2026)',
+  description = 'Research on how AI code review actually performs on real production pull requests. 17,773 AI suggestions across 200 organizations and 103 programming languages.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body class="bg-ink-50 text-ink-900">
+    <header class="border-b border-ink-200">
+      <div class="max-w-6xl mx-auto px-6 py-5 flex items-baseline justify-between flex-wrap gap-y-3">
+        <a href="/" class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-900">
+          State of AI Code Review<span class="text-ink-500"> · 2026</span>
+        </a>
+        <nav class="font-mono text-[11px] uppercase tracking-[0.18em] flex gap-6 text-ink-500">
+          <a href="/bugs/" class="hover:text-accent-700 transition-colors">Bugs</a>
+          <a href="/vulnerabilities/" class="hover:text-accent-700 transition-colors">Vulnerabilities</a>
+          <a href="/cross-file/" class="hover:text-accent-700 transition-colors">Cross-file</a>
+          <a href="/rules/" class="hover:text-accent-700 transition-colors">Rules</a>
+          <a href="/methodology/" class="hover:text-accent-700 transition-colors">Methodology</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="border-t border-ink-200 mt-32">
+      <div class="max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10 text-sm leading-relaxed">
+        <div>
+          <div class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500 mb-3">Research by</div>
+          <a href="https://kodus.io" class="text-ink-900 underline decoration-1 underline-offset-4 hover:text-accent-700">Kodus</a>
+          <p class="text-ink-500 mt-2 max-w-xs">Open source AI code review without vendor lock-in.</p>
+        </div>
+        <div>
+          <div class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500 mb-3">License</div>
+          <p class="text-ink-700">Report and data licensed under <a href="https://creativecommons.org/licenses/by/4.0/" class="underline decoration-1 underline-offset-4 hover:text-accent-700">CC BY 4.0</a>. Reuse with attribution.</p>
+        </div>
+        <div>
+          <div class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500 mb-3">Cite</div>
+          <p class="font-mono text-[11px] leading-relaxed text-ink-500">State of AI Code Review (2026-Q2). Research by Kodus. stateofcodereview.com</p>
+          <a href="https://github.com/kodustech/stateofcodereview.com" class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-500 hover:text-accent-700 mt-3 inline-block">GitHub repo →</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
